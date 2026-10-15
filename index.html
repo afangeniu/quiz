@@ -1,0 +1,1069 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WHO WANTS TO BE A MILLIONAIRE? - Bahasa Indonesia Kelas 6 SD</title>
+    <!-- Tailwind CSS for modern styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Font Inter & Poppins for gaming feel -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Poppins:wght@600;700;900&display=swap" rel="stylesheet">
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Tone.js for web audio sound effects -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: radial-gradient(circle at center, #0B192C 0%, #030712 100%);
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+        .game-title {
+            font-family: 'Poppins', sans-serif;
+            letter-spacing: 1px;
+            text-shadow: 0 0 20px rgba(234, 179, 8, 0.4);
+        }
+        .option-btn {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border: 2px solid #334155;
+            transition: all 0.2s ease-in-out;
+        }
+        .option-btn:hover:not(:disabled) {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            border-color: #60a5fa;
+            transform: translateY(-2px);
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
+        }
+        .option-btn.selected {
+            background: linear-gradient(135deg, #eab308 0%, #ca8a04 100%) !important;
+            border-color: #fef08a !important;
+            color: #030712 !important;
+            font-weight: 700;
+            box-shadow: 0 0 20px rgba(234, 179, 8, 0.8);
+        }
+        .option-btn.correct {
+            background: linear-gradient(135deg, #22c55e 0%, #15803d 100%) !important;
+            border-color: #86efac !important;
+            color: #ffffff !important;
+            box-shadow: 0 0 25px rgba(34, 197, 94, 0.8);
+            animation: pulse-correct 0.5s infinite alternate;
+        }
+        .option-btn.wrong {
+            background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%) !important;
+            border-color: #fca5a5 !important;
+            color: #ffffff !important;
+            box-shadow: 0 0 25px rgba(239, 68, 68, 0.8);
+        }
+        @keyframes pulse-correct {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.02); }
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #030712;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between select-none">
+
+    <header class="w-full bg-slate-900/80 backdrop-blur-md border-b border-slate-800 px-4 py-3 flex justify-between items-center sticky top-0 z-50">
+        <div class="flex items-center space-x-3">
+            <div class="bg-amber-500 text-slate-950 p-2 rounded-xl font-black text-lg shadow-lg shadow-amber-500/20">
+                <i class="fa-solid fa-graduation-cap"></i>
+            </div>
+            <div>
+                <h1 class="text-sm md:text-base font-bold text-amber-400 game-title leading-tight">WHO WANTS TO BE A MILLIONAIRE?</h1>
+                <p class="text-xs text-slate-400">Bahasa Indonesia Kelas 6 SD (15 Level Tantangan)</p>
+            </div>
+        </div>
+        <div class="flex items-center space-x-2">
+            <button id="bgMusicToggle" onclick="toggleBgMusic()" class="bg-slate-800 hover:bg-slate-700 text-amber-400 border border-slate-700 px-3 py-2 rounded-xl text-xs font-semibold flex items-center space-x-1 transition shadow" title="Putar/Hentikan Musik Latar (music.mp3)">
+                <i id="bgMusicIcon" class="fa-solid fa-music"></i>
+                <span class="hidden sm:inline" id="bgMusicText">Musik: Mati</span>
+            </button>
+            <button id="soundToggle" onclick="toggleSound()" class="bg-slate-800 hover:bg-slate-700 text-amber-400 border border-slate-700 px-3 py-2 rounded-xl text-xs font-semibold flex items-center space-x-1 transition shadow">
+                <i id="soundIcon" class="fa-solid fa-volume-high"></i>
+                <span class="hidden sm:inline" id="soundText">Suara: Nyala</span>
+            </button>
+            <button onclick="toggleFullScreen()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-3 py-2 rounded-xl text-xs font-semibold flex items-center space-x-1 transition shadow">
+                <i class="fa-solid fa-expand"></i>
+                <span class="hidden sm:inline">Layar Penuh</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- HTML5 Audio Element for music.mp3 -->
+    <audio id="bgMusic" loop preload="auto">
+        <source src="music.mp3" type="audio/mpeg">
+        Browser Anda tidak mendukung elemen audio.
+    </audio>
+
+    <main class="flex-grow flex flex-col items-center justify-center p-3 md:p-6 max-w-7xl mx-auto w-full">
+
+        <!-- SCREEN 1: WELCOME SCREEN -->
+        <div id="screenWelcome" class="w-full max-w-3xl bg-slate-900/90 border border-slate-800 rounded-3xl p-6 md:p-10 shadow-2xl text-center relative overflow-hidden">
+            <div class="absolute -top-24 -left-24 w-48 h-48 bg-blue-600/20 rounded-full blur-3xl"></div>
+            <div class="absolute -bottom-24 -right-24 w-48 h-48 bg-amber-500/20 rounded-full blur-3xl"></div>
+
+            <div class="inline-block bg-amber-500/10 border border-amber-500/30 text-amber-400 px-4 py-1.5 rounded-full text-xs font-bold mb-4 tracking-wide uppercase">
+                Uji Pengetahuan • 15 Level Tantangan • Raih 1 Miliar
+            </div>
+            <h2 class="text-3xl md:text-5xl font-black text-white game-title mb-3 leading-tight">
+                WHO WANTS TO BE <br><span class="text-amber-400">A MILLIONAIRE?</span>
+            </h2>
+            <p class="text-slate-300 text-sm md:text-base max-w-xl mx-auto mb-8">
+                Uji kemampuanmu seputar <span class="text-blue-400 font-semibold">Unsur Intrinsik Cerita</span>, <span class="text-blue-400 font-semibold">Surat Resmi & Pribadi</span>, serta <span class="text-blue-400 font-semibold">Formulir</span> Kelas 6 SD! Soal diacak tanpa pengulangan di setiap sesi baru.
+            </p>
+
+            <div class="bg-slate-950/60 border border-slate-800/80 rounded-2xl p-6 mb-8 text-left max-w-xl mx-auto shadow-inner">
+                <label class="block text-xs font-bold text-amber-400 uppercase tracking-wider mb-2">Nama Pemain / Tim:</label>
+                <input type="text" id="playerNameInput" placeholder="Contoh: Budi / Kelompok 1" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-amber-400 font-medium transition mb-5 text-sm md:text-base">
+
+                <label class="block text-xs font-bold text-amber-400 uppercase tracking-wider mb-2">Pilih Mode Permainan:</label>
+                <div class="grid grid-cols-2 gap-3 mb-5">
+                    <button onclick="setGameMode('solo')" id="modeSoloBtn" class="bg-amber-500 text-slate-950 border-2 border-amber-400 font-bold py-3 px-4 rounded-xl text-sm flex items-center justify-center space-x-2 transition shadow-md">
+                        <i class="fa-solid fa-user"></i>
+                        <span>Main Sendiri</span>
+                    </button>
+                    <button onclick="setGameMode('duo')" id="modeDuoBtn" class="bg-slate-800 text-slate-300 border-2 border-slate-700 font-bold py-3 px-4 rounded-xl text-sm flex items-center justify-center space-x-2 transition hover:bg-slate-700">
+                        <i class="fa-solid fa-users"></i>
+                        <span>Dua Tim</span>
+                    </button>
+                </div>
+
+                <div id="teamNamesContainer" class="hidden space-y-3 mb-2 animate-fadeIn">
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-[11px] font-semibold text-slate-400 mb-1">Nama Tim 1:</label>
+                            <input type="text" id="team1Input" value="Tim A" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-semibold text-slate-400 mb-1">Nama Tim 2:</label>
+                            <input type="text" id="team2Input" value="Tim B" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex flex-col sm:flex-row justify-center items-center gap-4">
+                <button onclick="startGame()" class="w-full sm:w-auto bg-gradient-to-r from-amber-500 to-yellow-400 hover:from-amber-400 hover:to-yellow-300 text-slate-950 font-black px-8 py-4 rounded-2xl shadow-xl shadow-amber-500/30 text-base md:text-lg transition transform hover:-translate-y-0.5">
+                    <i class="fa-solid fa-play mr-2"></i> MULAI PERMAINAN
+                </button>
+                <button onclick="openInstructions()" class="w-full sm:w-auto bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 font-bold px-6 py-4 rounded-2xl text-sm transition">
+                    <i class="fa-solid fa-circle-question mr-2"></i> Cara Bermain
+                </button>
+            </div>
+        </div>
+
+        <!-- SCREEN 2: GAMEPLAY SCREEN -->
+        <div id="screenGame" class="w-full max-w-7xl hidden flex-col lg:flex-row gap-6 items-start">
+            
+            <!-- LEFT / MAIN GAME AREA -->
+            <div class="flex-grow w-full lg:w-2/3 flex flex-col justify-between bg-slate-900/90 border border-slate-800 rounded-3xl p-4 md:p-6 shadow-2xl relative min-h-[550px]">
+                
+                <!-- TOP GAME STATS -->
+                <div class="flex justify-between items-center mb-4 pb-3 border-b border-slate-800">
+                    <div class="flex items-center space-x-2">
+                        <span class="bg-blue-600/20 text-blue-400 border border-blue-500/30 px-3 py-1 rounded-xl text-xs font-bold" id="playerDisplayTag">Pemain: Tamu</span>
+                        <span id="teamTurnIndicator" class="hidden bg-amber-500 text-slate-950 px-3 py-1 rounded-xl text-xs font-black shadow">Giliran: Tim A</span>
+                    </div>
+                    <div class="text-right">
+                        <span class="text-xs text-slate-400 block">Hadiah Saat Ini</span>
+                        <span class="text-base md:text-xl font-black text-amber-400" id="currentPrizeDisplay">Rp100.000</span>
+                    </div>
+                </div>
+
+                <!-- LIFELINES & LEVEL BADGE -->
+                <div class="flex flex-wrap justify-between items-center gap-2 mb-4">
+                    <div class="flex items-center space-x-2">
+                        <button onclick="useLifeline5050()" id="lifeline50Btn" class="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-amber-400 px-3 py-1.5 rounded-xl text-xs font-bold flex items-center space-x-1.5 shadow transition" title="Hilangkan 2 jawaban salah">
+                            <i class="fa-solid fa-circle-half-stroke"></i>
+                            <span>50:50</span>
+                        </button>
+                        <button onclick="useLifelineTeacher()" id="lifelineTeacherBtn" class="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-amber-400 px-3 py-1.5 rounded-xl text-xs font-bold flex items-center space-x-1.5 shadow transition" title="Minta Pendapat Guru">
+                            <i class="fa-solid fa-chalkboard-user"></i>
+                            <span>Tanya Guru</span>
+                        </button>
+                        <button onclick="useLifelineHint()" id="lifelineHintBtn" class="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-amber-400 px-3 py-1.5 rounded-xl text-xs font-bold flex items-center space-x-1.5 shadow transition" title="Petunjuk Soal">
+                            <i class="fa-solid fa-lightbulb"></i>
+                            <span>Petunjuk</span>
+                        </button>
+                    </div>
+                    <div class="bg-slate-950 border border-slate-800 px-4 py-1.5 rounded-xl text-xs font-bold text-slate-300">
+                        Level <span id="currentLevelNumber" class="text-amber-400 font-black">1</span> / 15
+                    </div>
+                </div>
+
+                <!-- QUESTION PANEL -->
+                <div class="bg-slate-950/70 border border-slate-800 rounded-2xl p-5 md:p-6 mb-5 shadow-inner min-h-[130px] flex items-center justify-center text-center">
+                    <p id="questionText" class="text-base md:text-xl font-bold text-white leading-relaxed">
+                        Memuat pertanyaan...
+                    </p>
+                </div>
+
+                <!-- OPTIONS GRID (A, B, C, D) -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-6">
+                    <button onclick="selectOption(0)" id="optionBtn0" class="option-btn text-left p-4 rounded-2xl flex items-center space-x-3 text-sm md:text-base font-semibold text-slate-200">
+                        <span class="w-8 h-8 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-amber-400 font-bold shrink-0">A</span>
+                        <span id="optionText0" class="flex-grow">Pilihan A</span>
+                    </button>
+                    <button onclick="selectOption(1)" id="optionBtn1" class="option-btn text-left p-4 rounded-2xl flex items-center space-x-3 text-sm md:text-base font-semibold text-slate-200">
+                        <span class="w-8 h-8 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-amber-400 font-bold shrink-0">B</span>
+                        <span id="optionText1" class="flex-grow">Pilihan B</span>
+                    </button>
+                    <button onclick="selectOption(2)" id="optionBtn2" class="option-btn text-left p-4 rounded-2xl flex items-center space-x-3 text-sm md:text-base font-semibold text-slate-200">
+                        <span class="w-8 h-8 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-amber-400 font-bold shrink-0">C</span>
+                        <span id="optionText2" class="flex-grow">Pilihan C</span>
+                    </button>
+                    <button onclick="selectOption(3)" id="optionBtn3" class="option-btn text-left p-4 rounded-2xl flex items-center space-x-3 text-sm md:text-base font-semibold text-slate-200">
+                        <span class="w-8 h-8 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-amber-400 font-bold shrink-0">D</span>
+                        <span id="optionText3" class="flex-grow">Pilihan D</span>
+                    </button>
+                </div>
+
+                <!-- ACTION BUTTONS -->
+                <div class="flex justify-between items-center pt-3 border-t border-slate-800">
+                    <button onclick="toggleSidebarMobile()" class="lg:hidden bg-slate-800 text-amber-400 px-4 py-2.5 rounded-xl text-xs font-bold border border-slate-700">
+                        <i class="fa-solid fa-list-ol mr-1.5"></i> Tangga Hadiah
+                    </button>
+                    <div class="ml-auto">
+                        <button onclick="lockInAnswer()" id="lockInBtn" disabled class="bg-slate-800 text-slate-500 font-bold px-8 py-3 rounded-2xl text-sm transition shadow cursor-not-allowed">
+                            Kunci Jawaban
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- RIGHT / PRIZE LADDER SIDEBAR (Positioned directly beside question panel) -->
+            <div id="prizeSidebar" class="w-full lg:w-80 bg-slate-900/90 border border-slate-800 rounded-3xl p-4 md:p-5 shadow-2xl flex flex-col justify-between shrink-0 h-auto self-stretch">
+                <div>
+                    <div class="flex justify-between items-center mb-3 pb-2 border-b border-slate-800">
+                        <h3 class="text-xs font-bold text-amber-400 uppercase tracking-wider"><i class="fa-solid fa-trophy mr-1.5"></i> Tangga Hadiah (15 Level)</h3>
+                        <button onclick="toggleSidebarMobile()" class="lg:hidden text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+                    </div>
+                    <!-- Ladder list container (scrollable and auto scrolls to current level) -->
+                    <div id="prizeLadderList" class="space-y-1.5 max-h-[460px] overflow-y-auto pr-1">
+                        <!-- Generated via JS -->
+                    </div>
+                </div>
+                <div class="mt-4 pt-3 border-t border-slate-800 text-center">
+                    <p class="text-[11px] text-slate-400">Puncak Hadiah: <span class="text-amber-400 font-bold">Rp1.000.000.000</span></p>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- SCREEN 3: RESULT SCREEN -->
+        <div id="screenResult" class="w-full max-w-2xl hidden bg-slate-900/90 border border-slate-800 rounded-3xl p-6 md:p-10 shadow-2xl text-center">
+            <div id="resultIconBadge" class="w-20 h-20 mx-auto rounded-3xl flex items-center justify-center text-3xl mb-4 shadow-xl">
+                <i class="fa-solid fa-award"></i>
+            </div>
+            <h2 id="resultTitle" class="text-2xl md:text-4xl font-black text-white game-title mb-2">PERMAINAN SELESAI</h2>
+            <p id="resultSubtitle" class="text-slate-300 text-sm md:text-base mb-6">Hebat! Kamu telah berjuang dengan sangat baik.</p>
+
+            <div class="bg-slate-950/70 border border-slate-800 rounded-2xl p-5 mb-6 text-left grid grid-cols-2 gap-4">
+                <div>
+                    <span class="text-[11px] text-slate-400 block font-semibold uppercase">Nama Pemain/Tim</span>
+                    <span id="resPlayerName" class="text-sm md:text-base font-bold text-white">Budi</span>
+                </div>
+                <div>
+                    <span class="text-[11px] text-slate-400 block font-semibold uppercase">Level Dicapai</span>
+                    <span id="resLevel" class="text-sm md:text-base font-bold text-amber-400">Level 5</span>
+                </div>
+                <div>
+                    <span class="text-[11px] text-slate-400 block font-semibold uppercase">Jawaban Benar</span>
+                    <span id="resCorrectCount" class="text-sm md:text-base font-bold text-green-400">4 / 15</span>
+                </div>
+                <div>
+                    <span class="text-[11px] text-slate-400 block font-semibold uppercase">Total Hadiah Virtual</span>
+                    <span id="resPrize" class="text-sm md:text-base font-black text-amber-400">Rp1.000.000</span>
+                </div>
+            </div>
+
+            <div class="bg-blue-950/30 border border-blue-900/40 rounded-2xl p-4 mb-8 text-blue-200 text-xs md:text-sm font-medium" id="resMotivation">
+                Pertahankan semangat belajar! Semakin banyak membaca, semakin luas pengetahuanmu.
+            </div>
+
+            <div class="flex flex-col sm:flex-row justify-center gap-3">
+                <button onclick="restartGame()" class="bg-gradient-to-r from-amber-500 to-yellow-400 hover:from-amber-400 hover:to-yellow-300 text-slate-950 font-black px-6 py-3.5 rounded-2xl shadow-lg text-sm transition">
+                    <i class="fa-solid fa-rotate-right mr-2"></i> MAIN LAGI
+                </button>
+                <button onclick="goToMenu()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 font-bold px-6 py-3.5 rounded-2xl text-sm transition">
+                    <i class="fa-solid fa-house mr-2"></i> KEMBALI KE MENU
+                </button>
+            </div>
+        </div>
+
+        <!-- MODAL: INSTRUCTIONS -->
+        <div id="instructionModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
+            <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-lg w-full p-6 shadow-2xl relative">
+                <div class="flex justify-between items-center mb-4 pb-3 border-b border-slate-800">
+                    <h3 class="text-base font-bold text-amber-400"><i class="fa-solid fa-circle-question mr-2"></i> Cara Bermain</h3>
+                    <button onclick="closeInstructions()" class="text-slate-400 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <div class="space-y-3 text-xs md:text-sm text-slate-300 max-h-[60vh] overflow-y-auto pr-2">
+                    <p>1. Game terdiri dari <strong class="text-amber-400">15 Level</strong> pertanyaan pilihan ganda Bahasa Indonesia Kelas 6 SD (Unsur Cerita, Surat, & Formulir) yang dipilih secara acak dari 30 bank soal tanpa pengulangan untuk setiap permainan baru.</p>
+                    <p>2. Pilih salah satu jawaban A, B, C, atau D, lalu tekan tombol <strong class="text-white">“Kunci Jawaban”</strong>.</p>
+                    <p>3. Jika jawaban benar, kamu akan naik ke level berikutnya dan hadiah virtual akan bertambah hingga Rp1.000.000.000!</p>
+                    <p>4. Tersedia 3 jenis bantuan yang bisa digunakan sekali per permainan:</p>
+                    <ul class="list-disc pl-5 space-y-1 text-slate-400">
+                        <li><strong class="text-amber-400">50:50</strong>: Menghilangkan 2 pilihan salah.</li>
+                        <li><strong class="text-amber-400">Tanya Guru</strong>: Meminta saran atau bimbingan guru.</li>
+                        <li><strong class="text-amber-400">Petunjuk</strong>: Membaca cluenya tanpa membuka jawaban langsung.</li>
+                    </ul>
+                    <p>5. Dapat dimainkan sendiri maupun dalam mode <strong class="text-blue-400">Dua Tim</strong> secara bergantian di kelas menggunakan komputer atau proyektor/IFP!</p>
+                </div>
+                <div class="mt-6 pt-3 border-t border-slate-800 text-right">
+                    <button onclick="closeInstructions()" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-5 py-2.5 rounded-xl text-xs">Mengerti</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODAL: FEEDBACK / EXPLANATION POPUP -->
+        <div id="feedbackModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
+            <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-md w-full p-6 shadow-2xl text-center">
+                <div id="feedbackIcon" class="w-16 h-16 mx-auto rounded-2xl flex items-center justify-center text-2xl mb-3 shadow-lg">
+                    <i class="fa-solid fa-check"></i>
+                </div>
+                <h3 id="feedbackTitle" class="text-xl font-black text-white mb-2">JAWABAN BENAR!</h3>
+                <p id="feedbackExplanation" class="text-xs md:text-sm text-slate-300 mb-6 bg-slate-950/60 p-4 rounded-2xl border border-slate-800 text-left">
+                    Penjelasan jawaban akan muncul di sini.
+                </p>
+                <button onclick="proceedNextStep()" id="feedbackNextBtn" class="w-full bg-gradient-to-r from-amber-500 to-yellow-400 hover:from-amber-400 hover:to-yellow-300 text-slate-950 font-black py-3.5 rounded-2xl shadow-lg text-sm transition">
+                    LANJUTKAN
+                </button>
+            </div>
+        </div>
+
+        <!-- MODAL: LIFELINE ALERT / TEACHER NOTE -->
+        <div id="lifelineModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
+            <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-md w-full p-6 shadow-2xl text-center">
+                <div class="w-16 h-16 mx-auto rounded-2xl bg-blue-500/20 border border-blue-500/40 text-blue-400 flex items-center justify-center text-2xl mb-3 shadow-lg">
+                    <i id="lifelineModalIcon" class="fa-solid fa-chalkboard-user"></i>
+                </div>
+                <h3 id="lifelineModalTitle" class="text-lg font-bold text-white mb-2">Bantuan Guru</h3>
+                <p id="lifelineModalText" class="text-xs md:text-sm text-slate-300 mb-6 bg-slate-950/60 p-4 rounded-2xl border border-slate-800 text-left">
+                    Pesan bantuan...
+                </p>
+                <button onclick="closeLifelineModal()" class="w-full bg-slate-800 hover:bg-slate-700 text-white font-bold py-3 rounded-xl text-xs md:text-sm transition">
+                    Kembali ke Soal
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="w-full bg-slate-900/60 border-t border-slate-800/80 py-3 text-center text-[11px] text-slate-400">
+        WHO WANTS TO BE A MILLIONAIRE? • Bahasa Indonesia Kelas 6 SD • Media Pembelajaran Interaktif
+    </footer>
+
+    <script>
+        // --- COMPLETE 30 QUESTION BANK (Unsur Cerita, Surat, & Formulir) ---
+        const questionBank = [
+            // Materi A: Unsur Intrinsik Cerita (Soal 1 - 10)
+            {
+                q: "Unsur cerita yang menunjukkan tokoh-tokoh yang terlibat dalam sebuah cerita disebut ....",
+                options: ["Tema", "Tokoh", "Alur", "Latar"],
+                correct: 1,
+                explanation: "Tokoh adalah pelaku atau pemeran yang terlibat dalam peristiwa di dalam cerita."
+            },
+            {
+                q: "Setiap pagi, Raka selalu membantu ibunya membersihkan halaman rumah. Ia juga rajin merawat tanaman di kebun. Sifat Raka adalah ....",
+                options: ["Pemalas", "Pemarah", "Rajin", "Sombong"],
+                correct: 2,
+                explanation: "Tindakan membantu ibu dan merawat tanaman menunjukkan watak atau sifat Raka yang rajin."
+            },
+            {
+                q: "Tempat, waktu, dan suasana terjadinya suatu peristiwa dalam cerita disebut ....",
+                options: ["Amanat", "Tema", "Latar", "Alur"],
+                correct: 2,
+                explanation: "Latar (setting) meliputi keterangan mengenai tempat, waktu, dan suasana dalam sebuah cerita."
+            },
+            {
+                q: "Pagi itu, para siswa berkumpul di halaman sekolah untuk mengikuti upacara bendera. Latar tempatnya adalah ....",
+                options: ["Rumah", "Halaman sekolah", "Lapangan desa", "Ruang kelas"],
+                correct: 1,
+                explanation: "Kutipan menyebutkan 'di halaman sekolah', maka latar tempatnya adalah halaman sekolah."
+            },
+            {
+                q: "Gagasan utama yang menjadi dasar sebuah cerita disebut ....",
+                options: ["Tema", "Tokoh", "Latar", "Amanat"],
+                correct: 0,
+                explanation: "Tema adalah gagasan pokok atau ide utama yang mendasari keseluruhan isi cerita."
+            },
+            {
+                q: "Pesan yang ingin disampaikan pengarang kepada pembaca disebut ....",
+                options: ["Alur", "Tema", "Amanat", "Latar"],
+                correct: 2,
+                explanation: "Amanat adalah pesan moral atau nasihat yang ingin disampaikan pengarang kepada pembaca."
+            },
+            {
+                q: "Danu menemukan dompet di halaman sekolah. Ia menyerahkannya kepada guru. Amanat cerita tersebut adalah ....",
+                options: ["Kita boleh mengambil barang temuan.", "Kita harus menyimpan barang temuan.", "Kita harus jujur terhadap barang milik orang lain.", "Kita sebaiknya menghindari guru."],
+                correct: 2,
+                explanation: "Menyerahkan temuan kepada guru mencerminkan sifat jujur terhadap barang milik orang lain."
+            },
+            {
+                q: "Rangkaian peristiwa dari awal hingga akhir dalam sebuah cerita disebut ....",
+                options: ["Tokoh", "Alur", "Tema", "Amanat"],
+                correct: 1,
+                explanation: "Alur (plot) adalah rangkaian peristiwa atau jalan cerita dari awal hingga akhir."
+            },
+            {
+                q: "Tokoh yang memiliki sifat baik dan biasanya menjadi tokoh yang disukai pembaca disebut tokoh ....",
+                options: ["Antagonis", "Protagonis", "Tambahan", "Pembantu"],
+                correct: 1,
+                explanation: "Protagonis adalah tokoh utama yang berwatak baik."
+            },
+            {
+                q: "Bima berkata kepada Ardi, “Aku tidak akan meninggalkanmu sendirian. Kita akan mencari jalan keluar bersama.” Watak Bima adalah ....",
+                options: ["Peduli", "Egois", "Sombong", "Penakut"],
+                correct: 0,
+                explanation: "Ucapan Bima yang bersedia menemani dan mencari jalan bersama menunjukkan kepedulian."
+            },
+
+            // Materi B: Surat Resmi dan Surat Pribadi (Soal 11 - 20)
+            {
+                q: "Surat untuk kepentingan pribadi yang ditujukan kepada orang yang dikenal disebut ....",
+                options: ["Surat resmi", "Surat dinas", "Surat pribadi", "Surat keputusan"],
+                correct: 2,
+                explanation: "Surat pribadi adalah surat yang dikirimkan untuk perorangan, seperti teman, saudara, atau orang tua."
+            },
+            {
+                q: "Salah satu ciri surat resmi adalah ....",
+                options: ["Menggunakan bahasa bebas", "Menggunakan bahasa baku", "Tidak memiliki tujuan", "Tidak mencantumkan identitas pengirim"],
+                correct: 1,
+                explanation: "Surat resmi wajib menggunakan bahasa baku, sopan, dan sesuai kaidah bahasa Indonesia."
+            },
+            {
+                q: "Bagian surat resmi yang memuat nama dan alamat lembaga disebut ....",
+                options: ["Salam pembuka", "Kop surat", "Isi surat", "Tanda tangan"],
+                correct: 1,
+                explanation: "Kop surat (kepala surat) terletak di bagian paling atas surat resmi yang memuat nama instansi/lembaga."
+            },
+            {
+                q: "“Dengan hormat, dalam rangka memperingati Hari Pendidikan Nasional, kami mengundang Bapak/Ibu untuk menghadiri kegiatan ....” Kutipan tersebut merupakan bagian ....",
+                options: ["Kop surat", "Pembuka dan isi surat", "Alamat tujuan", "Tanda tangan"],
+                correct: 1,
+                explanation: "Kutipan tersebut menunjukkan kalimat pembuka serta isi dari surat resmi/undangan."
+            },
+            {
+                q: "Bahasa yang tepat digunakan dalam surat resmi adalah ....",
+                options: ["Bahasa santai", "Bahasa daerah", "Bahasa baku dan sopan", "Bahasa percakapan sehari-hari"],
+                correct: 2,
+                explanation: "Surat resmi harus ditulis menggunakan ragam bahasa baku dan sopan."
+            },
+            {
+                q: "Surat resmi yang dibuat sekolah biasanya digunakan untuk ....",
+                options: ["Mengundang teman bermain", "Menyampaikan informasi kedinasan", "Menceritakan liburan", "Menyapa keluarga"],
+                correct: 1,
+                explanation: "Surat resmi sekolah diperuntukkan bagi kepentingan kedinasan atau pemberitahuan kepada orang tua siswa."
+            },
+            {
+                q: "“Sapeken, 5 Oktober 2026. Kepada Yth. Orang Tua/Wali Murid Kelas VI di Tempat.” Bagian tersebut menunjukkan ....",
+                options: ["Tanggal dan alamat tujuan surat", "Salam penutup", "Isi surat", "Identitas pengirim"],
+                correct: 0,
+                explanation: "Bagian tersebut memuat tempat/tanggal pembuatan surat serta alamat tujuan surat."
+            },
+            {
+                q: "Kalimat yang tepat digunakan dalam surat resmi adalah ....",
+                options: ["Hai teman-teman, jangan lupa datang ya!", "Kami mengharap kehadiran Bapak/Ibu dalam kegiatan tersebut.", "Kamu harus datang karena acaranya seru banget.", "Jangan sampai tidak datang, ya!"],
+                correct: 1,
+                explanation: "Opsi kedua menggunakan ragam bahasa baku dan sopan yang sesuai untuk undangan resmi."
+            },
+            {
+                q: "“Sahabatku Rina, apa kabarmu? Semoga kamu dan keluargamu selalu sehat. Aku ingin bercerita tentang pengalaman mengikuti lomba.” Kutipan tersebut merupakan bagian dari ....",
+                options: ["Surat resmi", "Surat pribadi", "Surat dinas", "Surat keputusan"],
+                correct: 1,
+                explanation: "Kutipan tersebut menggunakan sapaan akrab 'Sahabatku' yang merupakan ciri khas surat pribadi."
+            },
+            {
+                q: "Perbedaan yang tepat antara surat resmi dan surat pribadi adalah ....",
+                options: ["Surat resmi menggunakan bahasa baku, sedangkan surat pribadi dapat menggunakan bahasa lebih santai.", "Surat resmi tidak memiliki tujuan.", "Surat pribadi selalu menggunakan kop surat.", "Surat resmi hanya boleh ditulis oleh siswa."],
+                correct: 0,
+                explanation: "Surat resmi bersifat formal dengan bahasa baku, sementara surat pribadi bersifat luwes dan santai."
+            },
+
+            // Materi C: Formulir (Soal 21 - 30)
+            {
+                q: "Formulir adalah ....",
+                options: ["Cerita pengalaman", "Lembar isian yang harus diisi dengan data tertentu", "Surat untuk teman", "Tulisan berisi pendapat"],
+                correct: 1,
+                explanation: "Formulir adalah lembar atau surat isian yang berisi data diri atau informasi yang harus diisi."
+            },
+            {
+                q: "Data yang biasanya terdapat dalam formulir pendaftaran siswa adalah ....",
+                options: ["Nama lengkap", "Judul cerita", "Tokoh utama", "Amanat"],
+                correct: 0,
+                explanation: "Formulir pendaftaran memerlukan data identitas seperti nama lengkap, tempat tanggal lahir, dan alamat."
+            },
+            {
+                q: "Formulir yang memuat kolom nama lengkap, tempat tanggal lahir, alamat, dan jenis kelamin kemungkinan merupakan formulir ....",
+                options: ["Pendaftaran", "Daftar hadir upacara", "Surat pribadi", "Cerita pengalaman"],
+                correct: 0,
+                explanation: "Kolom-kolom tersebut merupakan standar utama dalam lembar formulir pendaftaran."
+            },
+            {
+                q: "Saat mengisi formulir, data yang dituliskan harus ....",
+                options: ["Dibuat-buat", "Sesuai keadaan sebenarnya", "Menggunakan nama samaran", "Ditulis sembarangan"],
+                correct: 1,
+                explanation: "Informasi dalam formulir wajib diisi secara jujur dan sesuai dengan keadaan sebenarnya (faktual)."
+            },
+            {
+                q: "Kolom “Alamat” pada formulir digunakan untuk menuliskan ....",
+                options: ["Nama lengkap", "Tempat lahir", "Tempat tinggal", "Nama sekolah"],
+                correct: 2,
+                explanation: "Kolom alamat diisi dengan keterangan tempat tinggal atau domisili pemohon."
+            },
+            {
+                q: "Kolom “Nomor Telepon” digunakan untuk menuliskan ....",
+                options: ["Nomor telepon yang dapat dihubungi", "Nomor peserta ujian", "Nomor induk siswa", "Nomor halaman buku"],
+                correct: 0,
+                explanation: "Nomor telepon diisi dengan kontak aktif yang dapat dihubungi bilamana diperlukan."
+            },
+            {
+                q: "Data nama Siti Aminah, kelas VI, sekolah SDN Sapeken IV, dan kegiatan Lomba Membaca Puisi paling tepat digunakan dalam formulir ....",
+                options: ["Pendaftaran lomba", "Pengiriman surat pribadi", "Riwayat hidup tokoh cerita", "Surat undangan resmi"],
+                correct: 0,
+                explanation: "Data nama, sekolah, dan jenis lomba menunjukkan rincian formulir pendaftaran lomba."
+            },
+            {
+                q: "Penulisan nama pada formulir sebaiknya ....",
+                options: ["Menggunakan nama panggilan", "Menggunakan nama lengkap sesuai identitas", "Menggunakan nama teman", "Menggunakan nama samaran"],
+                correct: 1,
+                explanation: "Identitas resmi pada formulir harus diisi dengan nama lengkap sesuai dokumen kependudukan/sekolah."
+            },
+            {
+                q: "Jika formulir meminta data “Tempat, Tanggal Lahir”, penulisan yang tepat adalah ....",
+                options: ["Sapeken, 12 Mei 2014", "12 Mei", "Sapeken saja", "Mei 2014"],
+                correct: 0,
+                explanation: "Format penulisan yang benar mencakup kota tempat lahir diikuti tanda koma dan tanggal lengkap."
+            },
+            {
+                q: "Hal yang perlu diperhatikan ketika mengisi formulir adalah ....",
+                options: ["Mengisi data dengan benar dan tulisan yang jelas", "Mengosongkan semua bagian yang sulit", "Menulis nama panggilan", "Mengisi berdasarkan perkiraan"],
+                correct: 0,
+                explanation: "Ketelitian, kebenaran data, serta kerapian tulisan adalah hal terpenting saat mengisi formulir."
+            }
+        ];
+
+        // Prize values for exactly 15 levels starting from Rp100.000 to Rp1.000.000.000
+        const prizeValues = [
+            "Rp100.000",
+            "Rp200.000",
+            "Rp300.000",
+            "Rp500.000",
+            "Rp1.000.000",
+            "Rp2.000.000",
+            "Rp4.000.000",
+            "Rp8.000.000",
+            "Rp16.000.000",
+            "Rp32.000.000",
+            "Rp64.000.000",
+            "Rp125.000.000",
+            "Rp250.000.000",
+            "Rp500.000.000",
+            "Rp1.000.000.000"
+        ];
+
+        // --- GAME STATE ---
+        let gameState = {
+            playerName: "Tamu",
+            gameMode: "solo",
+            team1Name: "Tim A",
+            team2Name: "Tim B",
+            currentTeam: 1,
+            level: 1,
+            correctAnswersCount: 0,
+            selectedOptionIndex: null,
+            lifelines: {
+                fifty: true,
+                teacher: true,
+                hint: true
+            },
+            soundEnabled: true,
+            shuffledQuestions: []
+        };
+
+        let currentActiveQuestion = null;
+
+        // --- AUDIO SYNTHESIZER (Tone.js - Sound Effects Only) ---
+        let synth = null;
+        let bassSynth = null;
+
+        let isMusicPlaying = false;
+
+        function toggleBgMusic() {
+            const audio = document.getElementById("bgMusic");
+            const icon = document.getElementById("bgMusicIcon");
+            const text = document.getElementById("bgMusicText");
+
+            if (isMusicPlaying) {
+                audio.pause();
+                isMusicPlaying = false;
+                icon.className = "fa-solid fa-music";
+                text.innerText = "Musik: Mati";
+            } else {
+                audio.play().then(() => {
+                    isMusicPlaying = true;
+                    icon.className = "fa-solid fa-compact-disc animate-spin";
+                    text.innerText = "Musik: Nyala";
+                }).catch(error => {
+                    console.log("Gagal memutar musik. Pastikan file music.mp3 ada di folder yang sama:", error);
+                    alert("File 'music.mp3' belum ditemukan di folder yang sama atau diblokir browser. Silakan letakkan file music.mp3 di folder yang sama dengan index.html.");
+                });
+            }
+            playSound('click');
+        }
+
+        function initAudio() {
+            try {
+                if (!synth) {
+                    synth = new Tone.PolySynth(Tone.Synth, {
+                        oscillator: { type: "triangle" },
+                        envelope: { attack: 0.1, decay: 0.3, sustain: 0.4, release: 0.8 }
+                    }).toDestination();
+                    synth.volume.value = -12;
+
+                    bassSynth = new Tone.MembraneSynth({
+                        pitchDecay: 0.05,
+                        octaves: 4,
+                        oscillator: { type: "sine" },
+                        envelope: { attack: 0.01, decay: 0.4, sustain: 0.01, release: 0.4 }
+                    }).toDestination();
+                    bassSynth.volume.value = -6;
+                }
+            } catch (e) {
+                console.log("Audio context not initialized yet.");
+            }
+        }
+
+        function playSound(type) {
+            if (!gameState.soundEnabled) return;
+            try {
+                if (Tone.context.state !== 'running') {
+                    Tone.start();
+                }
+                if (!synth) initAudio();
+
+                let now = Tone.now();
+                if (type === 'click') {
+                    synth.triggerAttackRelease(["C5"], "16n", now);
+                } else if (type === 'correct') {
+                    synth.triggerAttackRelease(["C4", "E4", "G4", "C5"], "4n", now);
+                } else if (type === 'wrong') {
+                    bassSynth.triggerAttackRelease("F1", "2n", now);
+                    synth.triggerAttackRelease(["C3", "F#3"], "2n", now);
+                } else if (type === 'lifeline') {
+                    synth.triggerAttackRelease(["G4", "C5", "E5"], "8n", now);
+                }
+            } catch (e) {
+                console.log("Audio play error:", e);
+            }
+        }
+
+        function toggleSound() {
+            gameState.soundEnabled = !gameState.soundEnabled;
+            const icon = document.getElementById("soundIcon");
+            const text = document.getElementById("soundText");
+            if (gameState.soundEnabled) {
+                icon.className = "fa-solid fa-volume-high";
+                text.innerText = "Suara: Nyala";
+            } else {
+                icon.className = "fa-solid fa-volume-xmark";
+                text.innerText = "Suara: Mati";
+            }
+            playSound('click');
+        }
+
+        function toggleFullScreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log("Error attempting to enable fullscreen:", err);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+
+        // --- UI NAVIGATION & SETUP ---
+        function setGameMode(mode) {
+            gameState.gameMode = mode;
+            playSound('click');
+            const soloBtn = document.getElementById("modeSoloBtn");
+            const duoBtn = document.getElementById("modeDuoBtn");
+            const teamContainer = document.getElementById("teamNamesContainer");
+
+            if (mode === 'solo') {
+                soloBtn.className = "bg-amber-500 text-slate-950 border-2 border-amber-400 font-bold py-3 px-4 rounded-xl text-sm flex items-center justify-center space-x-2 transition shadow-md";
+                duoBtn.className = "bg-slate-800 text-slate-300 border-2 border-slate-700 font-bold py-3 px-4 rounded-xl text-sm flex items-center justify-center space-x-2 transition hover:bg-slate-700";
+                teamContainer.classList.add("hidden");
+            } else {
+                duoBtn.className = "bg-amber-500 text-slate-950 border-2 border-amber-400 font-bold py-3 px-4 rounded-xl text-sm flex items-center justify-center space-x-2 transition shadow-md";
+                soloBtn.className = "bg-slate-800 text-slate-300 border-2 border-slate-700 font-bold py-3 px-4 rounded-xl text-sm flex items-center justify-center space-x-2 transition hover:bg-slate-700";
+                teamContainer.classList.remove("hidden");
+            }
+        }
+
+        function openInstructions() {
+            playSound('click');
+            document.getElementById("instructionModal").classList.remove("hidden");
+        }
+
+        function closeInstructions() {
+            playSound('click');
+            document.getElementById("instructionModal").classList.add("hidden");
+        }
+
+        function startGame() {
+            playSound('click');
+            const nameInput = document.getElementById("playerNameInput").value.trim();
+            if (nameInput) {
+                gameState.playerName = nameInput;
+            } else {
+                gameState.playerName = gameState.gameMode === 'solo' ? "Pemain Solo" : "Tim Peserta";
+            }
+
+            if (gameState.gameMode === 'duo') {
+                gameState.team1Name = document.getElementById("team1Input").value.trim() || "Tim A";
+                gameState.team2Name = document.getElementById("team2Input").value.trim() || "Tim B";
+                gameState.currentTeam = 1;
+            }
+
+            gameState.level = 1;
+            gameState.correctAnswersCount = 0;
+            gameState.lifelines = { fifty: true, teacher: true, hint: true };
+            
+            // Randomly select 15 unique questions from the 30-question bank without repetition for this session
+            let shuffledPool = [...questionBank].sort(() => Math.random() - 0.5);
+            gameState.shuffledQuestions = shuffledPool.slice(0, 15);
+
+            document.getElementById("screenWelcome").classList.add("hidden");
+            document.getElementById("screenResult").classList.add("hidden");
+            document.getElementById("screenGame").classList.remove("hidden");
+            document.getElementById("screenGame").classList.add("flex");
+
+            updatePlayerTag();
+            renderPrizeLadder();
+            loadQuestion();
+        }
+
+        function updatePlayerTag() {
+            const tag = document.getElementById("playerDisplayTag");
+            const teamIndicator = document.getElementById("teamTurnIndicator");
+            if (gameState.gameMode === 'solo') {
+                tag.innerText = "Pemain: " + gameState.playerName;
+                teamIndicator.classList.add("hidden");
+            } else {
+                tag.innerText = "Mode Dua Tim";
+                teamIndicator.classList.remove("hidden");
+                teamIndicator.innerText = "Giliran: " + (gameState.currentTeam === 1 ? gameState.team1Name : gameState.team2Name);
+            }
+        }
+
+        // --- RENDER PRIZE LADDER (15 Levels) ---
+        function renderPrizeLadder() {
+            const ladderContainer = document.getElementById("prizeLadderList");
+            ladderContainer.innerHTML = "";
+
+            for (let i = 15; i >= 1; i--) {
+                const isCurrent = i === gameState.level;
+                const isPassed = i < gameState.level;
+                
+                let itemClass = "flex justify-between items-center px-3 py-1.5 rounded-xl text-xs font-semibold transition ";
+                if (isCurrent) {
+                    itemClass += "bg-amber-500 text-slate-950 font-bold shadow-lg shadow-amber-500/20 scale-[1.02] border border-amber-300";
+                } else if (isPassed) {
+                    itemClass += "bg-slate-950/40 text-slate-500 line-through border border-slate-900";
+                } else {
+                    itemClass += "bg-slate-950/80 text-slate-300 border border-slate-800/60";
+                }
+
+                const itemHtml = `
+                    <div id="ladderItem${i}" class="${itemClass}">
+                        <span class="${isCurrent ? 'text-slate-950 font-bold' : (i % 5 === 0 ? 'text-amber-400 font-bold' : 'text-slate-400')}">Level ${i}</span>
+                        <span class="${isCurrent ? 'text-slate-950 font-black' : 'text-amber-400 font-bold'}">${prizeValues[i-1]}</span>
+                    </div>
+                `;
+                ladderContainer.innerHTML += itemHtml;
+            }
+
+            setTimeout(() => {
+                const activeElem = document.getElementById(`ladderItem${gameState.level}`);
+                if (activeElem) {
+                    activeElem.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }
+            }, 50);
+        }
+
+        // --- LOAD QUESTION ---
+        function loadQuestion() {
+            gameState.selectedOptionIndex = null;
+            const qData = gameState.shuffledQuestions[gameState.level - 1];
+            currentActiveQuestion = qData;
+
+            document.getElementById("currentLevelNumber").innerText = gameState.level;
+            document.getElementById("currentPrizeDisplay").innerText = prizeValues[gameState.level - 1];
+            document.getElementById("questionText").innerText = qData.q;
+
+            for (let i = 0; i < 4; i++) {
+                const btn = document.getElementById("optionBtn" + i);
+                const txt = document.getElementById("optionText" + i);
+                btn.disabled = false;
+                btn.className = "option-btn text-left p-4 rounded-2xl flex items-center space-x-3 text-sm md:text-base font-semibold text-slate-200";
+                txt.innerText = qData.options[i];
+                btn.style.display = "flex";
+            }
+
+            const lockBtn = document.getElementById("lockInBtn");
+            lockBtn.disabled = true;
+            lockBtn.className = "bg-slate-800 text-slate-500 font-bold px-8 py-3 rounded-2xl text-sm transition shadow cursor-not-allowed";
+            lockBtn.innerText = "Kunci Jawaban";
+
+            document.getElementById("lifeline50Btn").disabled = !gameState.lifelines.fifty;
+            document.getElementById("lifelineTeacherBtn").disabled = !gameState.lifelines.teacher;
+            document.getElementById("lifelineHintBtn").disabled = !gameState.lifelines.hint;
+            
+            if (!gameState.lifelines.fifty) document.getElementById("lifeline50Btn").classList.add("opacity-40", "cursor-not-allowed");
+            if (!gameState.lifelines.teacher) document.getElementById("lifelineTeacherBtn").classList.add("opacity-40", "cursor-not-allowed");
+            if (!gameState.lifelines.hint) document.getElementById("lifelineHintBtn").classList.add("opacity-40", "cursor-not-allowed");
+
+            renderPrizeLadder();
+        }
+
+        // --- SELECT OPTION & LOCK IN ---
+        function selectOption(index) {
+            playSound('click');
+            gameState.selectedOptionIndex = index;
+
+            for (let i = 0; i < 4; i++) {
+                const btn = document.getElementById("optionBtn" + i);
+                if (i === index) {
+                    btn.classList.add("selected");
+                } else {
+                    btn.classList.remove("selected");
+                }
+            }
+
+            const lockBtn = document.getElementById("lockInBtn");
+            lockBtn.disabled = false;
+            lockBtn.className = "bg-gradient-to-r from-amber-500 to-yellow-400 hover:from-amber-400 hover:to-yellow-300 text-slate-950 font-black px-8 py-3 rounded-2xl text-sm transition shadow-lg cursor-pointer transform hover:-translate-y-0.5";
+            lockBtn.innerText = "Kunci Jawaban";
+        }
+
+        function lockInAnswer() {
+            if (gameState.selectedOptionIndex === null) return;
+            playSound('click');
+
+            const selected = gameState.selectedOptionIndex;
+            const correct = currentActiveQuestion.correct;
+
+            for (let i = 0; i < 4; i++) {
+                document.getElementById("optionBtn" + i).disabled = true;
+            }
+
+            document.getElementById("lockInBtn").disabled = true;
+
+            if (selected === correct) {
+                document.getElementById("optionBtn" + selected).classList.add("correct");
+                document.getElementById("optionBtn" + selected).classList.remove("selected");
+                playSound('correct');
+                gameState.correctAnswersCount++;
+
+                setTimeout(() => {
+                    showFeedbackModal(true, currentActiveQuestion.explanation);
+                }, 800);
+            } else {
+                document.getElementById("optionBtn" + selected).classList.add("wrong");
+                document.getElementById("optionBtn" + selected).classList.remove("selected");
+                document.getElementById("optionBtn" + correct).classList.add("correct");
+                playSound('wrong');
+
+                setTimeout(() => {
+                    showFeedbackModal(false, currentActiveQuestion.explanation);
+                }, 800);
+            }
+        }
+
+        function showFeedbackModal(isCorrect, explanationText) {
+            const modal = document.getElementById("feedbackModal");
+            const icon = document.getElementById("feedbackIcon");
+            const title = document.getElementById("feedbackTitle");
+            const explanation = document.getElementById("feedbackExplanation");
+
+            if (isCorrect) {
+                icon.className = "w-16 h-16 mx-auto rounded-2xl bg-green-500/20 border border-green-500/40 text-green-400 flex items-center justify-center text-2xl mb-3 shadow-lg";
+                icon.innerHTML = '<i class="fa-solid fa-check"></i>';
+                title.innerText = "JAWABAN BENAR!";
+                title.className = "text-xl font-black text-green-400 mb-2";
+            } else {
+                icon.className = "w-16 h-16 mx-auto rounded-2xl bg-red-500/20 border border-red-500/40 text-red-400 flex items-center justify-center text-2xl mb-3 shadow-lg";
+                icon.innerHTML = '<i class="fa-solid fa-xmark"></i>';
+                title.innerText = "JAWABAN SALAH!";
+                title.className = "text-xl font-black text-red-400 mb-2";
+            }
+
+            explanation.innerText = explanationText;
+            modal.classList.remove("hidden");
+        }
+
+        function proceedNextStep() {
+            playSound('click');
+            document.getElementById("feedbackModal").classList.add("hidden");
+
+            const selected = gameState.selectedOptionIndex;
+            const correct = currentActiveQuestion.correct;
+
+            if (selected === correct) {
+                if (gameState.level >= 15) {
+                    endGame(true);
+                } else {
+                    gameState.level++;
+                    if (gameState.gameMode === 'duo') {
+                        gameState.currentTeam = gameState.currentTeam === 1 ? 2 : 1;
+                    }
+                    loadQuestion();
+                }
+            } else {
+                endGame(false);
+            }
+        }
+
+        // --- LIFELINES ---
+        function useLifeline5050() {
+            if (!gameState.lifelines.fifty) return;
+            gameState.lifelines.fifty = false;
+            playSound('lifeline');
+            document.getElementById("lifeline50Btn").disabled = true;
+            document.getElementById("lifeline50Btn").classList.add("opacity-40", "cursor-not-allowed");
+
+            const correct = currentActiveQuestion.correct;
+            let wrongIndices = [0, 1, 2, 3].filter(i => i !== correct);
+            wrongIndices.sort(() => Math.random() - 0.5);
+            const toHide = wrongIndices.slice(0, 2);
+
+            toHide.forEach(idx => {
+                const btn = document.getElementById("optionBtn" + idx);
+                btn.style.display = "none";
+            });
+
+            showLifelineModal("Bantuan 50:50", "Dua pilihan jawaban yang salah telah disingkirkan!");
+        }
+
+        function useLifelineTeacher() {
+            if (!gameState.lifelines.teacher) return;
+            gameState.lifelines.teacher = false;
+            playSound('lifeline');
+            document.getElementById("lifelineTeacherBtn").disabled = true;
+            document.getElementById("lifelineTeacherBtn").classList.add("opacity-40", "cursor-not-allowed");
+
+            showLifelineModal("Pendapat Guru", "Bapak/Ibu Guru menyarankan agar kamu membaca kembali dengan teliti kalimat atau teks yang ada pada soal sebelum memilih jawaban.");
+        }
+
+        function useLifelineHint() {
+            if (!gameState.lifelines.hint) return;
+            gameState.lifelines.hint = false;
+            playSound('lifeline');
+            document.getElementById("lifelineHintBtn").disabled = true;
+            document.getElementById("lifelineHintBtn").classList.add("opacity-40", "cursor-not-allowed");
+
+            let hintText = "Perhatikan kembali kata kunci pada pertanyaan.";
+            if (currentActiveQuestion.q.includes("Unsur")) {
+                hintText = "Petunjuk: Pikirkan kembali definisi unsur intrinsik cerita seperti tokoh, latar, tema, dan amanat.";
+            } else if (currentActiveQuestion.q.includes("surat") || currentActiveQuestion.q.includes("Kop")) {
+                hintText = "Petunjuk: Ingat kembali perbedaan ciri surat resmi (formal/baku) dan surat pribadi.";
+            } else if (currentActiveQuestion.q.includes("Formulir")) {
+                hintText = "Petunjuk: Ingat kembali ketentuan pengisian data diri dan formulir pendaftaran secara faktual.";
+            }
+
+            showLifelineModal("Petunjuk Soal", hintText);
+        }
+
+        function showLifelineModal(title, text) {
+            document.getElementById("lifelineModalTitle").innerText = title;
+            document.getElementById("lifelineModalText").innerText = text;
+            document.getElementById("lifelineModal").classList.remove("hidden");
+        }
+
+        function closeLifelineModal() {
+            playSound('click');
+            document.getElementById("lifelineModal").classList.add("hidden");
+        }
+
+        // --- END GAME ---
+        function endGame(isWon) {
+            document.getElementById("screenGame").classList.add("hidden");
+            document.getElementById("screenGame").classList.remove("flex");
+            document.getElementById("screenResult").classList.remove("hidden");
+
+            const iconBadge = document.getElementById("resultIconBadge");
+            const title = document.getElementById("resultTitle");
+            const subtitle = document.getElementById("resultSubtitle");
+            const resName = document.getElementById("resPlayerName");
+            const resLevel = document.getElementById("resLevel");
+            const resCorrect = document.getElementById("resCorrectCount");
+            const resPrize = document.getElementById("resPrize");
+            const motivation = document.getElementById("resMotivation");
+
+            let finalLvl = isWon ? 15 : Math.max(1, gameState.level - 1);
+            let prizeWon = prizeValues[finalLvl - 1] || "Rp100.000";
+
+            if (gameState.gameMode === 'solo') {
+                resName.innerText = gameState.playerName;
+            } else {
+                resName.innerText = gameState.playerName + " (" + (gameState.currentTeam === 1 ? gameState.team1Name : gameState.team2Name) + " giliran terakhir)";
+            }
+
+            resLevel.innerText = "Level " + finalLvl;
+            resCorrect.innerText = gameState.correctAnswersCount + " / 15";
+            resPrize.innerText = prizeWon;
+
+            if (isWon) {
+                iconBadge.className = "w-20 h-20 mx-auto rounded-3xl bg-amber-500/20 border border-amber-500/40 text-amber-400 flex items-center justify-center text-3xl mb-4 shadow-xl";
+                iconBadge.innerHTML = '<i class="fa-solid fa-trophy"></i>';
+                title.innerText = "LUAR BIASA! JUTAWAN SEJATI!";
+                subtitle.innerText = "Kamu berhasil menaklukkan 15 Level Bahasa Indonesia Kelas 6 SD hingga Rp1.000.000.000!";
+                motivation.innerText = "Hebat sekali! Penguasaan materi Unsur Cerita, Surat, dan Formulir milikmu sudah sangat sempurna!";
+            } else {
+                iconBadge.className = "w-20 h-20 mx-auto rounded-3xl bg-blue-500/20 border border-blue-500/40 text-blue-400 flex items-center justify-center text-3xl mb-4 shadow-xl";
+                iconBadge.innerHTML = '<i class="fa-solid fa-award"></i>';
+                title.innerText = "PERMAINAN SELESAI";
+                subtitle.innerText = "Usaha yang sangat hebat! Teruslah berlatih.";
+                motivation.innerText = "Tetap semangat belajar! Semakin sering berlatih soal Bahasa Indonesia, nilai ujianmu pasti akan semakin memuaskan.";
+            }
+        }
+
+        function restartGame() {
+            playSound('click');
+            startGame();
+        }
+
+        function goToMenu() {
+            playSound('click');
+            document.getElementById("screenResult").classList.add("hidden");
+            document.getElementById("screenWelcome").classList.remove("hidden");
+        }
+
+        function toggleSidebarMobile() {
+            const sidebar = document.getElementById("prizeSidebar");
+            if (sidebar.classList.contains("hidden")) {
+                sidebar.classList.remove("hidden");
+                sidebar.classList.add("flex");
+            } else {
+                sidebar.classList.add("hidden");
+                sidebar.classList.remove("flex");
+            }
+        }
+    </script>
+</body>
+</html>
