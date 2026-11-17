@@ -841,33 +841,30 @@
 
             statusMsg.innerText = `Memanggil gemini-3.8-flash untuk ${mapel} (${jenjang} Kelas ${kelas})...`;
 
-            const prompt = `Anda adalah guru profesional. Buatlah tepat 15 soal pilihan ganda berjenjang (dari mudah hingga sulit/HOTS) untuk:
-- Jenjang: ${jenjang}
-- Kelas: ${kelas}
-- Mata Pelajaran: ${mapel}
-- Materi: ${materi}
-- Tingkat Kesulitan: ${difficulty}
+            const promptText = `Buatlah tepat 15 soal pilihan ganda berjenjang dari level 1 (mudah) sampai level 15 (sulit/HOTS) untuk:
+Jenjang: ${jenjang}
+Kelas: ${kelas}
+Mata Pelajaran: ${mapel}
+Materi: ${materi}
+Tingkat Kesulitan: ${difficulty}
 
-Ketentuan:
-1. Hasilkan tepat 15 objek soal dalam format array JSON murni.
-2. Setiap objek soal wajib memiliki kunci:
-   - "q": teks pertanyaan string.
-   - "options": array 4 pilihan jawaban string (A, B, C, D).
-   - "correct": indeks jawaban benar (angka 0 sampai 3).
-   - "explanation": pembahasan singkat.
-   - "hint": petunjuk singkat.
-3. Kembalikan HANYA array JSON murni tanpa teks pengantar lain.`;
+Kirimkan jawaban HANYA DALAM FORMAT JSON BERUPA ARRAY DARI 15 OBJEK tanpa teks pengantar, markdown tambahan, atau penjelasan di luar JSON.
+Setiap objek dalam array harus memiliki format persis sebagai berikut:
+{
+  "q": "Teks pertanyaan",
+  "options": ["Pilihan A", "Pilihan B", "Pilihan C", "Pilihan D"],
+  "correct": 0,
+  "explanation": "Pembahasan singkat",
+  "hint": "Petunjuk singkat"
+}
+Di mana "correct" adalah angka 0 sampai 3 yang menunjukkan indeks pilihan jawaban yang benar.`;
 
             try {
                 const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key=${encodeURIComponent(apiKey)}`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
-                        contents: [{ role: "user", parts: [{ text: prompt }] }],
-                        generationConfig: {
-                            responseMimeType: "application/json",
-                            temperature: 0.7
-                        }
+                        contents: [{ parts: [{ text: promptText }] }]
                     })
                 });
 
@@ -879,7 +876,13 @@ Ketentuan:
                 const rawText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
                 if (!rawText) throw new Error("Respons AI kosong.");
 
-                const parsed = JSON.parse(rawText);
+                // Bersihkan block markdown jika ada
+                let cleanedJson = rawText.trim();
+                if (cleanedJson.startsWith("```")) {
+                    cleanedJson = cleanedJson.replace(/^```json\s*/i, "").replace(/^```\s*/, "").replace(/\s*```$/, "");
+                }
+
+                const parsed = JSON.parse(cleanedJson);
                 const list = Array.isArray(parsed) ? parsed : (parsed.questions || []);
                 if (!Array.isArray(list) || list.length < 15) {
                     throw new Error("Jumlah soal kurang dari 15.");
