@@ -647,14 +647,17 @@ Setiap objek dalam array harus memiliki format persis sebagai berikut:
 Di mana "correct" adalah angka 0 sampai 3 yang menunjukkan indeks pilihan jawaban yang benar.`;
 
             const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 10000);
+            const timeoutId = setTimeout(() => controller.abort(), 8000);
 
             try {
                 const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key=${encodeURIComponent(apiKey)}`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
-                        contents: [{ parts: [{ text: promptText }] }]
+                        contents: [{ parts: [{ text: promptText }] }],
+                        generationConfig: {
+                            responseMimeType: "application/json"
+                        }
                     }),
                     signal: controller.signal
                 });
@@ -662,7 +665,7 @@ Di mana "correct" adalah angka 0 sampai 3 yang menunjukkan indeks pilihan jawaba
 
                 const data = await response.json();
                 if (!response.ok) {
-                    throw new Error(data?.error?.message || "API Key tidak valid atau batas kuota terlampaui.");
+                    throw new Error(data?.error?.message || "API Key tidak valid atau mengalami gangguan.");
                 }
 
                 const rawText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
@@ -693,16 +696,16 @@ Di mana "correct" adalah angka 0 sampai 3 yang menunjukkan indeks pilihan jawaba
                 playSound('correct');
                 showInfoModal("Sukses!", "15 soal baru berhasil dibuat oleh gemini-3.8-flash!");
             } catch (err) {
-                console.warn("Gemini API error or timeout, beralih ke generator cadangan:", err.message);
+                console.warn("Gemini API error or timeout, beralih ke generator cadangan cerdas:", err.message);
                 statusMsg.className = "text-xs text-amber-300 mt-2.5 text-center";
-                statusMsg.innerText = "Koneksi/API Key lambat. Mengaktifkan 15 soal kurikulum instan...";
+                statusMsg.innerText = "API Key tidak valid atau gangguan jaringan. Mengaktifkan 15 soal kurikulum instan...";
                 
                 setTimeout(() => {
                     generateSmartFallbackQuestions(jenjang, kelas, mapel, materi);
                     statusMsg.className = "text-xs text-green-400 mt-2.5 text-center font-semibold";
-                    statusMsg.innerText = "Berhasil dimuat menggunakan bank soal cadangan kurikulum!";
-                    showInfoModal("Paket Soal Aktif", "15 soal kurikulum untuk " + mapel + " (" + jenjang + " Kelas " + kelas + ") berhasil dimuat secara instan!");
-                }, 400);
+                    statusMsg.innerText = "Berhasil dimuat menggunakan bank soal kurikulum instan!";
+                    showInfoModal("Paket Soal Aktif (Fallback)", "Karena kendala pada API Key / jaringan, 15 soal kurikulum untuk " + mapel + " (" + jenjang + " Kelas " + kelas + ") telah diaktifkan secara instan.");
+                }, 300);
             } finally {
                 btn.disabled = false;
                 btn.classList.remove("opacity-75", "cursor-wait");
