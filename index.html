@@ -371,7 +371,7 @@
             <div class="flex flex-wrap gap-2 mt-3"><a href="https://aistudio.google.com/api-keys" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-400 hover:text-blue-300 underline">Belum punya API Key? Dapatkan di Google AI Studio</a></div>
             <p id="apiKeyStatus" class="text-xs text-slate-400 mt-3" role="status">API Key belum diuji.</p>
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 mt-5"><button onclick="saveApiKey()" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-black py-3 rounded-xl">Simpan</button><button onclick="testApiKey()" class="bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-xl">Uji Koneksi</button><button onclick="removeApiKey()" class="bg-slate-800 hover:bg-red-900/60 border border-slate-700 text-slate-200 font-bold py-3 rounded-xl">Hapus</button></div>
-            <p class="text-[11px] text-slate-500 mt-4">Catatan keamanan: API Key disimpan di browser. Jangan gunakan pada komputer umum atau perangkat yang dipakai bersama. Penggunaan API dapat dikenai kuota atau biaya sesuai ketentuan Google.</p>
+            <p class="text-[11px] text-slate-500 mt-4">Catatan keamanan: API Key disimpan di browser. Jangan bagikan API Key melalui chat, tangkapan layar, atau komputer umum. Gunakan perangkat pribadi. Penggunaan API dapat dikenai kuota atau biaya sesuai ketentuan Google.</p>
           </div>
         </div>
 
@@ -645,6 +645,8 @@
 
         // --- GEMINI API KEY & QUESTION GENERATOR ---
         const GEMINI_KEY_STORAGE = 'millionaire_gemini_api_key_v1';
+        // Gunakan model Gemini Flash terbaru yang tersedia untuk proyek baru.
+        const GEMINI_MODEL = 'gemini-3.8-flash';
         let generatedQuestionBank = [];
         let lastGeneratedMeta = {};
         const SUBJECTS = {
@@ -671,8 +673,8 @@
         function saveApiKey(){const key=document.getElementById('geminiApiKey').value.trim();if(!key){document.getElementById('apiKeyStatus').textContent='Masukkan API Key terlebih dahulu.';return;}localStorage.setItem(GEMINI_KEY_STORAGE,key);document.getElementById('apiKeyStatus').textContent='API Key berhasil disimpan di browser ini.';}
         function removeApiKey(){localStorage.removeItem(GEMINI_KEY_STORAGE);document.getElementById('geminiApiKey').value='';document.getElementById('apiKeyStatus').textContent='API Key telah dihapus dari browser ini.';}
         async function callGemini(key, prompt){
-          const url='https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key='+encodeURIComponent(key);
-          const response=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:prompt}]}],generationConfig:{responseMimeType:'application/json',temperature:0.7}})});
+          const url='https://generativelanguage.googleapis.com/v1beta/models/'+GEMINI_MODEL+':generateContent';
+          const response=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':key},body:JSON.stringify({contents:[{parts:[{text:prompt}]}],generationConfig:{responseMimeType:'application/json',temperature:0.7}})});
           const data=await response.json();
           if(!response.ok){throw new Error(data?.error?.message||('Permintaan gagal ('+response.status+'). Periksa API Key, kuota, dan akses model.'));}
           return data?.candidates?.[0]?.content?.parts?.map(p=>p.text||'').join('')||'';
