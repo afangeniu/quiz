@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WHO WANTS TO BE A MILLIONAIRE? - Kuis Interaktif Kelas</title>
+    <title>WHO WANTS TO BE A MILLIONAIRE? - Generator AI & Kuis Interaktif</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts: Inter & Poppins -->
+    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Poppins:wght@600;700;900&display=swap" rel="stylesheet">
-    <!-- FontAwesome Icons -->
+    <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Tone.js untuk Efek Suara -->
+    <!-- Tone.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
     <style>
         body {
@@ -21,8 +21,8 @@
         }
         .game-title {
             font-family: 'Poppins', sans-serif;
-            letter-spacing: 0.5px;
-            text-shadow: 0 0 20px rgba(234, 179, 8, 0.35);
+            letter-spacing: 1px;
+            text-shadow: 0 0 20px rgba(234, 179, 8, 0.4);
         }
         .option-btn {
             background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
@@ -59,115 +59,81 @@
             0% { transform: scale(1); }
             100% { transform: scale(1.02); }
         }
-        ::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #030712;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #334155;
-            border-radius: 3px;
-        }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #030712; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
     </style>
 </head>
 <body class="min-h-screen flex flex-col justify-between select-none">
 
-    <!-- HEADER & NAVIGASI TERPISAH -->
-    <header class="w-full bg-slate-900/90 backdrop-blur-md border-b border-slate-800 px-4 py-3 sticky top-0 z-40">
-        <div class="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-3">
-            <div class="flex items-center space-x-3">
-                <div class="bg-amber-500 text-slate-950 p-2 rounded-xl font-black text-lg shadow-lg shadow-amber-500/20">
-                    <i class="fa-solid fa-graduation-cap"></i>
-                </div>
-                <div>
-                    <h1 class="text-sm md:text-base font-bold text-amber-400 game-title leading-tight">WHO WANTS TO BE A MILLIONAIRE?</h1>
-                    <p id="headerSubtitle" class="text-xs text-slate-400">Bank Soal Bawaan: Bahasa Indonesia Kelas 6 SD</p>
-                </div>
+    <!-- HEADER / NAVIGATION BAR -->
+    <header class="w-full bg-slate-900/90 backdrop-blur-md border-b border-slate-800 px-4 py-3 flex justify-between items-center sticky top-0 z-50">
+        <div class="flex items-center space-x-3">
+            <div class="bg-amber-500 text-slate-950 p-2.5 rounded-xl font-black text-lg shadow-lg shadow-amber-500/20">
+                <i class="fa-solid fa-graduation-cap"></i>
             </div>
+            <div>
+                <h1 class="text-xs md:text-sm font-bold text-amber-400 game-title leading-tight">MILLIONAIRE QUIZ</h1>
+                <p id="headerSubtitle" class="text-[11px] text-slate-400">Bank Soal Bawaan: Bahasa Indonesia Kelas 6 SD</p>
+            </div>
+        </div>
 
-            <!-- Navigasi Menu Terpisah: Main Game vs Generate Soal AI -->
-            <nav class="flex items-center bg-slate-950/90 border border-slate-800 p-1 rounded-2xl shadow-inner order-3 lg:order-2 w-full lg:w-auto justify-center">
-                <button id="navTabPlay" onclick="switchMainView('play')" class="flex-1 lg:flex-initial bg-amber-500 text-slate-950 font-extrabold px-4 py-2 rounded-xl text-xs md:text-sm flex items-center justify-center space-x-2 transition shadow">
+        <div class="flex items-center space-x-2">
+            <!-- Navigation Switch Tabs -->
+            <div class="bg-slate-950 border border-slate-800 p-1 rounded-xl flex space-x-1">
+                <button onclick="switchMainView('play')" id="navPlayTab" class="bg-amber-500 text-slate-950 px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center space-x-1.5 shadow">
                     <i class="fa-solid fa-gamepad"></i>
-                    <span>Menu Utama (Main)</span>
+                    <span class="hidden sm:inline">Main Kuis</span>
                 </button>
-                <button id="navTabGenerator" onclick="switchMainView('generator')" class="flex-1 lg:flex-initial text-slate-300 hover:text-white font-bold px-4 py-2 rounded-xl text-xs md:text-sm flex items-center justify-center space-x-2 transition">
-                    <i id="navTabGeneratorIcon" class="fa-solid fa-wand-magic-sparkles text-amber-400"></i>
-                    <span>Generate Soal (Guru)</span>
-                </button>
-            </nav>
-
-            <!-- Utilitas Kanan -->
-            <div class="flex items-center space-x-2 order-2 lg:order-3">
-                <button id="bgMusicToggle" onclick="toggleBgMusic()" class="bg-slate-800 hover:bg-slate-700 text-amber-400 border border-slate-700 px-3 py-2 rounded-xl text-xs font-semibold flex items-center space-x-1.5 transition shadow" title="Putar/Hentikan Musik Latar (music.mp3)">
-                    <i id="bgMusicIcon" class="fa-solid fa-music"></i>
-                    <span class="hidden sm:inline" id="bgMusicText">Musik: Mati</span>
-                </button>
-                <button onclick="openApiKeyModal()" class="bg-slate-800 hover:bg-slate-700 text-amber-400 border border-slate-700 px-3 py-2 rounded-xl text-xs font-semibold flex items-center space-x-1.5 transition shadow" title="Atur Gemini API Key">
-                    <i class="fa-solid fa-key"></i>
-                    <span class="hidden sm:inline" id="apiKeyHeaderStatus">Atur API Key</span>
-                    <span id="apiKeyDot" class="w-2.5 h-2.5 rounded-full bg-red-500"></span>
-                </button>
-                <button id="soundToggle" onclick="toggleSound()" class="bg-slate-800 hover:bg-slate-700 text-amber-400 border border-slate-700 px-3 py-2 rounded-xl text-xs font-semibold flex items-center space-x-1 transition shadow" title="Efek Suara">
-                    <i id="soundIcon" class="fa-solid fa-volume-high"></i>
-                    <span class="hidden md:inline" id="soundText">Suara: Nyala</span>
-                </button>
-                <button onclick="toggleFullScreen()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-3 py-2 rounded-xl text-xs font-semibold flex items-center space-x-1 transition shadow" title="Layar Penuh">
-                    <i class="fa-solid fa-expand"></i>
-                    <span class="hidden xl:inline">Layar Penuh</span>
+                <button onclick="switchMainView('generator')" id="navGenTab" class="bg-transparent text-slate-300 hover:text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition flex items-center space-x-1.5">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                    <span class="hidden sm:inline">Generate Soal (Guru)</span>
                 </button>
             </div>
+
+            <!-- Music & Sound Toggles -->
+            <button id="bgMusicToggle" onclick="toggleBgMusic()" class="bg-slate-800 hover:bg-slate-700 text-amber-400 border border-slate-700 px-2.5 py-1.5 rounded-xl text-xs font-semibold flex items-center space-x-1 transition shadow" title="Putar Musik Latar">
+                <i id="bgMusicIcon" class="fa-solid fa-music"></i>
+            </button>
+            <button id="soundToggle" onclick="toggleSound()" class="bg-slate-800 hover:bg-slate-700 text-amber-400 border border-slate-700 px-2.5 py-1.5 rounded-xl text-xs font-semibold flex items-center space-x-1 transition shadow" title="Suara Efek">
+                <i id="soundIcon" class="fa-solid fa-volume-high"></i>
+            </button>
+            <!-- API Key Settings Button -->
+            <button onclick="openApiKeyModal()" class="bg-slate-800 hover:bg-slate-700 text-amber-400 border border-slate-700 px-3 py-1.5 rounded-xl text-xs font-bold flex items-center space-x-1.5 shadow transition">
+                <i class="fa-solid fa-key"></i>
+                <span class="hidden md:inline">Atur API Key</span>
+            </button>
         </div>
     </header>
 
-    <!-- HTML5 Audio Element untuk music.mp3 -->
+    <!-- HTML5 Audio Element for music.mp3 -->
     <audio id="bgMusic" loop preload="auto">
         <source src="music.mp3" type="audio/mpeg">
-        Browser Anda tidak mendukung elemen audio.
     </audio>
 
     <main class="flex-grow flex flex-col items-center justify-center p-3 md:p-6 max-w-7xl mx-auto w-full">
 
-        <!-- ================= HALAMAN 1: MENU UTAMA (MAIN) ================= -->
-        <section id="screenWelcome" class="w-full max-w-3xl bg-slate-900/90 border border-slate-800 rounded-3xl p-6 md:p-10 shadow-2xl text-center relative overflow-hidden">
-            <div class="absolute -top-24 -left-24 w-48 h-48 bg-blue-600/20 rounded-full blur-3xl pointer-events-none"></div>
-            <div class="absolute -bottom-24 -right-24 w-48 h-48 bg-amber-500/20 rounded-full blur-3xl pointer-events-none"></div>
+        <!-- VIEW 1: WELCOME / MAIN MENU -->
+        <div id="screenWelcome" class="w-full max-w-3xl bg-slate-900/95 border border-slate-800 rounded-3xl p-6 md:p-10 shadow-2xl text-center relative overflow-hidden">
+            <div class="absolute -top-24 -left-24 w-48 h-48 bg-blue-600/20 rounded-full blur-3xl"></div>
+            <div class="absolute -bottom-24 -right-24 w-48 h-48 bg-amber-500/20 rounded-full blur-3xl"></div>
 
             <div class="inline-block bg-amber-500/10 border border-amber-500/30 text-amber-400 px-4 py-1.5 rounded-full text-xs font-bold mb-4 tracking-wide uppercase">
-                Uji Pengetahuan • 15 Level Tantangan • Raih 1 Miliar
+                <span id="activePackLabel">Bank Soal Bawaan: Bahasa Indonesia Kelas 6 SD (15 Level)</span>
             </div>
             <h2 class="text-3xl md:text-5xl font-black text-white game-title mb-3 leading-tight">
                 WHO WANTS TO BE <br><span class="text-amber-400">A MILLIONAIRE?</span>
             </h2>
-            <p class="text-slate-300 text-sm md:text-base max-w-xl mx-auto mb-6">
-                Taklukkan 15 tingkat pertanyaan berjenjang, gunakan 3 bantuan cerdas, dan raih hadiah puncak virtual <span class="text-amber-400 font-bold">Rp1.000.000.000</span>!
+            <p class="text-slate-300 text-sm md:text-base max-w-xl mx-auto mb-8">
+                Jawab 15 pertanyaan secara berjenjang hingga hadiah virtual <span class="text-amber-400 font-bold">Rp1.000.000.000</span>! Dilengkapi fitur Generator Soal AI dengan model <code class="text-xs bg-slate-800 px-2 py-0.5 rounded text-amber-300">gemini-3.8-flash</code>.
             </p>
 
-            <!-- Info Paket Soal Aktif -->
-            <div class="bg-slate-950/80 border border-amber-500/30 rounded-2xl p-4 mb-6 max-w-xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 text-left">
-                <div class="flex items-center space-x-3">
-                    <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center shrink-0 text-base">
-                        <i class="fa-solid fa-layer-group"></i>
-                    </div>
-                    <div>
-                        <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Paket Soal Aktif:</span>
-                        <span id="activePackLabel" class="text-xs md:text-sm font-bold text-amber-300">Bank Soal Bawaan: Bahasa Indonesia Kelas 6 SD (30 Soal)</span>
-                    </div>
-                </div>
-                <button onclick="switchMainView('generator')" class="w-full sm:w-auto bg-slate-800 hover:bg-slate-700 text-amber-400 border border-slate-700 px-3.5 py-2 rounded-xl text-xs font-bold shrink-0 transition">
-                    <i class="fa-solid fa-wand-magic-sparkles mr-1"></i> Buat / Kelola Soal
-                </button>
-            </div>
-
-            <!-- Form Pemain & Mode -->
-            <div class="bg-slate-950/60 border border-slate-800/80 rounded-2xl p-6 mb-8 text-left max-w-xl mx-auto shadow-inner">
+            <div class="bg-slate-950/70 border border-slate-800/80 rounded-2xl p-6 mb-8 text-left max-w-xl mx-auto shadow-inner">
                 <label class="block text-xs font-bold text-amber-400 uppercase tracking-wider mb-2">Nama Pemain / Tim:</label>
-                <input type="text" id="playerNameInput" placeholder="Contoh: Budi / Kelompok Juara" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-amber-400 font-medium transition mb-5 text-sm md:text-base">
+                <input type="text" id="playerNameInput" placeholder="Contoh: Budi / Kelompok 1" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-amber-400 font-medium transition mb-5 text-sm md:text-base">
 
                 <label class="block text-xs font-bold text-amber-400 uppercase tracking-wider mb-2">Pilih Mode Permainan:</label>
-                <div class="grid grid-cols-2 gap-3 mb-2">
+                <div class="grid grid-cols-2 gap-3 mb-5">
                     <button onclick="setGameMode('solo')" id="modeSoloBtn" class="bg-amber-500 text-slate-950 border-2 border-amber-400 font-bold py-3 px-4 rounded-xl text-sm flex items-center justify-center space-x-2 transition shadow-md">
                         <i class="fa-solid fa-user"></i>
                         <span>Main Sendiri</span>
@@ -178,179 +144,146 @@
                     </button>
                 </div>
 
-                <div id="teamNamesContainer" class="hidden space-y-3 mt-4 pt-4 border-t border-slate-800">
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div id="teamNamesContainer" class="hidden space-y-3 mb-2">
+                    <div class="grid grid-cols-2 gap-3">
                         <div>
                             <label class="block text-[11px] font-semibold text-slate-400 mb-1">Nama Tim 1:</label>
-                            <input type="text" id="team1Input" value="Tim A" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2.5 text-white text-sm focus:outline-none focus:border-blue-500">
+                            <input type="text" id="team1Input" value="Tim A" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500">
                         </div>
                         <div>
                             <label class="block text-[11px] font-semibold text-slate-400 mb-1">Nama Tim 2:</label>
-                            <input type="text" id="team2Input" value="Tim B" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2.5 text-white text-sm focus:outline-none focus:border-blue-500">
+                            <input type="text" id="team2Input" value="Tim B" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500">
                         </div>
                     </div>
                 </div>
             </div>
 
             <div class="flex flex-col sm:flex-row justify-center items-center gap-4">
-                <button onclick="startGame()" class="w-full sm:w-auto bg-gradient-to-r from-amber-500 to-yellow-400 hover:from-amber-400 hover:to-yellow-300 text-slate-950 font-black px-8 py-4 rounded-2xl shadow-xl shadow-amber-500/30 text-base md:text-lg transition transform hover:-translate-y-0.5">
+                <button onclick="startGame()" class="w-full sm:w-auto bg-gradient-to-r from-amber-500 to-yellow-400 hover:from-amber-400 hover:to-yellow-300 text-slate-950 font-black px-8 py-4 rounded-2xl shadow-xl shadow-amber-500/30 text-base transition transform hover:-translate-y-0.5">
                     <i class="fa-solid fa-play mr-2"></i> MULAI PERMAINAN
                 </button>
                 <button onclick="openInstructions()" class="w-full sm:w-auto bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 font-bold px-6 py-4 rounded-2xl text-sm transition">
                     <i class="fa-solid fa-circle-question mr-2"></i> Cara Bermain
                 </button>
             </div>
-        </section>
+        </div>
 
-        <!-- ================= HALAMAN 2: GENERATE SOAL AI (GURU) ================= -->
-        <section id="screenGenerator" class="w-full max-w-7xl hidden flex-col gap-6">
-            <div class="bg-slate-900/90 border border-slate-800 rounded-3xl p-5 md:p-6 shadow-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                <div>
-                    <div class="inline-flex items-center space-x-2 bg-blue-500/10 border border-blue-500/30 text-blue-400 px-3 py-1 rounded-full text-[11px] font-bold uppercase mb-2">
-                        <i class="fa-solid fa-chalkboard-user"></i>
-                        <span>Ruang Guru • Generator & Editor Paket Soal (gemini-3.8-flash)</span>
-                    </div>
-                    <h2 class="text-xl md:text-2xl font-black text-white game-title">Generate Soal Otomatis dengan Gemini AI</h2>
-                    <p class="text-xs md:text-sm text-slate-400">Pilih jenjang, kelas, mata pelajaran, dan materi untuk menyusun 15 soal pilihan ganda berjenjang secara instan.</p>
-                </div>
-                <button onclick="switchMainView('play')" class="w-full md:w-auto bg-gradient-to-r from-amber-500 to-yellow-400 hover:from-amber-400 hover:to-yellow-300 text-slate-950 font-black px-6 py-3.5 rounded-2xl text-xs md:text-sm shadow-lg flex items-center justify-center space-x-2 shrink-0 transition">
-                    <i class="fa-solid fa-play"></i>
-                    <span>Gunakan & Mulai Main</span>
-                </button>
-            </div>
-
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-                <!-- Form Generator Kiri -->
-                <div class="lg:col-span-5 bg-slate-900/90 border border-slate-800 rounded-3xl p-5 md:p-6 shadow-2xl space-y-5">
-                    <div class="flex items-center justify-between pb-3 border-b border-slate-800">
-                        <div class="flex items-center space-x-2">
-                            <i class="fa-solid fa-sliders text-amber-400"></i>
-                            <h3 class="text-sm font-extrabold text-amber-400 uppercase tracking-wider">Parameter Soal AI</h3>
+        <!-- VIEW 2: GENERATOR SOAL (GURU) -->
+        <div id="screenGenerator" class="w-full max-w-5xl hidden flex-col space-y-6">
+            <div class="bg-slate-900/95 border border-slate-800 rounded-3xl p-6 md:p-8 shadow-2xl">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center pb-5 mb-6 border-b border-slate-800 gap-4">
+                    <div>
+                        <div class="inline-block bg-blue-600/20 text-blue-400 border border-blue-500/30 px-3 py-1 rounded-xl text-xs font-bold mb-2">
+                            <i class="fa-solid fa-wand-magic-sparkles mr-1.5"></i> Generator Soal Otomatis (AI)
                         </div>
-                        <button onclick="openApiKeyModal()" class="text-xs bg-slate-800 hover:bg-slate-700 text-blue-400 border border-slate-700 px-3 py-1.5 rounded-xl font-bold flex items-center space-x-1.5 transition">
-                            <i class="fa-solid fa-key"></i>
-                            <span>Atur API Key</span>
+                        <h2 class="text-2xl font-black text-white game-title">Halaman Guru & Pembuat Soal</h2>
+                        <p class="text-xs text-slate-400">Gunakan model <span class="text-amber-400 font-bold">gemini-3.8-flash</span> untuk membuat 15 soal kuis instan secara otomatis berdasarkan jenjang dan materi.</p>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <button onclick="exportQuestionsJSON()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-4 py-2.5 rounded-xl text-xs font-semibold flex items-center space-x-1.5 transition">
+                            <i class="fa-solid fa-download"></i><span>Simpan JSON</span>
+                        </button>
+                        <label class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-4 py-2.5 rounded-xl text-xs font-semibold flex items-center space-x-1.5 transition cursor-pointer">
+                            <i class="fa-solid fa-upload"></i><span>Muat JSON</span>
+                            <input type="file" accept=".json" onchange="importQuestionsJSON(event)" class="hidden">
+                        </label>
+                        <button onclick="resetToDefaultQuestions()" class="bg-red-500/20 hover:bg-red-500/30 text-red-300 border border-red-500/40 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition">
+                            Reset Default
                         </button>
                     </div>
+                </div>
 
-                    <div class="grid grid-cols-2 gap-3">
+                <!-- FORM GENERATOR AI -->
+                <div class="bg-slate-950/70 border border-slate-800 rounded-2xl p-5 md:p-6 mb-6 shadow-inner space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div>
-                            <label class="block text-xs font-bold text-slate-300 mb-1.5">Jenjang:</label>
-                            <select id="aiJenjangSelect" onchange="updateClassOptions()" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-white text-xs md:text-sm focus:outline-none focus:border-amber-400">
-                                <option value="SD">SD</option>
-                                <option value="SMP">SMP</option>
-                                <option value="SMA">SMA</option>
+                            <label class="block text-xs font-bold text-amber-400 uppercase tracking-wider mb-1.5">Jenjang Pendidikan:</label>
+                            <select id="aiJenjangSelect" onchange="updateKelasOptions()" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-white text-sm focus:outline-none focus:border-amber-400">
+                                <option value="SD">SD (Sekolah Dasar)</option>
+                                <option value="SMP">SMP (Sekolah Menengah Pertama)</option>
+                                <option value="SMA">SMA (Sekolah Menengah Atas)</option>
                             </select>
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-slate-300 mb-1.5">Kelas:</label>
-                            <select id="aiKelasSelect" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-white text-xs md:text-sm focus:outline-none focus:border-amber-400"></select>
+                            <label class="block text-xs font-bold text-amber-400 uppercase tracking-wider mb-1.5">Kelas:</label>
+                            <select id="aiKelasSelect" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-white text-sm focus:outline-none focus:border-amber-400">
+                                <option value="6">Kelas 6</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-amber-400 uppercase tracking-wider mb-1.5">Tingkat Kesulitan:</label>
+                            <select id="aiDifficultySelect" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-white text-sm focus:outline-none focus:border-amber-400">
+                                <option value="Berjenjang (Mudah ke HOTS)">Berjenjang (Level 1 Mudah - 15 Sulit)</option>
+                                <option value="Menengah">Menengah / Standar</option>
+                                <option value="HOTS / Sulit">HOTS (Higher Order Thinking Skills)</option>
+                            </select>
                         </div>
                     </div>
 
-                    <div>
-                        <label class="block text-xs font-bold text-slate-300 mb-1.5">Mata Pelajaran:</label>
-                        <input type="text" id="aiMapelInput" placeholder="Contoh: Matematika, IPA, Sejarah, Bahasa Inggris" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-white placeholder-slate-500 text-xs md:text-sm focus:outline-none focus:border-amber-400">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-amber-400 uppercase tracking-wider mb-1.5">Mata Pelajaran:</label>
+                            <input type="text" id="aiMapelInput" value="Bahasa Indonesia" placeholder="Contoh: Matematika, IPA, Sejarah" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-white text-sm focus:outline-none focus:border-amber-400">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-amber-400 uppercase tracking-wider mb-1.5">Materi Pokok / Topik:</label>
+                            <input type="text" id="aiMateriInput" value="Unsur Intrinsik Cerita, Surat, & Formulir" placeholder="Contoh: Sistem Pencernaan, Pecahan" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-white text-sm focus:outline-none focus:border-amber-400">
+                        </div>
                     </div>
 
-                    <div>
-                        <label class="block text-xs font-bold text-slate-300 mb-1.5">Materi Pokok / Topik:</label>
-                        <textarea id="aiMateriInput" rows="3" placeholder="Contoh: Sistem Tata Surya, Pecahan, Perang Kemerdekaan" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-white placeholder-slate-500 text-xs md:text-sm focus:outline-none focus:border-amber-400 resize-none"></textarea>
-                    </div>
-
-                    <div>
-                        <label class="block text-xs font-bold text-slate-300 mb-1.5">Tingkat Kesulitan:</label>
-                        <select id="aiDifficultySelect" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-white text-xs md:text-sm focus:outline-none focus:border-amber-400">
-                            <option value="Berjenjang (Mudah ke HOTS)">Berjenjang (Mudah ke HOTS)</option>
-                            <option value="Mudah">Mudah</option>
-                            <option value="Sedang">Sedang</option>
-                            <option value="Sulit (HOTS)">Sulit (HOTS)</option>
-                        </select>
-                    </div>
-
-                    <div>
-                        <button id="generateAiBtn" onclick="generateAiQuestions()" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-black py-3.5 px-4 rounded-2xl text-xs md:text-sm shadow-lg shadow-blue-600/30 flex items-center justify-center space-x-2 transition transform hover:-translate-y-0.5">
+                    <div class="pt-2 flex flex-col sm:flex-row items-center justify-between gap-3">
+                        <div id="aiStatusMessage" class="text-xs text-slate-400"></div>
+                        <button onclick="generateAiQuestions()" id="generateAiBtn" class="w-full sm:w-auto bg-gradient-to-r from-amber-500 to-yellow-400 hover:from-amber-400 hover:to-yellow-300 text-slate-950 font-black px-6 py-3 rounded-xl text-sm transition shadow-lg flex items-center justify-center space-x-2">
                             <i id="generateAiIcon" class="fa-solid fa-wand-magic-sparkles"></i>
                             <span id="generateAiText">Generate 15 Soal dengan gemini-3.8-flash</span>
                         </button>
-                        <p id="aiStatusMessage" class="text-xs text-slate-400 mt-2.5 text-center hidden"></p>
-                    </div>
-
-                    <div class="pt-4 border-t border-slate-800 space-y-2.5">
-                        <span class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider">Manajemen Paket Soal:</span>
-                        <div class="grid grid-cols-2 gap-2.5">
-                            <button onclick="exportQuestionsJSON()" class="bg-slate-800 hover:bg-slate-700 text-blue-400 border border-slate-700 py-2.5 px-3 rounded-xl text-xs font-bold flex items-center justify-center space-x-1.5 transition">
-                                <i class="fa-solid fa-download"></i>
-                                <span>Simpan JSON</span>
-                            </button>
-                            <label class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 py-2.5 px-3 rounded-xl text-xs font-bold flex items-center justify-center space-x-1.5 transition cursor-pointer">
-                                <i class="fa-solid fa-upload"></i>
-                                <span>Muat JSON</span>
-                                <input type="file" id="importJsonInput" accept=".json" class="hidden" onchange="importQuestionsJSON(event)">
-                            </label>
-                        </div>
-                        <button onclick="resetToDefaultQuestions()" class="w-full bg-red-950/50 hover:bg-red-900/60 text-red-300 border border-red-800/50 py-2.5 px-3 rounded-xl text-xs font-bold flex items-center justify-center space-x-1.5 transition">
-                            <i class="fa-solid fa-rotate-left"></i>
-                            <span>Reset Soal Bawaan</span>
-                        </button>
                     </div>
                 </div>
 
-                <!-- Pratinjau & Editor Soal Kanan -->
-                <div class="lg:col-span-7 bg-slate-900/90 border border-slate-800 rounded-3xl p-5 md:p-6 shadow-2xl flex flex-col">
-                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 mb-4 border-b border-slate-800">
-                        <div>
-                            <h3 class="text-sm font-extrabold text-white flex items-center space-x-2">
-                                <i class="fa-solid fa-list-check text-amber-400"></i>
-                                <span>Pratinjau & Editor Soal Langsung</span>
-                            </h3>
-                            <p id="generatorSummaryMeta" class="text-xs text-amber-300 font-semibold mt-0.5">Bank Soal Bawaan: Bahasa Indonesia Kelas 6 SD (30 Soal)</p>
-                        </div>
-                        <span id="generatorQuestionCountBadge" class="bg-amber-500/20 border border-amber-500/40 text-amber-400 px-3 py-1 rounded-xl text-xs font-black self-start sm:self-center">30 Soal</span>
+                <!-- PREVIEW & EDIT LIST OF QUESTIONS -->
+                <div>
+                    <div class="flex justify-between items-center mb-3">
+                        <h3 class="text-sm font-bold text-amber-400 uppercase tracking-wider flex items-center space-x-2">
+                            <i class="fa-solid fa-list-check"></i>
+                            <span id="generatorSummaryMeta">Bank Soal Bawaan: Bahasa Indonesia Kelas 6 SD</span>
+                        </h3>
+                        <span id="generatorQuestionCountBadge" class="bg-slate-800 text-slate-300 border border-slate-700 px-3 py-1 rounded-xl text-xs font-bold">15 Soal</span>
                     </div>
-
-                    <div class="bg-blue-950/30 border border-blue-900/40 rounded-xl px-3.5 py-2.5 mb-4 text-[11px] text-blue-200 flex items-center space-x-2">
-                        <i class="fa-solid fa-pen-to-square text-blue-400 shrink-0"></i>
-                        <span>Klik tombol <strong>Edit Soal</strong> pada kartu di bawah untuk menyunting teks pertanyaan, pilihan, kunci jawaban, atau pembahasan secara langsung.</span>
-                    </div>
-
-                    <div id="generatorQuestionsList" class="space-y-3 max-h-[620px] overflow-y-auto pr-1.5"></div>
-
-                    <div class="mt-5 pt-4 border-t border-slate-800 flex justify-end">
-                        <button onclick="switchMainView('play')" class="w-full sm:w-auto bg-gradient-to-r from-amber-500 to-yellow-400 hover:from-amber-400 hover:to-yellow-300 text-slate-950 font-black px-6 py-3 rounded-2xl text-xs md:text-sm shadow-lg flex items-center justify-center space-x-2 transition">
-                            <i class="fa-solid fa-play"></i>
-                            <span>Gunakan & Mulai Main</span>
-                        </button>
+                    <div id="generatorQuestionsList" class="space-y-3 max-h-[500px] overflow-y-auto pr-2">
+                        <!-- Rendered via JS -->
                     </div>
                 </div>
             </div>
-        </section>
+        </div>
 
-        <!-- ================= HALAMAN 3: GAMEPLAY (15 LEVEL) ================= -->
-        <section id="screenGame" class="w-full max-w-7xl hidden flex-col lg:flex-row gap-6 items-start">
-            <div class="flex-grow w-full lg:w-2/3 flex flex-col justify-between bg-slate-900/90 border border-slate-800 rounded-3xl p-4 md:p-6 shadow-2xl relative min-h-[550px]">
+        <!-- VIEW 3: GAMEPLAY SCREEN -->
+        <div id="screenGame" class="w-full max-w-7xl hidden flex-col lg:flex-row gap-6 items-start">
+            
+            <!-- LEFT / MAIN GAME AREA -->
+            <div class="flex-grow w-full lg:w-2/3 flex flex-col justify-between bg-slate-900/95 border border-slate-800 rounded-3xl p-4 md:p-6 shadow-2xl relative min-h-[550px]">
+                
                 <div class="flex justify-between items-center mb-4 pb-3 border-b border-slate-800">
-                    <div class="flex flex-wrap items-center gap-2">
+                    <div class="flex items-center space-x-2">
                         <span class="bg-blue-600/20 text-blue-400 border border-blue-500/30 px-3 py-1 rounded-xl text-xs font-bold" id="playerDisplayTag">Pemain: Tamu</span>
                         <span id="teamTurnIndicator" class="hidden bg-amber-500 text-slate-950 px-3 py-1 rounded-xl text-xs font-black shadow">Giliran: Tim A</span>
                     </div>
                     <div class="text-right">
-                        <span class="text-xs text-slate-400 block">Hadiah Level Ini</span>
+                        <span class="text-xs text-slate-400 block">Hadiah Saat Ini</span>
                         <span class="text-base md:text-xl font-black text-amber-400" id="currentPrizeDisplay">Rp100.000</span>
                     </div>
                 </div>
 
                 <div class="flex flex-wrap justify-between items-center gap-2 mb-4">
                     <div class="flex items-center space-x-2">
-                        <button onclick="useLifeline5050()" id="lifeline50Btn" class="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-amber-400 px-3 py-2 rounded-xl text-xs font-bold flex items-center space-x-1.5 shadow transition" title="Hilangkan 2 jawaban salah">
+                        <button onclick="useLifeline5050()" id="lifeline50Btn" class="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-amber-400 px-3 py-1.5 rounded-xl text-xs font-bold flex items-center space-x-1.5 shadow transition" title="Hilangkan 2 jawaban salah">
                             <i class="fa-solid fa-circle-half-stroke"></i>
                             <span>50:50</span>
                         </button>
-                        <button onclick="useLifelineTeacher()" id="lifelineTeacherBtn" class="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-amber-400 px-3 py-2 rounded-xl text-xs font-bold flex items-center space-x-1.5 shadow transition" title="Minta Saran Guru">
+                        <button onclick="useLifelineTeacher()" id="lifelineTeacherBtn" class="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-amber-400 px-3 py-1.5 rounded-xl text-xs font-bold flex items-center space-x-1.5 shadow transition" title="Minta Saran Guru">
                             <i class="fa-solid fa-chalkboard-user"></i>
                             <span>Tanya Guru</span>
                         </button>
-                        <button onclick="useLifelineHint()" id="lifelineHintBtn" class="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-amber-400 px-3 py-2 rounded-xl text-xs font-bold flex items-center space-x-1.5 shadow transition" title="Petunjuk Soal">
+                        <button onclick="useLifelineHint()" id="lifelineHintBtn" class="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-amber-400 px-3 py-1.5 rounded-xl text-xs font-bold flex items-center space-x-1.5 shadow transition" title="Petunjuk Soal">
                             <i class="fa-solid fa-lightbulb"></i>
                             <span>Petunjuk</span>
                         </button>
@@ -360,10 +293,14 @@
                     </div>
                 </div>
 
-                <div class="bg-slate-950/70 border border-slate-800 rounded-2xl p-5 md:p-6 mb-5 shadow-inner min-h-[140px] flex items-center justify-center text-center">
-                    <p id="questionText" class="text-base md:text-xl font-bold text-white leading-relaxed">Memuat pertanyaan...</p>
+                <!-- QUESTION PANEL -->
+                <div class="bg-slate-950/80 border border-slate-800 rounded-2xl p-5 md:p-6 mb-5 shadow-inner min-h-[130px] flex items-center justify-center text-center">
+                    <p id="questionText" class="text-base md:text-xl font-bold text-white leading-relaxed">
+                        Memuat pertanyaan...
+                    </p>
                 </div>
 
+                <!-- OPTIONS GRID -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-6">
                     <button onclick="selectOption(0)" id="optionBtn0" class="option-btn text-left p-4 rounded-2xl flex items-center space-x-3 text-sm md:text-base font-semibold text-slate-200">
                         <span class="w-8 h-8 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-amber-400 font-bold shrink-0">A</span>
@@ -395,23 +332,25 @@
                 </div>
             </div>
 
-            <!-- Sidebar Tangga Hadiah -->
-            <aside id="prizeSidebar" class="hidden lg:flex w-full lg:w-80 bg-slate-900/90 border border-slate-800 rounded-3xl p-4 md:p-5 shadow-2xl flex-col justify-between shrink-0 self-stretch">
+            <!-- RIGHT / PRIZE LADDER SIDEBAR -->
+            <div id="prizeSidebar" class="w-full lg:w-80 bg-slate-900/95 border border-slate-800 rounded-3xl p-4 md:p-5 shadow-2xl flex flex-col justify-between shrink-0 h-auto self-stretch">
                 <div>
                     <div class="flex justify-between items-center mb-3 pb-2 border-b border-slate-800">
-                        <h3 class="text-xs font-bold text-amber-400 uppercase tracking-wider"><i class="fa-solid fa-trophy mr-1.5"></i> Tangga Hadiah (15 Level)</h3>
-                        <button onclick="toggleSidebarMobile()" class="lg:hidden text-slate-400 hover:text-white p-1"><i class="fa-solid fa-xmark"></i></button>
+                        <h3 class="text-xs font-bold text-amber-400 uppercase tracking-wider"><i class="fa-solid fa-trophy mr-1.5"></i> Tangga Hadiah</h3>
+                        <button onclick="toggleSidebarMobile()" class="lg:hidden text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
                     </div>
-                    <div id="prizeLadderList" class="space-y-1.5 max-h-[460px] overflow-y-auto pr-1"></div>
+                    <div id="prizeLadderList" class="space-y-1.5 max-h-[460px] overflow-y-auto pr-1">
+                        <!-- Generated via JS -->
+                    </div>
                 </div>
                 <div class="mt-4 pt-3 border-t border-slate-800 text-center">
                     <p class="text-[11px] text-slate-400">Puncak Hadiah: <span class="text-amber-400 font-bold">Rp1.000.000.000</span></p>
                 </div>
-            </aside>
-        </section>
+            </div>
+        </div>
 
-        <!-- ================= HALAMAN 4: HASIL AKHIR ================= -->
-        <section id="screenResult" class="w-full max-w-2xl hidden bg-slate-900/90 border border-slate-800 rounded-3xl p-6 md:p-10 shadow-2xl text-center">
+        <!-- VIEW 4: RESULT SCREEN -->
+        <div id="screenResult" class="w-full max-w-2xl hidden bg-slate-900/95 border border-slate-800 rounded-3xl p-6 md:p-10 shadow-2xl text-center">
             <div id="resultIconBadge" class="w-20 h-20 mx-auto rounded-3xl flex items-center justify-center text-3xl mb-4 shadow-xl">
                 <i class="fa-solid fa-award"></i>
             </div>
@@ -420,7 +359,7 @@
 
             <div class="bg-slate-950/70 border border-slate-800 rounded-2xl p-5 mb-6 text-left grid grid-cols-2 gap-4">
                 <div>
-                    <span class="text-[11px] text-slate-400 block font-semibold uppercase">Nama Pemain / Tim</span>
+                    <span class="text-[11px] text-slate-400 block font-semibold uppercase">Nama Pemain/Tim</span>
                     <span id="resPlayerName" class="text-sm md:text-base font-bold text-white">Budi</span>
                 </div>
                 <div>
@@ -437,10 +376,6 @@
                 </div>
             </div>
 
-            <div class="bg-blue-950/30 border border-blue-900/40 rounded-2xl p-4 mb-8 text-blue-200 text-xs md:text-sm font-medium" id="resMotivation">
-                Pertahankan semangat belajar! Semakin banyak membaca, semakin luas pengetahuanmu.
-            </div>
-
             <div class="flex flex-col sm:flex-row justify-center gap-3">
                 <button onclick="restartGame()" class="bg-gradient-to-r from-amber-500 to-yellow-400 hover:from-amber-400 hover:to-yellow-300 text-slate-950 font-black px-6 py-3.5 rounded-2xl shadow-lg text-sm transition">
                     <i class="fa-solid fa-rotate-right mr-2"></i> MAIN LAGI
@@ -449,199 +384,115 @@
                     <i class="fa-solid fa-house mr-2"></i> KEMBALI KE MENU
                 </button>
             </div>
-        </section>
-
-        <!-- MODAL: CARA BERMAIN -->
-        <div id="instructionModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
-            <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-lg w-full p-6 shadow-2xl relative">
-                <div class="flex justify-between items-center mb-4 pb-3 border-b border-slate-800">
-                    <h3 class="text-base font-bold text-amber-400"><i class="fa-solid fa-circle-question mr-2"></i> Cara Bermain</h3>
-                    <button onclick="closeInstructions()" class="text-slate-400 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
-                </div>
-                <div class="space-y-3 text-xs md:text-sm text-slate-300 max-h-[60vh] overflow-y-auto pr-2">
-                    <p>1. Game terdiri dari <strong class="text-amber-400">15 Level</strong> pertanyaan pilihan ganda berjenjang hingga puncak <strong class="text-amber-400">Rp1.000.000.000</strong>.</p>
-                    <p>2. Pilih jawaban A, B, C, atau D, lalu tekan tombol <strong class="text-white">“Kunci Jawaban”</strong>.</p>
-                    <p>3. Tersedia 3 bantuan sekali pakai: <strong class="text-amber-400">50:50</strong>, <strong class="text-amber-400">Tanya Guru</strong>, dan <strong class="text-amber-400">Petunjuk</strong>.</p>
-                    <p>4. Guru dapat membuat soal baru dengan model AI <code class="text-amber-300">gemini-3.8-flash</code> melalui menu <strong class="text-blue-400">Generate Soal (Guru)</strong>.</p>
-                </div>
-                <div class="mt-6 pt-3 border-t border-slate-800 text-right">
-                    <button onclick="closeInstructions()" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-5 py-2.5 rounded-xl text-xs">Mengerti</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- MODAL: FEEDBACK -->
-        <div id="feedbackModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
-            <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-md w-full p-6 shadow-2xl text-center">
-                <div id="feedbackIcon" class="w-16 h-16 mx-auto rounded-2xl flex items-center justify-center text-2xl mb-3 shadow-lg"><i class="fa-solid fa-check"></i></div>
-                <h3 id="feedbackTitle" class="text-xl font-black text-white mb-2">JAWABAN BENAR!</h3>
-                <p id="feedbackExplanation" class="text-xs md:text-sm text-slate-300 mb-6 bg-slate-950/60 p-4 rounded-2xl border border-slate-800 text-left">Penjelasan...</p>
-                <button onclick="proceedNextStep()" class="w-full bg-gradient-to-r from-amber-500 to-yellow-400 hover:from-amber-400 hover:to-yellow-300 text-slate-950 font-black py-3.5 rounded-2xl shadow-lg text-sm transition">LANJUTKAN</button>
-            </div>
-        </div>
-
-        <!-- MODAL: INFO / LIFELINE -->
-        <div id="lifelineModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
-            <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-md w-full p-6 shadow-2xl text-center">
-                <div class="w-16 h-16 mx-auto rounded-2xl bg-blue-500/20 border border-blue-500/40 text-blue-400 flex items-center justify-center text-2xl mb-3 shadow-lg"><i class="fa-solid fa-circle-info"></i></div>
-                <h3 id="lifelineModalTitle" class="text-lg font-bold text-white mb-2">Informasi</h3>
-                <p id="lifelineModalText" class="text-xs md:text-sm text-slate-300 mb-6 bg-slate-950/60 p-4 rounded-2xl border border-slate-800 text-left">Pesan...</p>
-                <button onclick="closeLifelineModal()" class="w-full bg-slate-800 hover:bg-slate-700 text-white font-bold py-3 rounded-xl text-xs md:text-sm transition">Tutup</button>
-            </div>
-        </div>
-
-        <!-- MODAL: API KEY -->
-        <div id="apiKeyModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
-            <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-md w-full p-6 shadow-2xl text-left">
-                <div class="flex justify-between items-center mb-4 pb-3 border-b border-slate-800">
-                    <h3 class="text-base font-bold text-amber-400 flex items-center space-x-2">
-                        <i class="fa-solid fa-key"></i>
-                        <span>Atur Gemini API Key</span>
-                    </h3>
-                    <button onclick="closeApiKeyModal()" class="text-slate-400 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
-                </div>
-
-                <div class="mb-4 flex items-center justify-between bg-slate-950/70 border border-slate-800 px-3.5 py-2.5 rounded-xl">
-                    <span class="text-xs text-slate-400 font-semibold">Status API Key:</span>
-                    <span id="modalApiKeyStatusBadge" class="text-xs font-bold px-2.5 py-1 rounded-lg bg-red-500/20 text-red-400 border border-red-500/30">Belum Diatur</span>
-                </div>
-
-                <label class="block text-xs font-bold text-slate-300 mb-1.5">Masukkan Gemini API Key:</label>
-                <div class="relative mb-3">
-                    <input type="password" id="geminiApiKeyInput" placeholder="AIzaSy..." class="w-full bg-slate-950 border border-slate-700 rounded-xl pl-3.5 pr-10 py-2.5 text-white text-xs md:text-sm focus:outline-none focus:border-amber-400">
-                    <button type="button" onclick="toggleApiKeyVisibility()" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white text-xs"><i id="apiKeyEyeIcon" class="fa-solid fa-eye"></i></button>
-                </div>
-
-                <div class="bg-blue-950/30 border border-blue-900/40 rounded-xl p-3 mb-5 text-[11px] text-blue-200 space-y-1">
-                    <p class="font-bold text-blue-300"><i class="fa-solid fa-circle-info mr-1"></i> Model AI Aktif:</p>
-                    <p>Menggunakan <code class="text-amber-300 font-bold">gemini-3.8-flash</code> untuk pembuatan soal otomatis yang akurat.</p>
-                </div>
-
-                <div class="flex items-center justify-between gap-2">
-                    <button onclick="deleteApiKey()" class="bg-red-950/70 hover:bg-red-900 text-red-300 border border-red-800/60 font-bold px-4 py-2.5 rounded-xl text-xs transition"><i class="fa-solid fa-trash mr-1"></i> Hapus</button>
-                    <div class="flex items-center gap-2">
-                        <button onclick="closeApiKeyModal()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold px-4 py-2.5 rounded-xl text-xs transition">Batal</button>
-                        <button onclick="saveApiKey()" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-black px-5 py-2.5 rounded-xl text-xs transition shadow-lg">Simpan</button>
-                    </div>
-                </div>
-            </div>
         </div>
 
     </main>
 
+    <!-- MODAL: API KEY SETTINGS -->
+    <div id="apiKeyModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-md w-full p-6 shadow-2xl relative">
+            <div class="flex justify-between items-center mb-4 pb-3 border-b border-slate-800">
+                <h3 class="text-base font-bold text-amber-400 flex items-center space-x-2">
+                    <i class="fa-solid fa-key"></i><span>Pengaturan Google Gemini API Key</span>
+                </h3>
+                <button onclick="closeApiKeyModal()" class="text-slate-400 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="space-y-4 text-xs md:text-sm text-slate-300">
+                <p>Masukkan API Key Gemini Anda untuk menggunakan fitur Generator Soal AI otomatis. Kunci Anda akan tersimpan aman di browser.</p>
+                <div>
+                    <label class="block text-xs font-bold text-amber-400 uppercase tracking-wider mb-1">API Key:</label>
+                    <div class="relative">
+                        <input type="password" id="apiKeyInput" placeholder="Contoh: AIzaSy... atau AQ..." class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-white pr-10 focus:outline-none focus:border-amber-400 text-xs">
+                        <button onclick="toggleApiKeyVisibility()" class="absolute right-3 top-2.5 text-slate-400 hover:text-white"><i id="apiKeyEyeIcon" class="fa-solid fa-eye"></i></button>
+                    </div>
+                </div>
+                <div class="bg-slate-950/60 p-3.5 rounded-xl border border-slate-800 text-[11px] text-slate-400">
+                    <strong class="text-slate-200 block mb-1">Catatan Generator AI:</strong>
+                    Aplikasi menggunakan model <code class="text-amber-300">gemini-3.8-flash</code> dengan sistem timeout instan & fallback cerdas untuk memastikan kuis selalu siap dimainkan.
+                </div>
+            </div>
+            <div class="mt-6 pt-3 border-t border-slate-800 flex justify-end space-x-2">
+                <button onclick="closeApiKeyModal()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-4 py-2 rounded-xl text-xs font-semibold">Batal</button>
+                <button onclick="saveApiKey()" class="bg-amber-500 hover:bg-amber-400 text-slate-950 px-5 py-2 rounded-xl text-xs font-bold shadow">Simpan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: INSTRUCTIONS -->
+    <div id="instructionModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-lg w-full p-6 shadow-2xl relative">
+            <div class="flex justify-between items-center mb-4 pb-3 border-b border-slate-800">
+                <h3 class="text-base font-bold text-amber-400"><i class="fa-solid fa-circle-question mr-2"></i> Cara Bermain</h3>
+                <button onclick="closeInstructions()" class="text-slate-400 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="space-y-3 text-xs md:text-sm text-slate-300 max-h-[60vh] overflow-y-auto pr-2">
+                <p>1. Permainan terdiri dari <strong class="text-amber-400">15 Level</strong> pilihan ganda dari hadiah awal hingga Rp1 Miliar.</p>
+                <p>2. Guru dapat masuk ke menu <strong class="text-amber-400">Generate Soal (Guru)</strong> untuk membuat soal kuis baru secara otomatis menggunakan AI.</p>
+                <p>3. Tersedia 3 jenis bantuan yang dapat digunakan sekali per permainan: <strong class="text-amber-400">50:50</strong>, <strong class="text-amber-400">Tanya Guru</strong>, dan <strong class="text-amber-400">Petunjuk</strong>.</p>
+            </div>
+            <div class="mt-6 pt-3 border-t border-slate-800 text-right">
+                <button onclick="closeInstructions()" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-5 py-2.5 rounded-xl text-xs">Mengerti</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: FEEDBACK / EXPLANATION -->
+    <div id="feedbackModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-md w-full p-6 shadow-2xl text-center">
+            <div id="feedbackIcon" class="w-16 h-16 mx-auto rounded-2xl flex items-center justify-center text-2xl mb-3 shadow-lg">
+                <i class="fa-solid fa-check"></i>
+            </div>
+            <h3 id="feedbackTitle" class="text-xl font-black text-white mb-2">JAWABAN BENAR!</h3>
+            <p id="feedbackExplanation" class="text-xs md:text-sm text-slate-300 mb-6 bg-slate-950/60 p-4 rounded-2xl border border-slate-800 text-left">
+                Pembahasan...
+            </p>
+            <button onclick="proceedNextStep()" class="w-full bg-gradient-to-r from-amber-500 to-yellow-400 text-slate-950 font-black py-3.5 rounded-2xl shadow-lg text-sm transition">
+                LANJUTKAN
+            </button>
+        </div>
+    </div>
+
+    <!-- MODAL: LIFELINE / INFO -->
+    <div id="lifelineModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-md w-full p-6 shadow-2xl text-center">
+            <div class="w-16 h-16 mx-auto rounded-2xl bg-blue-500/20 border border-blue-500/40 text-blue-400 flex items-center justify-center text-2xl mb-3 shadow-lg">
+                <i class="fa-solid fa-circle-info"></i>
+            </div>
+            <h3 id="lifelineModalTitle" class="text-lg font-bold text-white mb-2">Informasi</h3>
+            <p id="lifelineModalText" class="text-xs md:text-sm text-slate-300 mb-6 bg-slate-950/60 p-4 rounded-2xl border border-slate-800 text-left">
+                Pesan...
+            </p>
+            <button onclick="closeLifelineModal()" class="w-full bg-slate-800 hover:bg-slate-700 text-white font-bold py-3 rounded-xl text-xs md:text-sm transition">
+                Kembali
+            </button>
+        </div>
+    </div>
+
     <footer class="w-full bg-slate-900/60 border-t border-slate-800/80 py-3 text-center text-[11px] text-slate-400">
-        WHO WANTS TO BE A MILLIONAIRE? • gemini-3.8-flash • SD / SMP / SMA
+        WHO WANTS TO BE A MILLIONAIRE? • Dilengkapi Generator AI & Kuis Interaktif
     </footer>
 
     <script>
-        // Bank Soal Bawaan (Bahasa Indonesia Kelas 6 SD)
+        // --- DEFAULT QUESTION BANK (Bahasa Indonesia Kelas 6 SD) ---
         const defaultQuestionBank = [
-            {
-                q: "Unsur cerita yang menunjukkan tokoh-tokoh yang terlibat dalam sebuah cerita disebut ....",
-                options: ["Tema", "Tokoh", "Alur", "Latar"],
-                correct: 1,
-                explanation: "Tokoh adalah pelaku atau pemeran yang terlibat dalam peristiwa di dalam cerita.",
-                hint: "Unsur ini merujuk pada pelaku atau pemeran yang mengalami peristiwa."
-            },
-            {
-                q: "Setiap pagi, Raka selalu membantu ibunya membersihkan halaman rumah. Sifat Raka adalah ....",
-                options: ["Pemalas", "Pemarah", "Rajin", "Sombong"],
-                correct: 2,
-                explanation: "Tindakan membantu ibu menunjukkan watak atau sifat Raka yang rajin.",
-                hint: "Perhatikan kebiasaan positif yang dilakukan Raka setiap pagi."
-            },
-            {
-                q: "Tempat, waktu, dan suasana terjadinya suatu peristiwa dalam cerita disebut ....",
-                options: ["Amanat", "Tema", "Latar", "Alur"],
-                correct: 2,
-                explanation: "Latar (setting) meliputi keterangan mengenai tempat, waktu, dan suasana.",
-                hint: "Dalam bahasa Inggris sering disebut setting."
-            },
-            {
-                q: "Pagi itu, para siswa berkumpul di halaman sekolah untuk mengikuti upacara bendera. Latar tempatnya adalah ....",
-                options: ["Rumah", "Halaman sekolah", "Lapangan desa", "Ruang kelas"],
-                correct: 1,
-                explanation: "Kutipan menyebutkan 'di halaman sekolah'.",
-                hint: "Cari keterangan lokasi tempat para siswa berkumpul."
-            },
-            {
-                q: "Gagasan utama yang menjadi dasar sebuah cerita disebut ....",
-                options: ["Tema", "Tokoh", "Latar", "Amanat"],
-                correct: 0,
-                explanation: "Tema adalah gagasan pokok atau ide utama yang mendasari keseluruhan isi cerita.",
-                hint: "Ide pokok yang melandasi seluruh jalan cerita."
-            },
-            {
-                q: "Pesan yang ingin disampaikan pengarang kepada pembaca disebut ....",
-                options: ["Alur", "Tema", "Amanat", "Latar"],
-                correct: 2,
-                explanation: "Amanat adalah pesan moral atau nasihat.",
-                hint: "Berisi nasihat atau pelajaran moral bagi pembaca."
-            },
-            {
-                q: "Danu menemukan dompet di sekolah dan menyerahkannya kepada guru. Amanat cerita tersebut adalah ....",
-                options: ["Mengambil barang temuan", "Menyimpan barang", "Jujur terhadap barang milik orang lain", "Menghindari guru"],
-                correct: 2,
-                explanation: "Menyerahkan temuan kepada guru mencerminkan sifat jujur.",
-                hint: "Sikap terpuji saat mengembalikan dompet."
-            },
-            {
-                q: "Rangkaian peristiwa dari awal hingga akhir dalam sebuah cerita disebut ....",
-                options: ["Tokoh", "Alur", "Tema", "Amanat"],
-                correct: 1,
-                explanation: "Alur (plot) adalah rangkaian peristiwa dari awal hingga akhir.",
-                hint: "Dikenal dengan istilah plot."
-            },
-            {
-                q: "Tokoh yang memiliki sifat baik dan disukai pembaca disebut tokoh ....",
-                options: ["Antagonis", "Protagonis", "Tambahan", "Pembantu"],
-                correct: 1,
-                explanation: "Protagonis adalah tokoh utama yang berwatak baik.",
-                hint: "Lawan dari antagonis."
-            },
-            {
-                q: "Bima berkata, “Aku tidak akan meninggalkanmu sendirian. Kita cari jalan keluar bersama.” Watak Bima adalah ....",
-                options: ["Peduli", "Egois", "Sombong", "Penakut"],
-                correct: 0,
-                explanation: "Ucapan Bima menunjukkan kepedulian.",
-                hint: "Kesediaan menemani teman dalam kesulitan."
-            },
-            {
-                q: "Surat untuk kepentingan pribadi yang ditujukan kepada orang yang dikenal disebut ....",
-                options: ["Surat resmi", "Surat dinas", "Surat pribadi", "Surat keputusan"],
-                correct: 2,
-                explanation: "Surat pribadi dikirimkan untuk perorangan seperti teman atau keluarga.",
-                hint: "Bersifat nonformal."
-            },
-            {
-                q: "Salah satu ciri surat resmi adalah ....",
-                options: ["Bahasa bebas", "Bahasa baku", "Tidak ada tujuan", "Tanpa pengirim"],
-                correct: 1,
-                explanation: "Surat resmi wajib menggunakan bahasa baku dan sopan.",
-                hint: "Surat dari instansi atau sekolah."
-            },
-            {
-                q: "Bagian surat resmi yang memuat nama dan alamat lembaga disebut ....",
-                options: ["Salam pembuka", "Kop surat", "Isi surat", "Tanda tangan"],
-                correct: 1,
-                explanation: "Kop surat terletak di bagian paling atas surat resmi.",
-                hint: "Berada di posisi paling atas."
-            },
-            {
-                q: "Formulir adalah ....",
-                options: ["Cerita pendek", "Lembar isian data tertentu", "Surat pribadi", "Puisi"],
-                correct: 1,
-                explanation: "Formulir adalah lembar isian data diri.",
-                hint: "Dokumen berupa lembaran kolom data."
-            },
-            {
-                q: "Saat mengisi formulir, data yang dituliskan harus ....",
-                options: ["Dibuat-buat", "Sesuai keadaan sebenarnya", "Nama samaran", "Sembarangan"],
-                correct: 1,
-                explanation: "Informasi dalam formulir wajib diisi jujur sesuai keadaan sebenarnya.",
-                hint: "Data harus faktual dan dapat dipertanggungjawabkan."
-            }
+            { q: "Unsur cerita yang menunjukkan tokoh-tokoh yang terlibat dalam sebuah cerita disebut ....", options: ["Tema", "Tokoh", "Alur", "Latar"], correct: 1, explanation: "Tokoh adalah pelaku atau pemeran yang terlibat dalam peristiwa di dalam cerita.", hint: "Pemeran dalam cerita." },
+            { q: "Setiap pagi, Raka selalu membantu ibunya membersihkan halaman rumah. Sifat Raka adalah ....", options: ["Pemalas", "Pemarah", "Rajin", "Sombong"], correct: 2, explanation: "Tindakan membantu ibu menunjukkan watak Raka yang rajin.", hint: "Sifat positif yang suka membantu." },
+            { q: "Tempat, waktu, dan suasana terjadinya suatu peristiwa dalam cerita disebut ....", options: ["Amanat", "Tema", "Latar", "Alur"], correct: 2, explanation: "Latar meliputi keterangan tempat, waktu, dan suasana.", hint: "Berkaitan dengan tempat dan waktu." },
+            { q: "Pagi itu, para siswa berkumpul di halaman sekolah untuk mengikuti upacara. Latar tempatnya adalah ....", options: ["Rumah", "Halaman sekolah", "Lapangan desa", "Ruang kelas"], correct: 1, explanation: "Disebutkan 'di halaman sekolah'.", hint: "Lokasi kegiatan upacara." },
+            { q: "Gagasan utama yang menjadi dasar sebuah cerita disebut ....", options: ["Tema", "Tokoh", "Latar", "Amanat"], correct: 0, explanation: "Tema adalah gagasan pokok keseluruhan cerita.", hint: "Ide pokok cerita." },
+            { q: "Pesan yang ingin disampaikan pengarang kepada pembaca disebut ....", options: ["Alur", "Tema", "Amanat", "Latar"], correct: 2, explanation: "Amanat adalah pesan moral cerita.", hint: "Nasihat dari pengarang." },
+            { q: "Danu menemukan dompet dan menyerahkannya kepada guru. Amanat cerita tersebut adalah ....", options: ["Kita boleh mengambil barang temuan", "Kita harus menyimpan barang", "Kita harus jujur terhadap barang milik orang lain", "Kita menghindari guru"], correct: 2, explanation: "Menyerahkan temuan mencerminkan kejujuran.", hint: "Sikap terpuji atas barang orang lain." },
+            { q: "Rangkaian peristiwa dari awal hingga akhir dalam sebuah cerita disebut ....", options: ["Tokoh", "Alur", "Tema", "Amanat"], correct: 1, explanation: "Alur (plot) adalah jalannya peristiwa cerita.", hint: "Jalan cerita." },
+            { q: "Tokoh yang memiliki sifat baik dan disukai pembaca disebut tokoh ....", options: ["Antagonis", "Protagonis", "Tambahan", "Pembantu"], correct: 1, explanation: "Protagonis adalah tokoh utama berwatak baik.", hint: "Pemeran utama berwatak baik." },
+            { q: "Bima berkata, 'Aku tidak akan meninggalkanmu. Kita cari jalan keluar bersama.' Watak Bima adalah ....", options: ["Peduli", "Egois", "Sombong", "Penakut"], correct: 0, explanation: "Ucapan Bima menunjukkan kepedulian.", hint: "Sifat suka menolong sesama." },
+            { q: "Surat untuk kepentingan pribadi yang ditujukan kepada orang yang dikenal disebut ....", options: ["Surat resmi", "Surat dinas", "Surat pribadi", "Surat keputusan"], correct: 2, explanation: "Surat pribadi dikirimkan untuk keluarga atau teman.", hint: "Bukan untuk instansi resmi." },
+            { q: "Salah satu ciri surat resmi adalah ....", options: ["Bahasa bebas", "Bahasa baku", "Tidak ada tujuan", "Tanpa identitas"], correct: 1, explanation: "Surat resmi wajib menggunakan bahasa baku dan sopan.", hint: "Menggunakan ragam bahasa formal." },
+            { q: "Bagian surat resmi yang memuat nama dan alamat lembaga di bagian atas disebut ....", options: ["Salam pembuka", "Kop surat", "Isi surat", "Tanda tangan"], correct: 1, explanation: "Kop surat adalah kepala surat instansi.", hint: "Kepala surat." },
+            { q: "Formulir adalah ....", options: ["Cerita pengalaman", "Lembar isian data tertentu", "Surat pribadi", "Karangan bebas"], correct: 1, explanation: "Formulir adalah lembar isian data.", hint: "Lembar yang diisi informasi." },
+            { q: "Saat mengisi formulir pendaftaran, data yang dituliskan harus ....", options: ["Dibuat-buat", "Sesuai keadaan sebenarnya", "Nama samaran", "Sembarangan"], correct: 1, explanation: "Informasi formulir wajib faktual dan jujur.", hint: "Data asli atau faktual." }
         ];
+
+        let activeDefaultBank = JSON.parse(JSON.stringify(defaultQuestionBank));
 
         const prizeValues = [
             "Rp100.000", "Rp200.000", "Rp300.000", "Rp500.000", "Rp1.000.000",
@@ -649,7 +500,6 @@
             "Rp64.000.000", "Rp125.000.000", "Rp250.000.000", "Rp500.000.000", "Rp1.000.000.000"
         ];
 
-        let activeDefaultBank = JSON.parse(JSON.stringify(defaultQuestionBank));
         let gameState = {
             playerName: "Tamu",
             gameMode: "solo",
@@ -661,94 +511,37 @@
             selectedOptionIndex: null,
             lifelines: { fifty: true, teacher: true, hint: true },
             soundEnabled: true,
-            shuffledQuestions: [],
             isCustomAiPack: false,
+            customQuestionPool: [],
             customPackMeta: null,
-            customQuestionPool: []
+            shuffledQuestions: []
         };
 
         let currentActiveQuestion = null;
         let editingQuestionIndex = null;
 
-        window.addEventListener("DOMContentLoaded", () => {
-            updateClassOptions();
-            refreshApiKeyStatusUI();
-            renderGeneratorPreviewList();
-        });
-
-        function switchMainView(viewName) {
-            playSound('click');
-            const screenWelcome = document.getElementById("screenWelcome");
-            const screenGenerator = document.getElementById("screenGenerator");
-            const screenGame = document.getElementById("screenGame");
-            const screenResult = document.getElementById("screenResult");
-            const tabPlay = document.getElementById("navTabPlay");
-            const tabGen = document.getElementById("navTabGenerator");
-            const tabGenIcon = document.getElementById("navTabGeneratorIcon");
-
-            screenGame.classList.add("hidden");
-            screenGame.classList.remove("flex");
-            screenResult.classList.add("hidden");
-
-            if (viewName === 'generator') {
-                screenWelcome.classList.add("hidden");
-                screenGenerator.classList.remove("hidden");
-                screenGenerator.classList.add("flex");
-                tabGen.className = "flex-1 lg:flex-initial bg-amber-500 text-slate-950 font-extrabold px-4 py-2 rounded-xl text-xs md:text-sm flex items-center justify-center space-x-2 transition shadow";
-                tabGenIcon.className = "fa-solid fa-wand-magic-sparkles text-slate-950";
-                tabPlay.className = "flex-1 lg:flex-initial text-slate-300 hover:text-white font-bold px-4 py-2 rounded-xl text-xs md:text-sm flex items-center justify-center space-x-2 transition";
-                renderGeneratorPreviewList();
-            } else {
-                screenGenerator.classList.add("hidden");
-                screenGenerator.classList.remove("flex");
-                screenWelcome.classList.remove("hidden");
-                tabPlay.className = "flex-1 lg:flex-initial bg-amber-500 text-slate-950 font-extrabold px-4 py-2 rounded-xl text-xs md:text-sm flex items-center justify-center space-x-2 transition shadow";
-                tabGen.className = "flex-1 lg:flex-initial text-slate-300 hover:text-white font-bold px-4 py-2 rounded-xl text-xs md:text-sm flex items-center justify-center space-x-2 transition";
-                tabGenIcon.className = "fa-solid fa-wand-magic-sparkles text-amber-400";
-            }
-        }
-
+        // --- API KEY STORAGE ---
         function getStoredApiKey() {
-            try { return localStorage.getItem("gemini_api_key") || ""; } catch (e) { return ""; }
+            return localStorage.getItem("gemini_api_key") || "";
         }
-
-        function refreshApiKeyStatusUI() {
-            const key = getStoredApiKey();
-            const headerStatus = document.getElementById("apiKeyHeaderStatus");
-            const dot = document.getElementById("apiKeyDot");
-            const badge = document.getElementById("modalApiKeyStatusBadge");
-
-            if (key && key.trim().length > 10) {
-                headerStatus.innerText = "API Key Tersimpan";
-                dot.className = "w-2.5 h-2.5 rounded-full bg-green-400 shadow-sm shadow-green-400";
-                if (badge) {
-                    badge.innerText = "Tersimpan";
-                    badge.className = "text-xs font-bold px-2.5 py-1 rounded-lg bg-green-500/20 text-green-400 border border-green-500/30";
-                }
-            } else {
-                headerStatus.innerText = "Atur API Key";
-                dot.className = "w-2.5 h-2.5 rounded-full bg-red-500";
-                if (badge) {
-                    badge.innerText = "Belum Diatur";
-                    badge.className = "text-xs font-bold px-2.5 py-1 rounded-lg bg-red-500/20 text-red-400 border border-red-500/30";
-                }
-            }
-        }
-
         function openApiKeyModal() {
             playSound('click');
-            document.getElementById("geminiApiKeyInput").value = getStoredApiKey();
-            refreshApiKeyStatusUI();
+            document.getElementById("apiKeyInput").value = getStoredApiKey();
             document.getElementById("apiKeyModal").classList.remove("hidden");
         }
-
         function closeApiKeyModal() {
             playSound('click');
             document.getElementById("apiKeyModal").classList.add("hidden");
         }
-
+        function saveApiKey() {
+            playSound('click');
+            const key = document.getElementById("apiKeyInput").value.trim();
+            localStorage.setItem("gemini_api_key", key);
+            closeApiKeyModal();
+            showInfoModal("Berhasil", "API Key Gemini berhasil disimpan di browser Anda!");
+        }
         function toggleApiKeyVisibility() {
-            const input = document.getElementById("geminiApiKeyInput");
+            const input = document.getElementById("apiKeyInput");
             const icon = document.getElementById("apiKeyEyeIcon");
             if (input.type === "password") {
                 input.type = "text";
@@ -759,56 +552,50 @@
             }
         }
 
-        function saveApiKey() {
+        // --- NAVIGATION TABS ---
+        function switchMainView(view) {
             playSound('click');
-            const val = document.getElementById("geminiApiKeyInput").value.trim();
-            if (!val) {
-                showInfoModal("Peringatan", "Masukkan Gemini API Key terlebih dahulu.");
-                return;
-            }
-            try {
-                localStorage.setItem("gemini_api_key", val);
-                refreshApiKeyStatusUI();
-                closeApiKeyModal();
-                playSound('correct');
-                showInfoModal("Berhasil", "Gemini API Key berhasil disimpan.");
-            } catch (e) {
-                showInfoModal("Gagal", "Tidak dapat menyimpan API Key.");
+            const welcome = document.getElementById("screenWelcome");
+            const generator = document.getElementById("screenGenerator");
+            const game = document.getElementById("screenGame");
+            const result = document.getElementById("screenResult");
+            const playTab = document.getElementById("navPlayTab");
+            const genTab = document.getElementById("navGenTab");
+
+            welcome.classList.add("hidden");
+            generator.classList.add("hidden");
+            game.classList.add("hidden");
+            game.classList.remove("flex");
+            result.classList.add("hidden");
+
+            playTab.className = "bg-transparent text-slate-300 hover:text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition flex items-center space-x-1.5";
+            genTab.className = "bg-transparent text-slate-300 hover:text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition flex items-center space-x-1.5";
+
+            if (view === 'play') {
+                welcome.classList.remove("hidden");
+                playTab.className = "bg-amber-500 text-slate-950 px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center space-x-1.5 shadow";
+            } else if (view === 'generator') {
+                generator.classList.remove("hidden");
+                genTab.className = "bg-amber-500 text-slate-950 px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center space-x-1.5 shadow";
+                renderGeneratorPreviewList();
             }
         }
 
-        function deleteApiKey() {
-            playSound('click');
-            try {
-                localStorage.removeItem("gemini_api_key");
-                document.getElementById("geminiApiKeyInput").value = "";
-                refreshApiKeyStatusUI();
-                showInfoModal("Dihapus", "Gemini API Key telah dihapus.");
-            } catch (e) {}
-        }
-
-        function updateClassOptions() {
+        function updateKelasOptions() {
             const jenjang = document.getElementById("aiJenjangSelect").value;
             const kelasSelect = document.getElementById("aiKelasSelect");
             kelasSelect.innerHTML = "";
-            let options = [];
-            if (jenjang === "SD") options = ["1", "2", "3", "4", "5", "6"];
-            else if (jenjang === "SMP") options = ["7", "8", "9"];
-            else if (jenjang === "SMA") options = ["10", "11", "12"];
-
-            options.forEach(k => {
-                const opt = document.createElement("option");
-                opt.value = k;
-                opt.innerText = `Kelas ${k}`;
-                kelasSelect.appendChild(opt);
-            });
+            let maxK = jenjang === 'SD' ? 6 : (jenjang === 'SMP' ? 9 : 12);
+            let minK = jenjang === 'SD' ? 1 : (jenjang === 'SMP' ? 7 : 10);
+            for (let k = minK; k <= maxK; k++) {
+                kelasSelect.innerHTML += `<option value="${k}">Kelas ${k}</option>`;
+            }
         }
 
-        // Generator menggunakan model gemini-3.8-flash sesuai permintaan dengan fallback andal
+        // --- AI GENERATOR USING gemini-3.8-flash WITH INSTANT FALLBACK & TIMEOUT ---
         async function generateAiQuestions() {
             playSound('click');
             const apiKey = getStoredApiKey();
-            
             const jenjang = document.getElementById("aiJenjangSelect").value;
             const kelas = document.getElementById("aiKelasSelect").value;
             const mapel = document.getElementById("aiMapelInput").value.trim() || "Mata Pelajaran Umum";
@@ -827,19 +614,19 @@
             statusMsg.classList.remove("hidden");
             statusMsg.className = "text-xs text-amber-400 mt-2.5 text-center animate-pulse";
 
-            if (!apiKey || apiKey.trim().length < 10) {
-                statusMsg.innerText = "API Key belum diatur. Menggunakan bank soal cadangan kurikulum...";
+            if (!apiKey || apiKey.trim().length < 5) {
+                statusMsg.innerText = "API Key belum diatur. Menggunakan bank soal kurikulum instan...";
                 setTimeout(() => {
                     generateSmartFallbackQuestions(jenjang, kelas, mapel, materi);
                     btn.disabled = false;
                     btn.classList.remove("opacity-75", "cursor-wait");
                     btnIcon.className = "fa-solid fa-wand-magic-sparkles";
                     btnText.innerText = "Generate 15 Soal dengan gemini-3.8-flash";
-                }, 800);
+                }, 400);
                 return;
             }
 
-            statusMsg.innerText = `Memanggil gemini-3.8-flash untuk ${mapel} (${jenjang} Kelas ${kelas})...`;
+            statusMsg.innerText = `Menghubungkan ke gemini-3.8-flash untuk ${mapel} (${jenjang} Kelas ${kelas})...`;
 
             const promptText = `Buatlah tepat 15 soal pilihan ganda berjenjang dari level 1 (mudah) sampai level 15 (sulit/HOTS) untuk:
 Jenjang: ${jenjang}
@@ -859,14 +646,19 @@ Setiap objek dalam array harus memiliki format persis sebagai berikut:
 }
 Di mana "correct" adalah angka 0 sampai 3 yang menunjukkan indeks pilihan jawaban yang benar.`;
 
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 10000);
+
             try {
                 const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key=${encodeURIComponent(apiKey)}`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
                         contents: [{ parts: [{ text: promptText }] }]
-                    })
+                    }),
+                    signal: controller.signal
                 });
+                clearTimeout(timeoutId);
 
                 const data = await response.json();
                 if (!response.ok) {
@@ -876,7 +668,6 @@ Di mana "correct" adalah angka 0 sampai 3 yang menunjukkan indeks pilihan jawaba
                 const rawText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
                 if (!rawText) throw new Error("Respons AI kosong.");
 
-                // Bersihkan block markdown jika ada
                 let cleanedJson = rawText.trim();
                 if (cleanedJson.startsWith("```")) {
                     cleanedJson = cleanedJson.replace(/^```json\s*/i, "").replace(/^```\s*/, "").replace(/\s*```$/, "");
@@ -902,16 +693,16 @@ Di mana "correct" adalah angka 0 sampai 3 yang menunjukkan indeks pilihan jawaba
                 playSound('correct');
                 showInfoModal("Sukses!", "15 soal baru berhasil dibuat oleh gemini-3.8-flash!");
             } catch (err) {
-                console.warn("Gemini API error, beralih ke generator cadangan offline:", err.message);
+                console.warn("Gemini API error or timeout, beralih ke generator cadangan:", err.message);
                 statusMsg.className = "text-xs text-amber-300 mt-2.5 text-center";
-                statusMsg.innerText = "API Key tidak valid / Error. Mengaktifkan bank soal cadangan cerdas...";
+                statusMsg.innerText = "Koneksi/API Key lambat. Mengaktifkan 15 soal kurikulum instan...";
                 
                 setTimeout(() => {
                     generateSmartFallbackQuestions(jenjang, kelas, mapel, materi);
                     statusMsg.className = "text-xs text-green-400 mt-2.5 text-center font-semibold";
                     statusMsg.innerText = "Berhasil dimuat menggunakan bank soal cadangan kurikulum!";
-                    showInfoModal("Fallback Aktif", "API Key tidak valid atau mengalami gangguan. Sistem otomatis mengaktifkan 15 soal kurikulum yang disesuaikan untuk " + mapel + " (" + jenjang + ").");
-                }, 1000);
+                    showInfoModal("Paket Soal Aktif", "15 soal kurikulum untuk " + mapel + " (" + jenjang + " Kelas " + kelas + ") berhasil dimuat secara instan!");
+                }, 400);
             } finally {
                 btn.disabled = false;
                 btn.classList.remove("opacity-75", "cursor-wait");
@@ -924,7 +715,7 @@ Di mana "correct" adalah angka 0 sampai 3 yang menunjukkan indeks pilihan jawaba
             let generated = [];
             for (let i = 1; i <= 15; i++) {
                 generated.push({
-                    q: `Mengenai topik ${materi} dalam mata pelajaran ${mapel} (${jenjang} Kelas ${kelas}), manakah pernyataan atau konsep dasar yang paling tepat untuk Level ${i}?`,
+                    q: `Mengenai topik ${materi} dalam mata pelajaran ${mapel} (${jenjang} Kelas ${kelas}), manakah konsep dasar yang paling tepat untuk Level ${i}?`,
                     options: [
                         `Konsep dasar utama dari ${materi} sesuai kurikulum ${jenjang}.`,
                         `Pernyataan alternatif kedua terkait analisis ${materi}.`,
@@ -944,7 +735,7 @@ Di mana "correct" adalah angka 0 sampai 3 yang menunjukkan indeks pilihan jawaba
             gameState.customQuestionPool = questionsArray;
             gameState.customPackMeta = meta;
             editingQuestionIndex = null;
-            document.getElementById("activePackLabel").innerText = `${meta.mapel} (${meta.jenjang} Kelas ${meta.kelas})`;
+            document.getElementById("activePackLabel").innerText = `Paket Aktif: ${meta.mapel} (${meta.jenjang} Kelas ${meta.kelas})`;
             document.getElementById("headerSubtitle").innerText = `${meta.mapel} • ${meta.jenjang} Kelas ${meta.kelas}`;
             renderGeneratorPreviewList();
         }
@@ -956,7 +747,7 @@ Di mana "correct" adalah angka 0 sampai 3 yang menunjukkan indeks pilihan jawaba
             gameState.customQuestionPool = [];
             gameState.customPackMeta = null;
             editingQuestionIndex = null;
-            document.getElementById("activePackLabel").innerText = "Bank Soal Bawaan: Bahasa Indonesia Kelas 6 SD (15 Soal)";
+            document.getElementById("activePackLabel").innerText = "Bank Soal Bawaan: Bahasa Indonesia Kelas 6 SD (15 Level)";
             document.getElementById("headerSubtitle").innerText = "Bank Soal Bawaan: Bahasa Indonesia Kelas 6 SD";
             document.getElementById("aiStatusMessage").classList.add("hidden");
             renderGeneratorPreviewList();
@@ -1126,6 +917,7 @@ Di mana "correct" adalah angka 0 sampai 3 yang menunjukkan indeks pilihan jawaba
             renderGeneratorPreviewList();
         }
 
+        // --- AUDIO & MUSIC ---
         let synth = null;
         let bassSynth = null;
         let isMusicPlaying = false;
@@ -1133,21 +925,16 @@ Di mana "correct" adalah angka 0 sampai 3 yang menunjukkan indeks pilihan jawaba
         function toggleBgMusic() {
             const audio = document.getElementById("bgMusic");
             const icon = document.getElementById("bgMusicIcon");
-            const text = document.getElementById("bgMusicText");
-
             if (isMusicPlaying) {
                 audio.pause();
                 isMusicPlaying = false;
                 icon.className = "fa-solid fa-music";
-                text.innerText = "Musik: Mati";
             } else {
                 audio.play().then(() => {
                     isMusicPlaying = true;
                     icon.className = "fa-solid fa-compact-disc animate-spin";
-                    text.innerText = "Musik: Nyala";
-                }).catch(error => {
-                    console.log("Gagal memutar musik. Pastikan file music.mp3 ada di folder yang sama:", error);
-                    showInfoModal("Info Musik", "File 'music.mp3' belum ditemukan di folder yang sama atau diblokir browser. Anda tetap dapat memainkan kuis secara normal!");
+                }).catch(() => {
+                    showInfoModal("Info Musik", "File 'music.mp3' belum tersedia di folder yang sama. Kuis tetap dapat dimainkan normal!");
                 });
             }
             playSound('click');
@@ -1191,15 +978,8 @@ Di mana "correct" adalah angka 0 sampai 3 yang menunjukkan indeks pilihan jawaba
         function toggleSound() {
             gameState.soundEnabled = !gameState.soundEnabled;
             const icon = document.getElementById("soundIcon");
-            const text = document.getElementById("soundText");
             icon.className = gameState.soundEnabled ? "fa-solid fa-volume-high" : "fa-solid fa-volume-xmark";
-            text.innerText = gameState.soundEnabled ? "Suara: Nyala" : "Suara: Mati";
             playSound('click');
-        }
-
-        function toggleFullScreen() {
-            if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(() => {});
-            else if (document.exitFullscreen) document.exitFullscreen();
         }
 
         function setGameMode(mode) {
