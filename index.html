@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WHO WANTS TO BE A MILLIONAIRE? - Bahasa Indonesia Kelas 6 SD</title>
-    <!-- Tailwind CSS for modern styling -->
+    <title>WHO WANTS TO BE A MILLIONAIRE? - Kuis Interaktif Kelas</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Font Inter & Poppins for gaming feel -->
+    <!-- Google Fonts: Inter & Poppins -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Poppins:wght@600;700;900&display=swap" rel="stylesheet">
-    <!-- FontAwesome for icons -->
+    <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Tone.js for web audio sound effects -->
+    <!-- Tone.js untuk Efek Suara -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
     <style>
         body {
@@ -21,8 +21,8 @@
         }
         .game-title {
             font-family: 'Poppins', sans-serif;
-            letter-spacing: 1px;
-            text-shadow: 0 0 20px rgba(234, 179, 8, 0.4);
+            letter-spacing: 0.5px;
+            text-shadow: 0 0 20px rgba(234, 179, 8, 0.35);
         }
         .option-btn {
             background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
@@ -61,6 +61,7 @@
         }
         ::-webkit-scrollbar {
             width: 6px;
+            height: 6px;
         }
         ::-webkit-scrollbar-track {
             background: #030712;
@@ -73,44 +74,56 @@
 </head>
 <body class="min-h-screen flex flex-col justify-between select-none">
 
-    <header class="w-full bg-slate-900/80 backdrop-blur-md border-b border-slate-800 px-4 py-3 flex justify-between items-center sticky top-0 z-50">
-        <div class="flex items-center space-x-3">
-            <div class="bg-amber-500 text-slate-950 p-2 rounded-xl font-black text-lg shadow-lg shadow-amber-500/20">
-                <i class="fa-solid fa-graduation-cap"></i>
+    <!-- HEADER & NAVIGASI TERPISAH -->
+    <header class="w-full bg-slate-900/90 backdrop-blur-md border-b border-slate-800 px-4 py-3 sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-3">
+            <div class="flex items-center space-x-3">
+                <div class="bg-amber-500 text-slate-950 p-2 rounded-xl font-black text-lg shadow-lg shadow-amber-500/20">
+                    <i class="fa-solid fa-graduation-cap"></i>
+                </div>
+                <div>
+                    <h1 class="text-sm md:text-base font-bold text-amber-400 game-title leading-tight">WHO WANTS TO BE A MILLIONAIRE?</h1>
+                    <p id="headerSubtitle" class="text-xs text-slate-400">Bank Soal Bawaan: Bahasa Indonesia Kelas 6 SD</p>
+                </div>
             </div>
-            <div>
-                <h1 class="text-sm md:text-base font-bold text-amber-400 game-title leading-tight">WHO WANTS TO BE A MILLIONAIRE?</h1>
-                <p class="text-xs text-slate-400">Bahasa Indonesia Kelas 6 SD (15 Level Tantangan)</p>
+
+            <!-- Navigasi Menu Terpisah: Main Game vs Generate Soal AI -->
+            <nav class="flex items-center bg-slate-950/90 border border-slate-800 p-1 rounded-2xl shadow-inner order-3 lg:order-2 w-full lg:w-auto justify-center">
+                <button id="navTabPlay" onclick="switchMainView('play')" class="flex-1 lg:flex-initial bg-amber-500 text-slate-950 font-extrabold px-4 py-2 rounded-xl text-xs md:text-sm flex items-center justify-center space-x-2 transition shadow">
+                    <i class="fa-solid fa-gamepad"></i>
+                    <span>Menu Utama (Main)</span>
+                </button>
+                <button id="navTabGenerator" onclick="switchMainView('generator')" class="flex-1 lg:flex-initial text-slate-300 hover:text-white font-bold px-4 py-2 rounded-xl text-xs md:text-sm flex items-center justify-center space-x-2 transition">
+                    <i id="navTabGeneratorIcon" class="fa-solid fa-wand-magic-sparkles text-amber-400"></i>
+                    <span>Generate Soal (Guru)</span>
+                </button>
+            </nav>
+
+            <!-- Utilitas Kanan -->
+            <div class="flex items-center space-x-2 order-2 lg:order-3">
+                <button onclick="openApiKeyModal()" class="bg-slate-800 hover:bg-slate-700 text-amber-400 border border-slate-700 px-3 py-2 rounded-xl text-xs font-semibold flex items-center space-x-1.5 transition shadow" title="Atur Gemini API Key">
+                    <i class="fa-solid fa-key"></i>
+                    <span class="hidden sm:inline" id="apiKeyHeaderStatus">Atur API Key</span>
+                    <span id="apiKeyDot" class="w-2.5 h-2.5 rounded-full bg-red-500"></span>
+                </button>
+                <button id="soundToggle" onclick="toggleSound()" class="bg-slate-800 hover:bg-slate-700 text-amber-400 border border-slate-700 px-3 py-2 rounded-xl text-xs font-semibold flex items-center space-x-1 transition shadow" title="Efek Suara">
+                    <i id="soundIcon" class="fa-solid fa-volume-high"></i>
+                    <span class="hidden md:inline" id="soundText">Suara: Nyala</span>
+                </button>
+                <button onclick="toggleFullScreen()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-3 py-2 rounded-xl text-xs font-semibold flex items-center space-x-1 transition shadow" title="Layar Penuh">
+                    <i class="fa-solid fa-expand"></i>
+                    <span class="hidden xl:inline">Layar Penuh</span>
+                </button>
             </div>
-        </div>
-        <div class="flex items-center space-x-2">
-            <button id="bgMusicToggle" onclick="toggleBgMusic()" class="bg-slate-800 hover:bg-slate-700 text-amber-400 border border-slate-700 px-3 py-2 rounded-xl text-xs font-semibold flex items-center space-x-1 transition shadow" title="Putar/Hentikan Musik Latar (music.mp3)">
-                <i id="bgMusicIcon" class="fa-solid fa-music"></i>
-                <span class="hidden sm:inline" id="bgMusicText">Musik: Mati</span>
-            </button>
-            <button id="soundToggle" onclick="toggleSound()" class="bg-slate-800 hover:bg-slate-700 text-amber-400 border border-slate-700 px-3 py-2 rounded-xl text-xs font-semibold flex items-center space-x-1 transition shadow">
-                <i id="soundIcon" class="fa-solid fa-volume-high"></i>
-                <span class="hidden sm:inline" id="soundText">Suara: Nyala</span>
-            </button>
-            <button onclick="toggleFullScreen()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-3 py-2 rounded-xl text-xs font-semibold flex items-center space-x-1 transition shadow">
-                <i class="fa-solid fa-expand"></i>
-                <span class="hidden sm:inline">Layar Penuh</span>
-            </button>
         </div>
     </header>
 
-    <!-- HTML5 Audio Element for music.mp3 -->
-    <audio id="bgMusic" loop preload="auto">
-        <source src="music.mp3" type="audio/mpeg">
-        Browser Anda tidak mendukung elemen audio.
-    </audio>
-
     <main class="flex-grow flex flex-col items-center justify-center p-3 md:p-6 max-w-7xl mx-auto w-full">
 
-        <!-- SCREEN 1: WELCOME SCREEN -->
-        <div id="screenWelcome" class="w-full max-w-3xl bg-slate-900/90 border border-slate-800 rounded-3xl p-6 md:p-10 shadow-2xl text-center relative overflow-hidden">
-            <div class="absolute -top-24 -left-24 w-48 h-48 bg-blue-600/20 rounded-full blur-3xl"></div>
-            <div class="absolute -bottom-24 -right-24 w-48 h-48 bg-amber-500/20 rounded-full blur-3xl"></div>
+        <!-- ================= HALAMAN 1: MENU UTAMA (MAIN) ================= -->
+        <section id="screenWelcome" class="w-full max-w-3xl bg-slate-900/90 border border-slate-800 rounded-3xl p-6 md:p-10 shadow-2xl text-center relative overflow-hidden">
+            <div class="absolute -top-24 -left-24 w-48 h-48 bg-blue-600/20 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="absolute -bottom-24 -right-24 w-48 h-48 bg-amber-500/20 rounded-full blur-3xl pointer-events-none"></div>
 
             <div class="inline-block bg-amber-500/10 border border-amber-500/30 text-amber-400 px-4 py-1.5 rounded-full text-xs font-bold mb-4 tracking-wide uppercase">
                 Uji Pengetahuan • 15 Level Tantangan • Raih 1 Miliar
@@ -118,16 +131,33 @@
             <h2 class="text-3xl md:text-5xl font-black text-white game-title mb-3 leading-tight">
                 WHO WANTS TO BE <br><span class="text-amber-400">A MILLIONAIRE?</span>
             </h2>
-            <p class="text-slate-300 text-sm md:text-base max-w-xl mx-auto mb-8">
-                Uji kemampuanmu seputar <span class="text-blue-400 font-semibold">Unsur Intrinsik Cerita</span>, <span class="text-blue-400 font-semibold">Surat Resmi & Pribadi</span>, serta <span class="text-blue-400 font-semibold">Formulir</span> Kelas 6 SD! Soal diacak tanpa pengulangan di setiap sesi baru.
+            <p class="text-slate-300 text-sm md:text-base max-w-xl mx-auto mb-6">
+                Taklukkan 15 tingkat pertanyaan berjenjang, gunakan 3 bantuan cerdas, dan raih hadiah puncak virtual <span class="text-amber-400 font-bold">Rp1.000.000.000</span>!
             </p>
 
+            <!-- Info Paket Soal Aktif -->
+            <div class="bg-slate-950/80 border border-amber-500/30 rounded-2xl p-4 mb-6 max-w-xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 text-left">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center shrink-0 text-base">
+                        <i class="fa-solid fa-layer-group"></i>
+                    </div>
+                    <div>
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Paket Soal Aktif:</span>
+                        <span id="activePackLabel" class="text-xs md:text-sm font-bold text-amber-300">Bank Soal Bawaan: Bahasa Indonesia Kelas 6 SD (30 Soal)</span>
+                    </div>
+                </div>
+                <button onclick="switchMainView('generator')" class="w-full sm:w-auto bg-slate-800 hover:bg-slate-700 text-amber-400 border border-slate-700 px-3.5 py-2 rounded-xl text-xs font-bold shrink-0 transition">
+                    <i class="fa-solid fa-wand-magic-sparkles mr-1"></i> Buat / Kelola Soal
+                </button>
+            </div>
+
+            <!-- Form Pemain & Mode -->
             <div class="bg-slate-950/60 border border-slate-800/80 rounded-2xl p-6 mb-8 text-left max-w-xl mx-auto shadow-inner">
                 <label class="block text-xs font-bold text-amber-400 uppercase tracking-wider mb-2">Nama Pemain / Tim:</label>
-                <input type="text" id="playerNameInput" placeholder="Contoh: Budi / Kelompok 1" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-amber-400 font-medium transition mb-5 text-sm md:text-base">
+                <input type="text" id="playerNameInput" placeholder="Contoh: Budi / Kelompok Juara" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-amber-400 font-medium transition mb-5 text-sm md:text-base">
 
                 <label class="block text-xs font-bold text-amber-400 uppercase tracking-wider mb-2">Pilih Mode Permainan:</label>
-                <div class="grid grid-cols-2 gap-3 mb-5">
+                <div class="grid grid-cols-2 gap-3 mb-2">
                     <button onclick="setGameMode('solo')" id="modeSoloBtn" class="bg-amber-500 text-slate-950 border-2 border-amber-400 font-bold py-3 px-4 rounded-xl text-sm flex items-center justify-center space-x-2 transition shadow-md">
                         <i class="fa-solid fa-user"></i>
                         <span>Main Sendiri</span>
@@ -138,15 +168,15 @@
                     </button>
                 </div>
 
-                <div id="teamNamesContainer" class="hidden space-y-3 mb-2 animate-fadeIn">
-                    <div class="grid grid-cols-2 gap-3">
+                <div id="teamNamesContainer" class="hidden space-y-3 mt-4 pt-4 border-t border-slate-800">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <div>
                             <label class="block text-[11px] font-semibold text-slate-400 mb-1">Nama Tim 1:</label>
-                            <input type="text" id="team1Input" value="Tim A" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500">
+                            <input type="text" id="team1Input" value="Tim A" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2.5 text-white text-sm focus:outline-none focus:border-blue-500">
                         </div>
                         <div>
                             <label class="block text-[11px] font-semibold text-slate-400 mb-1">Nama Tim 2:</label>
-                            <input type="text" id="team2Input" value="Tim B" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500">
+                            <input type="text" id="team2Input" value="Tim B" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2.5 text-white text-sm focus:outline-none focus:border-blue-500">
                         </div>
                     </div>
                 </div>
@@ -160,38 +190,157 @@
                     <i class="fa-solid fa-circle-question mr-2"></i> Cara Bermain
                 </button>
             </div>
-        </div>
+        </section>
 
-        <!-- SCREEN 2: GAMEPLAY SCREEN -->
-        <div id="screenGame" class="w-full max-w-7xl hidden flex-col lg:flex-row gap-6 items-start">
-            
-            <!-- LEFT / MAIN GAME AREA -->
+        <!-- ================= HALAMAN 2: GENERATE SOAL AI (GURU) ================= -->
+        <section id="screenGenerator" class="w-full max-w-7xl hidden flex-col gap-6">
+            <div class="bg-slate-900/90 border border-slate-800 rounded-3xl p-5 md:p-6 shadow-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div>
+                    <div class="inline-flex items-center space-x-2 bg-blue-500/10 border border-blue-500/30 text-blue-400 px-3 py-1 rounded-full text-[11px] font-bold uppercase mb-2">
+                        <i class="fa-solid fa-chalkboard-user"></i>
+                        <span>Ruang Guru • Generator & Editor Paket Soal (gemini-3.8-flash)</span>
+                    </div>
+                    <h2 class="text-xl md:text-2xl font-black text-white game-title">Generate Soal Otomatis dengan Gemini AI</h2>
+                    <p class="text-xs md:text-sm text-slate-400">Pilih jenjang, kelas, mata pelajaran, dan materi untuk menyusun 15 soal pilihan ganda berjenjang secara instan.</p>
+                </div>
+                <button onclick="switchMainView('play')" class="w-full md:w-auto bg-gradient-to-r from-amber-500 to-yellow-400 hover:from-amber-400 hover:to-yellow-300 text-slate-950 font-black px-6 py-3.5 rounded-2xl text-xs md:text-sm shadow-lg flex items-center justify-center space-x-2 shrink-0 transition">
+                    <i class="fa-solid fa-play"></i>
+                    <span>Gunakan & Mulai Main</span>
+                </button>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                <!-- Form Generator Kiri -->
+                <div class="lg:col-span-5 bg-slate-900/90 border border-slate-800 rounded-3xl p-5 md:p-6 shadow-2xl space-y-5">
+                    <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+                        <div class="flex items-center space-x-2">
+                            <i class="fa-solid fa-sliders text-amber-400"></i>
+                            <h3 class="text-sm font-extrabold text-amber-400 uppercase tracking-wider">Parameter Soal AI</h3>
+                        </div>
+                        <button onclick="openApiKeyModal()" class="text-xs bg-slate-800 hover:bg-slate-700 text-blue-400 border border-slate-700 px-3 py-1.5 rounded-xl font-bold flex items-center space-x-1.5 transition">
+                            <i class="fa-solid fa-key"></i>
+                            <span>Atur API Key</span>
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-300 mb-1.5">Jenjang:</label>
+                            <select id="aiJenjangSelect" onchange="updateClassOptions()" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-white text-xs md:text-sm focus:outline-none focus:border-amber-400">
+                                <option value="SD">SD</option>
+                                <option value="SMP">SMP</option>
+                                <option value="SMA">SMA</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-300 mb-1.5">Kelas:</label>
+                            <select id="aiKelasSelect" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-white text-xs md:text-sm focus:outline-none focus:border-amber-400"></select>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-300 mb-1.5">Mata Pelajaran:</label>
+                        <input type="text" id="aiMapelInput" placeholder="Contoh: Matematika, IPA, Sejarah, Bahasa Inggris" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-white placeholder-slate-500 text-xs md:text-sm focus:outline-none focus:border-amber-400">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-300 mb-1.5">Materi Pokok / Topik:</label>
+                        <textarea id="aiMateriInput" rows="3" placeholder="Contoh: Sistem Tata Surya, Pecahan, Perang Kemerdekaan" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-white placeholder-slate-500 text-xs md:text-sm focus:outline-none focus:border-amber-400 resize-none"></textarea>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-300 mb-1.5">Tingkat Kesulitan:</label>
+                        <select id="aiDifficultySelect" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-white text-xs md:text-sm focus:outline-none focus:border-amber-400">
+                            <option value="Berjenjang (Mudah ke HOTS)">Berjenjang (Mudah ke HOTS)</option>
+                            <option value="Mudah">Mudah</option>
+                            <option value="Sedang">Sedang</option>
+                            <option value="Sulit (HOTS)">Sulit (HOTS)</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <button id="generateAiBtn" onclick="generateAiQuestions()" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-black py-3.5 px-4 rounded-2xl text-xs md:text-sm shadow-lg shadow-blue-600/30 flex items-center justify-center space-x-2 transition transform hover:-translate-y-0.5">
+                            <i id="generateAiIcon" class="fa-solid fa-wand-magic-sparkles"></i>
+                            <span id="generateAiText">Generate 15 Soal dengan gemini-3.8-flash</span>
+                        </button>
+                        <p id="aiStatusMessage" class="text-xs text-slate-400 mt-2.5 text-center hidden"></p>
+                    </div>
+
+                    <div class="pt-4 border-t border-slate-800 space-y-2.5">
+                        <span class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider">Manajemen Paket Soal:</span>
+                        <div class="grid grid-cols-2 gap-2.5">
+                            <button onclick="exportQuestionsJSON()" class="bg-slate-800 hover:bg-slate-700 text-blue-400 border border-slate-700 py-2.5 px-3 rounded-xl text-xs font-bold flex items-center justify-center space-x-1.5 transition">
+                                <i class="fa-solid fa-download"></i>
+                                <span>Simpan JSON</span>
+                            </button>
+                            <label class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 py-2.5 px-3 rounded-xl text-xs font-bold flex items-center justify-center space-x-1.5 transition cursor-pointer">
+                                <i class="fa-solid fa-upload"></i>
+                                <span>Muat JSON</span>
+                                <input type="file" id="importJsonInput" accept=".json" class="hidden" onchange="importQuestionsJSON(event)">
+                            </label>
+                        </div>
+                        <button onclick="resetToDefaultQuestions()" class="w-full bg-red-950/50 hover:bg-red-900/60 text-red-300 border border-red-800/50 py-2.5 px-3 rounded-xl text-xs font-bold flex items-center justify-center space-x-1.5 transition">
+                            <i class="fa-solid fa-rotate-left"></i>
+                            <span>Reset Soal Bawaan</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Pratinjau & Editor Soal Kanan -->
+                <div class="lg:col-span-7 bg-slate-900/90 border border-slate-800 rounded-3xl p-5 md:p-6 shadow-2xl flex flex-col">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 mb-4 border-b border-slate-800">
+                        <div>
+                            <h3 class="text-sm font-extrabold text-white flex items-center space-x-2">
+                                <i class="fa-solid fa-list-check text-amber-400"></i>
+                                <span>Pratinjau & Editor Soal Langsung</span>
+                            </h3>
+                            <p id="generatorSummaryMeta" class="text-xs text-amber-300 font-semibold mt-0.5">Bank Soal Bawaan: Bahasa Indonesia Kelas 6 SD (30 Soal)</p>
+                        </div>
+                        <span id="generatorQuestionCountBadge" class="bg-amber-500/20 border border-amber-500/40 text-amber-400 px-3 py-1 rounded-xl text-xs font-black self-start sm:self-center">30 Soal</span>
+                    </div>
+
+                    <div class="bg-blue-950/30 border border-blue-900/40 rounded-xl px-3.5 py-2.5 mb-4 text-[11px] text-blue-200 flex items-center space-x-2">
+                        <i class="fa-solid fa-pen-to-square text-blue-400 shrink-0"></i>
+                        <span>Klik tombol <strong>Edit Soal</strong> pada kartu di bawah untuk menyunting teks pertanyaan, pilihan, kunci jawaban, atau pembahasan secara langsung.</span>
+                    </div>
+
+                    <div id="generatorQuestionsList" class="space-y-3 max-h-[620px] overflow-y-auto pr-1.5"></div>
+
+                    <div class="mt-5 pt-4 border-t border-slate-800 flex justify-end">
+                        <button onclick="switchMainView('play')" class="w-full sm:w-auto bg-gradient-to-r from-amber-500 to-yellow-400 hover:from-amber-400 hover:to-yellow-300 text-slate-950 font-black px-6 py-3 rounded-2xl text-xs md:text-sm shadow-lg flex items-center justify-center space-x-2 transition">
+                            <i class="fa-solid fa-play"></i>
+                            <span>Gunakan & Mulai Main</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= HALAMAN 3: GAMEPLAY (15 LEVEL) ================= -->
+        <section id="screenGame" class="w-full max-w-7xl hidden flex-col lg:flex-row gap-6 items-start">
             <div class="flex-grow w-full lg:w-2/3 flex flex-col justify-between bg-slate-900/90 border border-slate-800 rounded-3xl p-4 md:p-6 shadow-2xl relative min-h-[550px]">
-                
-                <!-- TOP GAME STATS -->
                 <div class="flex justify-between items-center mb-4 pb-3 border-b border-slate-800">
-                    <div class="flex items-center space-x-2">
+                    <div class="flex flex-wrap items-center gap-2">
                         <span class="bg-blue-600/20 text-blue-400 border border-blue-500/30 px-3 py-1 rounded-xl text-xs font-bold" id="playerDisplayTag">Pemain: Tamu</span>
                         <span id="teamTurnIndicator" class="hidden bg-amber-500 text-slate-950 px-3 py-1 rounded-xl text-xs font-black shadow">Giliran: Tim A</span>
                     </div>
                     <div class="text-right">
-                        <span class="text-xs text-slate-400 block">Hadiah Saat Ini</span>
+                        <span class="text-xs text-slate-400 block">Hadiah Level Ini</span>
                         <span class="text-base md:text-xl font-black text-amber-400" id="currentPrizeDisplay">Rp100.000</span>
                     </div>
                 </div>
 
-                <!-- LIFELINES & LEVEL BADGE -->
                 <div class="flex flex-wrap justify-between items-center gap-2 mb-4">
                     <div class="flex items-center space-x-2">
-                        <button onclick="useLifeline5050()" id="lifeline50Btn" class="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-amber-400 px-3 py-1.5 rounded-xl text-xs font-bold flex items-center space-x-1.5 shadow transition" title="Hilangkan 2 jawaban salah">
+                        <button onclick="useLifeline5050()" id="lifeline50Btn" class="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-amber-400 px-3 py-2 rounded-xl text-xs font-bold flex items-center space-x-1.5 shadow transition" title="Hilangkan 2 jawaban salah">
                             <i class="fa-solid fa-circle-half-stroke"></i>
                             <span>50:50</span>
                         </button>
-                        <button onclick="useLifelineTeacher()" id="lifelineTeacherBtn" class="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-amber-400 px-3 py-1.5 rounded-xl text-xs font-bold flex items-center space-x-1.5 shadow transition" title="Minta Pendapat Guru">
+                        <button onclick="useLifelineTeacher()" id="lifelineTeacherBtn" class="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-amber-400 px-3 py-2 rounded-xl text-xs font-bold flex items-center space-x-1.5 shadow transition" title="Minta Saran Guru">
                             <i class="fa-solid fa-chalkboard-user"></i>
                             <span>Tanya Guru</span>
                         </button>
-                        <button onclick="useLifelineHint()" id="lifelineHintBtn" class="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-amber-400 px-3 py-1.5 rounded-xl text-xs font-bold flex items-center space-x-1.5 shadow transition" title="Petunjuk Soal">
+                        <button onclick="useLifelineHint()" id="lifelineHintBtn" class="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-amber-400 px-3 py-2 rounded-xl text-xs font-bold flex items-center space-x-1.5 shadow transition" title="Petunjuk Soal">
                             <i class="fa-solid fa-lightbulb"></i>
                             <span>Petunjuk</span>
                         </button>
@@ -201,14 +350,10 @@
                     </div>
                 </div>
 
-                <!-- QUESTION PANEL -->
-                <div class="bg-slate-950/70 border border-slate-800 rounded-2xl p-5 md:p-6 mb-5 shadow-inner min-h-[130px] flex items-center justify-center text-center">
-                    <p id="questionText" class="text-base md:text-xl font-bold text-white leading-relaxed">
-                        Memuat pertanyaan...
-                    </p>
+                <div class="bg-slate-950/70 border border-slate-800 rounded-2xl p-5 md:p-6 mb-5 shadow-inner min-h-[140px] flex items-center justify-center text-center">
+                    <p id="questionText" class="text-base md:text-xl font-bold text-white leading-relaxed">Memuat pertanyaan...</p>
                 </div>
 
-                <!-- OPTIONS GRID (A, B, C, D) -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-6">
                     <button onclick="selectOption(0)" id="optionBtn0" class="option-btn text-left p-4 rounded-2xl flex items-center space-x-3 text-sm md:text-base font-semibold text-slate-200">
                         <span class="w-8 h-8 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-amber-400 font-bold shrink-0">A</span>
@@ -228,7 +373,6 @@
                     </button>
                 </div>
 
-                <!-- ACTION BUTTONS -->
                 <div class="flex justify-between items-center pt-3 border-t border-slate-800">
                     <button onclick="toggleSidebarMobile()" class="lg:hidden bg-slate-800 text-amber-400 px-4 py-2.5 rounded-xl text-xs font-bold border border-slate-700">
                         <i class="fa-solid fa-list-ol mr-1.5"></i> Tangga Hadiah
@@ -239,30 +383,25 @@
                         </button>
                     </div>
                 </div>
-
             </div>
 
-            <!-- RIGHT / PRIZE LADDER SIDEBAR (Positioned directly beside question panel) -->
-            <div id="prizeSidebar" class="w-full lg:w-80 bg-slate-900/90 border border-slate-800 rounded-3xl p-4 md:p-5 shadow-2xl flex flex-col justify-between shrink-0 h-auto self-stretch">
+            <!-- Sidebar Tangga Hadiah -->
+            <aside id="prizeSidebar" class="hidden lg:flex w-full lg:w-80 bg-slate-900/90 border border-slate-800 rounded-3xl p-4 md:p-5 shadow-2xl flex-col justify-between shrink-0 self-stretch">
                 <div>
                     <div class="flex justify-between items-center mb-3 pb-2 border-b border-slate-800">
                         <h3 class="text-xs font-bold text-amber-400 uppercase tracking-wider"><i class="fa-solid fa-trophy mr-1.5"></i> Tangga Hadiah (15 Level)</h3>
-                        <button onclick="toggleSidebarMobile()" class="lg:hidden text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+                        <button onclick="toggleSidebarMobile()" class="lg:hidden text-slate-400 hover:text-white p-1"><i class="fa-solid fa-xmark"></i></button>
                     </div>
-                    <!-- Ladder list container (scrollable and auto scrolls to current level) -->
-                    <div id="prizeLadderList" class="space-y-1.5 max-h-[460px] overflow-y-auto pr-1">
-                        <!-- Generated via JS -->
-                    </div>
+                    <div id="prizeLadderList" class="space-y-1.5 max-h-[460px] overflow-y-auto pr-1"></div>
                 </div>
                 <div class="mt-4 pt-3 border-t border-slate-800 text-center">
                     <p class="text-[11px] text-slate-400">Puncak Hadiah: <span class="text-amber-400 font-bold">Rp1.000.000.000</span></p>
                 </div>
-            </div>
+            </aside>
+        </section>
 
-        </div>
-
-        <!-- SCREEN 3: RESULT SCREEN -->
-        <div id="screenResult" class="w-full max-w-2xl hidden bg-slate-900/90 border border-slate-800 rounded-3xl p-6 md:p-10 shadow-2xl text-center">
+        <!-- ================= HALAMAN 4: HASIL AKHIR ================= -->
+        <section id="screenResult" class="w-full max-w-2xl hidden bg-slate-900/90 border border-slate-800 rounded-3xl p-6 md:p-10 shadow-2xl text-center">
             <div id="resultIconBadge" class="w-20 h-20 mx-auto rounded-3xl flex items-center justify-center text-3xl mb-4 shadow-xl">
                 <i class="fa-solid fa-award"></i>
             </div>
@@ -271,7 +410,7 @@
 
             <div class="bg-slate-950/70 border border-slate-800 rounded-2xl p-5 mb-6 text-left grid grid-cols-2 gap-4">
                 <div>
-                    <span class="text-[11px] text-slate-400 block font-semibold uppercase">Nama Pemain/Tim</span>
+                    <span class="text-[11px] text-slate-400 block font-semibold uppercase">Nama Pemain / Tim</span>
                     <span id="resPlayerName" class="text-sm md:text-base font-bold text-white">Budi</span>
                 </div>
                 <div>
@@ -300,9 +439,9 @@
                     <i class="fa-solid fa-house mr-2"></i> KEMBALI KE MENU
                 </button>
             </div>
-        </div>
+        </section>
 
-        <!-- MODAL: INSTRUCTIONS -->
+        <!-- MODAL: CARA BERMAIN -->
         <div id="instructionModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
             <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-lg w-full p-6 shadow-2xl relative">
                 <div class="flex justify-between items-center mb-4 pb-3 border-b border-slate-800">
@@ -310,16 +449,10 @@
                     <button onclick="closeInstructions()" class="text-slate-400 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
                 </div>
                 <div class="space-y-3 text-xs md:text-sm text-slate-300 max-h-[60vh] overflow-y-auto pr-2">
-                    <p>1. Game terdiri dari <strong class="text-amber-400">15 Level</strong> pertanyaan pilihan ganda Bahasa Indonesia Kelas 6 SD (Unsur Cerita, Surat, & Formulir) yang dipilih secara acak dari 30 bank soal tanpa pengulangan untuk setiap permainan baru.</p>
-                    <p>2. Pilih salah satu jawaban A, B, C, atau D, lalu tekan tombol <strong class="text-white">“Kunci Jawaban”</strong>.</p>
-                    <p>3. Jika jawaban benar, kamu akan naik ke level berikutnya dan hadiah virtual akan bertambah hingga Rp1.000.000.000!</p>
-                    <p>4. Tersedia 3 jenis bantuan yang bisa digunakan sekali per permainan:</p>
-                    <ul class="list-disc pl-5 space-y-1 text-slate-400">
-                        <li><strong class="text-amber-400">50:50</strong>: Menghilangkan 2 pilihan salah.</li>
-                        <li><strong class="text-amber-400">Tanya Guru</strong>: Meminta saran atau bimbingan guru.</li>
-                        <li><strong class="text-amber-400">Petunjuk</strong>: Membaca cluenya tanpa membuka jawaban langsung.</li>
-                    </ul>
-                    <p>5. Dapat dimainkan sendiri maupun dalam mode <strong class="text-blue-400">Dua Tim</strong> secara bergantian di kelas menggunakan komputer atau proyektor/IFP!</p>
+                    <p>1. Game terdiri dari <strong class="text-amber-400">15 Level</strong> pertanyaan pilihan ganda berjenjang hingga puncak <strong class="text-amber-400">Rp1.000.000.000</strong>.</p>
+                    <p>2. Pilih jawaban A, B, C, atau D, lalu tekan tombol <strong class="text-white">“Kunci Jawaban”</strong>.</p>
+                    <p>3. Tersedia 3 bantuan sekali pakai: <strong class="text-amber-400">50:50</strong>, <strong class="text-amber-400">Tanya Guru</strong>, dan <strong class="text-amber-400">Petunjuk</strong>.</p>
+                    <p>4. Guru dapat membuat soal baru dengan model AI <code class="text-amber-300">gemini-3.8-flash</code> melalui menu <strong class="text-blue-400">Generate Soal (Guru)</strong>.</p>
                 </div>
                 <div class="mt-6 pt-3 border-t border-slate-800 text-right">
                     <button onclick="closeInstructions()" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-5 py-2.5 rounded-xl text-xs">Mengerti</button>
@@ -327,254 +460,186 @@
             </div>
         </div>
 
-        <!-- MODAL: FEEDBACK / EXPLANATION POPUP -->
+        <!-- MODAL: FEEDBACK -->
         <div id="feedbackModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
             <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-md w-full p-6 shadow-2xl text-center">
-                <div id="feedbackIcon" class="w-16 h-16 mx-auto rounded-2xl flex items-center justify-center text-2xl mb-3 shadow-lg">
-                    <i class="fa-solid fa-check"></i>
-                </div>
+                <div id="feedbackIcon" class="w-16 h-16 mx-auto rounded-2xl flex items-center justify-center text-2xl mb-3 shadow-lg"><i class="fa-solid fa-check"></i></div>
                 <h3 id="feedbackTitle" class="text-xl font-black text-white mb-2">JAWABAN BENAR!</h3>
-                <p id="feedbackExplanation" class="text-xs md:text-sm text-slate-300 mb-6 bg-slate-950/60 p-4 rounded-2xl border border-slate-800 text-left">
-                    Penjelasan jawaban akan muncul di sini.
-                </p>
-                <button onclick="proceedNextStep()" id="feedbackNextBtn" class="w-full bg-gradient-to-r from-amber-500 to-yellow-400 hover:from-amber-400 hover:to-yellow-300 text-slate-950 font-black py-3.5 rounded-2xl shadow-lg text-sm transition">
-                    LANJUTKAN
-                </button>
+                <p id="feedbackExplanation" class="text-xs md:text-sm text-slate-300 mb-6 bg-slate-950/60 p-4 rounded-2xl border border-slate-800 text-left">Penjelasan...</p>
+                <button onclick="proceedNextStep()" class="w-full bg-gradient-to-r from-amber-500 to-yellow-400 hover:from-amber-400 hover:to-yellow-300 text-slate-950 font-black py-3.5 rounded-2xl shadow-lg text-sm transition">LANJUTKAN</button>
             </div>
         </div>
 
-        <!-- MODAL: LIFELINE ALERT / TEACHER NOTE -->
+        <!-- MODAL: INFO / LIFELINE -->
         <div id="lifelineModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
             <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-md w-full p-6 shadow-2xl text-center">
-                <div class="w-16 h-16 mx-auto rounded-2xl bg-blue-500/20 border border-blue-500/40 text-blue-400 flex items-center justify-center text-2xl mb-3 shadow-lg">
-                    <i id="lifelineModalIcon" class="fa-solid fa-chalkboard-user"></i>
+                <div class="w-16 h-16 mx-auto rounded-2xl bg-blue-500/20 border border-blue-500/40 text-blue-400 flex items-center justify-center text-2xl mb-3 shadow-lg"><i class="fa-solid fa-circle-info"></i></div>
+                <h3 id="lifelineModalTitle" class="text-lg font-bold text-white mb-2">Informasi</h3>
+                <p id="lifelineModalText" class="text-xs md:text-sm text-slate-300 mb-6 bg-slate-950/60 p-4 rounded-2xl border border-slate-800 text-left">Pesan...</p>
+                <button onclick="closeLifelineModal()" class="w-full bg-slate-800 hover:bg-slate-700 text-white font-bold py-3 rounded-xl text-xs md:text-sm transition">Tutup</button>
+            </div>
+        </div>
+
+        <!-- MODAL: API KEY -->
+        <div id="apiKeyModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
+            <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-md w-full p-6 shadow-2xl text-left">
+                <div class="flex justify-between items-center mb-4 pb-3 border-b border-slate-800">
+                    <h3 class="text-base font-bold text-amber-400 flex items-center space-x-2">
+                        <i class="fa-solid fa-key"></i>
+                        <span>Atur Gemini API Key</span>
+                    </h3>
+                    <button onclick="closeApiKeyModal()" class="text-slate-400 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
                 </div>
-                <h3 id="lifelineModalTitle" class="text-lg font-bold text-white mb-2">Bantuan Guru</h3>
-                <p id="lifelineModalText" class="text-xs md:text-sm text-slate-300 mb-6 bg-slate-950/60 p-4 rounded-2xl border border-slate-800 text-left">
-                    Pesan bantuan...
-                </p>
-                <button onclick="closeLifelineModal()" class="w-full bg-slate-800 hover:bg-slate-700 text-white font-bold py-3 rounded-xl text-xs md:text-sm transition">
-                    Kembali ke Soal
-                </button>
+
+                <div class="mb-4 flex items-center justify-between bg-slate-950/70 border border-slate-800 px-3.5 py-2.5 rounded-xl">
+                    <span class="text-xs text-slate-400 font-semibold">Status API Key:</span>
+                    <span id="modalApiKeyStatusBadge" class="text-xs font-bold px-2.5 py-1 rounded-lg bg-red-500/20 text-red-400 border border-red-500/30">Belum Diatur</span>
+                </div>
+
+                <label class="block text-xs font-bold text-slate-300 mb-1.5">Masukkan Gemini API Key:</label>
+                <div class="relative mb-3">
+                    <input type="password" id="geminiApiKeyInput" placeholder="AIzaSy..." class="w-full bg-slate-950 border border-slate-700 rounded-xl pl-3.5 pr-10 py-2.5 text-white text-xs md:text-sm focus:outline-none focus:border-amber-400">
+                    <button type="button" onclick="toggleApiKeyVisibility()" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white text-xs"><i id="apiKeyEyeIcon" class="fa-solid fa-eye"></i></button>
+                </div>
+
+                <div class="bg-blue-950/30 border border-blue-900/40 rounded-xl p-3 mb-5 text-[11px] text-blue-200 space-y-1">
+                    <p class="font-bold text-blue-300"><i class="fa-solid fa-circle-info mr-1"></i> Model AI Aktif:</p>
+                    <p>Menggunakan <code class="text-amber-300 font-bold">gemini-3.8-flash</code> untuk pembuatan soal otomatis yang akurat.</p>
+                </div>
+
+                <div class="flex items-center justify-between gap-2">
+                    <button onclick="deleteApiKey()" class="bg-red-950/70 hover:bg-red-900 text-red-300 border border-red-800/60 font-bold px-4 py-2.5 rounded-xl text-xs transition"><i class="fa-solid fa-trash mr-1"></i> Hapus</button>
+                    <div class="flex items-center gap-2">
+                        <button onclick="closeApiKeyModal()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold px-4 py-2.5 rounded-xl text-xs transition">Batal</button>
+                        <button onclick="saveApiKey()" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-black px-5 py-2.5 rounded-xl text-xs transition shadow-lg">Simpan</button>
+                    </div>
+                </div>
             </div>
         </div>
 
     </main>
 
     <footer class="w-full bg-slate-900/60 border-t border-slate-800/80 py-3 text-center text-[11px] text-slate-400">
-        WHO WANTS TO BE A MILLIONAIRE? • Bahasa Indonesia Kelas 6 SD • Media Pembelajaran Interaktif
+        WHO WANTS TO BE A MILLIONAIRE? • gemini-3.8-flash • SD / SMP / SMA
     </footer>
 
     <script>
-        // --- COMPLETE 30 QUESTION BANK (Unsur Cerita, Surat, & Formulir) ---
-        const questionBank = [
-            // Materi A: Unsur Intrinsik Cerita (Soal 1 - 10)
+        // Bank Soal Bawaan (Bahasa Indonesia Kelas 6 SD)
+        const defaultQuestionBank = [
             {
                 q: "Unsur cerita yang menunjukkan tokoh-tokoh yang terlibat dalam sebuah cerita disebut ....",
                 options: ["Tema", "Tokoh", "Alur", "Latar"],
                 correct: 1,
-                explanation: "Tokoh adalah pelaku atau pemeran yang terlibat dalam peristiwa di dalam cerita."
+                explanation: "Tokoh adalah pelaku atau pemeran yang terlibat dalam peristiwa di dalam cerita.",
+                hint: "Unsur ini merujuk pada pelaku atau pemeran yang mengalami peristiwa."
             },
             {
-                q: "Setiap pagi, Raka selalu membantu ibunya membersihkan halaman rumah. Ia juga rajin merawat tanaman di kebun. Sifat Raka adalah ....",
+                q: "Setiap pagi, Raka selalu membantu ibunya membersihkan halaman rumah. Sifat Raka adalah ....",
                 options: ["Pemalas", "Pemarah", "Rajin", "Sombong"],
                 correct: 2,
-                explanation: "Tindakan membantu ibu dan merawat tanaman menunjukkan watak atau sifat Raka yang rajin."
+                explanation: "Tindakan membantu ibu menunjukkan watak atau sifat Raka yang rajin.",
+                hint: "Perhatikan kebiasaan positif yang dilakukan Raka setiap pagi."
             },
             {
                 q: "Tempat, waktu, dan suasana terjadinya suatu peristiwa dalam cerita disebut ....",
                 options: ["Amanat", "Tema", "Latar", "Alur"],
                 correct: 2,
-                explanation: "Latar (setting) meliputi keterangan mengenai tempat, waktu, dan suasana dalam sebuah cerita."
+                explanation: "Latar (setting) meliputi keterangan mengenai tempat, waktu, dan suasana.",
+                hint: "Dalam bahasa Inggris sering disebut setting."
             },
             {
                 q: "Pagi itu, para siswa berkumpul di halaman sekolah untuk mengikuti upacara bendera. Latar tempatnya adalah ....",
                 options: ["Rumah", "Halaman sekolah", "Lapangan desa", "Ruang kelas"],
                 correct: 1,
-                explanation: "Kutipan menyebutkan 'di halaman sekolah', maka latar tempatnya adalah halaman sekolah."
+                explanation: "Kutipan menyebutkan 'di halaman sekolah'.",
+                hint: "Cari keterangan lokasi tempat para siswa berkumpul."
             },
             {
                 q: "Gagasan utama yang menjadi dasar sebuah cerita disebut ....",
                 options: ["Tema", "Tokoh", "Latar", "Amanat"],
                 correct: 0,
-                explanation: "Tema adalah gagasan pokok atau ide utama yang mendasari keseluruhan isi cerita."
+                explanation: "Tema adalah gagasan pokok atau ide utama yang mendasari keseluruhan isi cerita.",
+                hint: "Ide pokok yang melandasi seluruh jalan cerita."
             },
             {
                 q: "Pesan yang ingin disampaikan pengarang kepada pembaca disebut ....",
                 options: ["Alur", "Tema", "Amanat", "Latar"],
                 correct: 2,
-                explanation: "Amanat adalah pesan moral atau nasihat yang ingin disampaikan pengarang kepada pembaca."
+                explanation: "Amanat adalah pesan moral atau nasihat.",
+                hint: "Berisi nasihat atau pelajaran moral bagi pembaca."
             },
             {
-                q: "Danu menemukan dompet di halaman sekolah. Ia menyerahkannya kepada guru. Amanat cerita tersebut adalah ....",
-                options: ["Kita boleh mengambil barang temuan.", "Kita harus menyimpan barang temuan.", "Kita harus jujur terhadap barang milik orang lain.", "Kita sebaiknya menghindari guru."],
+                q: "Danu menemukan dompet di sekolah dan menyerahkannya kepada guru. Amanat cerita tersebut adalah ....",
+                options: ["Mengambil barang temuan", "Menyimpan barang", "Jujur terhadap barang milik orang lain", "Menghindari guru"],
                 correct: 2,
-                explanation: "Menyerahkan temuan kepada guru mencerminkan sifat jujur terhadap barang milik orang lain."
+                explanation: "Menyerahkan temuan kepada guru mencerminkan sifat jujur.",
+                hint: "Sikap terpuji saat mengembalikan dompet."
             },
             {
                 q: "Rangkaian peristiwa dari awal hingga akhir dalam sebuah cerita disebut ....",
                 options: ["Tokoh", "Alur", "Tema", "Amanat"],
                 correct: 1,
-                explanation: "Alur (plot) adalah rangkaian peristiwa atau jalan cerita dari awal hingga akhir."
+                explanation: "Alur (plot) adalah rangkaian peristiwa dari awal hingga akhir.",
+                hint: "Dikenal dengan istilah plot."
             },
             {
-                q: "Tokoh yang memiliki sifat baik dan biasanya menjadi tokoh yang disukai pembaca disebut tokoh ....",
+                q: "Tokoh yang memiliki sifat baik dan disukai pembaca disebut tokoh ....",
                 options: ["Antagonis", "Protagonis", "Tambahan", "Pembantu"],
                 correct: 1,
-                explanation: "Protagonis adalah tokoh utama yang berwatak baik."
+                explanation: "Protagonis adalah tokoh utama yang berwatak baik.",
+                hint: "Lawan dari antagonis."
             },
             {
-                q: "Bima berkata kepada Ardi, “Aku tidak akan meninggalkanmu sendirian. Kita akan mencari jalan keluar bersama.” Watak Bima adalah ....",
+                q: "Bima berkata, “Aku tidak akan meninggalkanmu sendirian. Kita cari jalan keluar bersama.” Watak Bima adalah ....",
                 options: ["Peduli", "Egois", "Sombong", "Penakut"],
                 correct: 0,
-                explanation: "Ucapan Bima yang bersedia menemani dan mencari jalan bersama menunjukkan kepedulian."
+                explanation: "Ucapan Bima menunjukkan kepedulian.",
+                hint: "Kesediaan menemani teman dalam kesulitan."
             },
-
-            // Materi B: Surat Resmi dan Surat Pribadi (Soal 11 - 20)
             {
                 q: "Surat untuk kepentingan pribadi yang ditujukan kepada orang yang dikenal disebut ....",
                 options: ["Surat resmi", "Surat dinas", "Surat pribadi", "Surat keputusan"],
                 correct: 2,
-                explanation: "Surat pribadi adalah surat yang dikirimkan untuk perorangan, seperti teman, saudara, atau orang tua."
+                explanation: "Surat pribadi dikirimkan untuk perorangan seperti teman atau keluarga.",
+                hint: "Bersifat nonformal."
             },
             {
                 q: "Salah satu ciri surat resmi adalah ....",
-                options: ["Menggunakan bahasa bebas", "Menggunakan bahasa baku", "Tidak memiliki tujuan", "Tidak mencantumkan identitas pengirim"],
+                options: ["Bahasa bebas", "Bahasa baku", "Tidak ada tujuan", "Tanpa pengirim"],
                 correct: 1,
-                explanation: "Surat resmi wajib menggunakan bahasa baku, sopan, dan sesuai kaidah bahasa Indonesia."
+                explanation: "Surat resmi wajib menggunakan bahasa baku dan sopan.",
+                hint: "Surat dari instansi atau sekolah."
             },
             {
                 q: "Bagian surat resmi yang memuat nama dan alamat lembaga disebut ....",
                 options: ["Salam pembuka", "Kop surat", "Isi surat", "Tanda tangan"],
                 correct: 1,
-                explanation: "Kop surat (kepala surat) terletak di bagian paling atas surat resmi yang memuat nama instansi/lembaga."
+                explanation: "Kop surat terletak di bagian paling atas surat resmi.",
+                hint: "Berada di posisi paling atas."
             },
-            {
-                q: "“Dengan hormat, dalam rangka memperingati Hari Pendidikan Nasional, kami mengundang Bapak/Ibu untuk menghadiri kegiatan ....” Kutipan tersebut merupakan bagian ....",
-                options: ["Kop surat", "Pembuka dan isi surat", "Alamat tujuan", "Tanda tangan"],
-                correct: 1,
-                explanation: "Kutipan tersebut menunjukkan kalimat pembuka serta isi dari surat resmi/undangan."
-            },
-            {
-                q: "Bahasa yang tepat digunakan dalam surat resmi adalah ....",
-                options: ["Bahasa santai", "Bahasa daerah", "Bahasa baku dan sopan", "Bahasa percakapan sehari-hari"],
-                correct: 2,
-                explanation: "Surat resmi harus ditulis menggunakan ragam bahasa baku dan sopan."
-            },
-            {
-                q: "Surat resmi yang dibuat sekolah biasanya digunakan untuk ....",
-                options: ["Mengundang teman bermain", "Menyampaikan informasi kedinasan", "Menceritakan liburan", "Menyapa keluarga"],
-                correct: 1,
-                explanation: "Surat resmi sekolah diperuntukkan bagi kepentingan kedinasan atau pemberitahuan kepada orang tua siswa."
-            },
-            {
-                q: "“Sapeken, 5 Oktober 2026. Kepada Yth. Orang Tua/Wali Murid Kelas VI di Tempat.” Bagian tersebut menunjukkan ....",
-                options: ["Tanggal dan alamat tujuan surat", "Salam penutup", "Isi surat", "Identitas pengirim"],
-                correct: 0,
-                explanation: "Bagian tersebut memuat tempat/tanggal pembuatan surat serta alamat tujuan surat."
-            },
-            {
-                q: "Kalimat yang tepat digunakan dalam surat resmi adalah ....",
-                options: ["Hai teman-teman, jangan lupa datang ya!", "Kami mengharap kehadiran Bapak/Ibu dalam kegiatan tersebut.", "Kamu harus datang karena acaranya seru banget.", "Jangan sampai tidak datang, ya!"],
-                correct: 1,
-                explanation: "Opsi kedua menggunakan ragam bahasa baku dan sopan yang sesuai untuk undangan resmi."
-            },
-            {
-                q: "“Sahabatku Rina, apa kabarmu? Semoga kamu dan keluargamu selalu sehat. Aku ingin bercerita tentang pengalaman mengikuti lomba.” Kutipan tersebut merupakan bagian dari ....",
-                options: ["Surat resmi", "Surat pribadi", "Surat dinas", "Surat keputusan"],
-                correct: 1,
-                explanation: "Kutipan tersebut menggunakan sapaan akrab 'Sahabatku' yang merupakan ciri khas surat pribadi."
-            },
-            {
-                q: "Perbedaan yang tepat antara surat resmi dan surat pribadi adalah ....",
-                options: ["Surat resmi menggunakan bahasa baku, sedangkan surat pribadi dapat menggunakan bahasa lebih santai.", "Surat resmi tidak memiliki tujuan.", "Surat pribadi selalu menggunakan kop surat.", "Surat resmi hanya boleh ditulis oleh siswa."],
-                correct: 0,
-                explanation: "Surat resmi bersifat formal dengan bahasa baku, sementara surat pribadi bersifat luwes dan santai."
-            },
-
-            // Materi C: Formulir (Soal 21 - 30)
             {
                 q: "Formulir adalah ....",
-                options: ["Cerita pengalaman", "Lembar isian yang harus diisi dengan data tertentu", "Surat untuk teman", "Tulisan berisi pendapat"],
+                options: ["Cerita pendek", "Lembar isian data tertentu", "Surat pribadi", "Puisi"],
                 correct: 1,
-                explanation: "Formulir adalah lembar atau surat isian yang berisi data diri atau informasi yang harus diisi."
-            },
-            {
-                q: "Data yang biasanya terdapat dalam formulir pendaftaran siswa adalah ....",
-                options: ["Nama lengkap", "Judul cerita", "Tokoh utama", "Amanat"],
-                correct: 0,
-                explanation: "Formulir pendaftaran memerlukan data identitas seperti nama lengkap, tempat tanggal lahir, dan alamat."
-            },
-            {
-                q: "Formulir yang memuat kolom nama lengkap, tempat tanggal lahir, alamat, dan jenis kelamin kemungkinan merupakan formulir ....",
-                options: ["Pendaftaran", "Daftar hadir upacara", "Surat pribadi", "Cerita pengalaman"],
-                correct: 0,
-                explanation: "Kolom-kolom tersebut merupakan standar utama dalam lembar formulir pendaftaran."
+                explanation: "Formulir adalah lembar isian data diri.",
+                hint: "Dokumen berupa lembaran kolom data."
             },
             {
                 q: "Saat mengisi formulir, data yang dituliskan harus ....",
-                options: ["Dibuat-buat", "Sesuai keadaan sebenarnya", "Menggunakan nama samaran", "Ditulis sembarangan"],
+                options: ["Dibuat-buat", "Sesuai keadaan sebenarnya", "Nama samaran", "Sembarangan"],
                 correct: 1,
-                explanation: "Informasi dalam formulir wajib diisi secara jujur dan sesuai dengan keadaan sebenarnya (faktual)."
-            },
-            {
-                q: "Kolom “Alamat” pada formulir digunakan untuk menuliskan ....",
-                options: ["Nama lengkap", "Tempat lahir", "Tempat tinggal", "Nama sekolah"],
-                correct: 2,
-                explanation: "Kolom alamat diisi dengan keterangan tempat tinggal atau domisili pemohon."
-            },
-            {
-                q: "Kolom “Nomor Telepon” digunakan untuk menuliskan ....",
-                options: ["Nomor telepon yang dapat dihubungi", "Nomor peserta ujian", "Nomor induk siswa", "Nomor halaman buku"],
-                correct: 0,
-                explanation: "Nomor telepon diisi dengan kontak aktif yang dapat dihubungi bilamana diperlukan."
-            },
-            {
-                q: "Data nama Siti Aminah, kelas VI, sekolah SDN Sapeken IV, dan kegiatan Lomba Membaca Puisi paling tepat digunakan dalam formulir ....",
-                options: ["Pendaftaran lomba", "Pengiriman surat pribadi", "Riwayat hidup tokoh cerita", "Surat undangan resmi"],
-                correct: 0,
-                explanation: "Data nama, sekolah, dan jenis lomba menunjukkan rincian formulir pendaftaran lomba."
-            },
-            {
-                q: "Penulisan nama pada formulir sebaiknya ....",
-                options: ["Menggunakan nama panggilan", "Menggunakan nama lengkap sesuai identitas", "Menggunakan nama teman", "Menggunakan nama samaran"],
-                correct: 1,
-                explanation: "Identitas resmi pada formulir harus diisi dengan nama lengkap sesuai dokumen kependudukan/sekolah."
-            },
-            {
-                q: "Jika formulir meminta data “Tempat, Tanggal Lahir”, penulisan yang tepat adalah ....",
-                options: ["Sapeken, 12 Mei 2014", "12 Mei", "Sapeken saja", "Mei 2014"],
-                correct: 0,
-                explanation: "Format penulisan yang benar mencakup kota tempat lahir diikuti tanda koma dan tanggal lengkap."
-            },
-            {
-                q: "Hal yang perlu diperhatikan ketika mengisi formulir adalah ....",
-                options: ["Mengisi data dengan benar dan tulisan yang jelas", "Mengosongkan semua bagian yang sulit", "Menulis nama panggilan", "Mengisi berdasarkan perkiraan"],
-                correct: 0,
-                explanation: "Ketelitian, kebenaran data, serta kerapian tulisan adalah hal terpenting saat mengisi formulir."
+                explanation: "Informasi dalam formulir wajib diisi jujur sesuai keadaan sebenarnya.",
+                hint: "Data harus faktual dan dapat dipertanggungjawabkan."
             }
         ];
 
-        // Prize values for exactly 15 levels starting from Rp100.000 to Rp1.000.000.000
         const prizeValues = [
-            "Rp100.000",
-            "Rp200.000",
-            "Rp300.000",
-            "Rp500.000",
-            "Rp1.000.000",
-            "Rp2.000.000",
-            "Rp4.000.000",
-            "Rp8.000.000",
-            "Rp16.000.000",
-            "Rp32.000.000",
-            "Rp64.000.000",
-            "Rp125.000.000",
-            "Rp250.000.000",
-            "Rp500.000.000",
-            "Rp1.000.000.000"
+            "Rp100.000", "Rp200.000", "Rp300.000", "Rp500.000", "Rp1.000.000",
+            "Rp2.000.000", "Rp4.000.000", "Rp8.000.000", "Rp16.000.000", "Rp32.000.000",
+            "Rp64.000.000", "Rp125.000.000", "Rp250.000.000", "Rp500.000.000", "Rp1.000.000.000"
         ];
 
-        // --- GAME STATE ---
+        let activeDefaultBank = JSON.parse(JSON.stringify(defaultQuestionBank));
         let gameState = {
             playerName: "Tamu",
             gameMode: "solo",
@@ -584,126 +649,490 @@
             level: 1,
             correctAnswersCount: 0,
             selectedOptionIndex: null,
-            lifelines: {
-                fifty: true,
-                teacher: true,
-                hint: true
-            },
+            lifelines: { fifty: true, teacher: true, hint: true },
             soundEnabled: true,
-            shuffledQuestions: []
+            shuffledQuestions: [],
+            isCustomAiPack: false,
+            customPackMeta: null,
+            customQuestionPool: []
         };
 
         let currentActiveQuestion = null;
+        let editingQuestionIndex = null;
 
-        // --- AUDIO SYNTHESIZER (Tone.js - Sound Effects Only) ---
+        window.addEventListener("DOMContentLoaded", () => {
+            updateClassOptions();
+            refreshApiKeyStatusUI();
+            renderGeneratorPreviewList();
+        });
+
+        function switchMainView(viewName) {
+            playSound('click');
+            const screenWelcome = document.getElementById("screenWelcome");
+            const screenGenerator = document.getElementById("screenGenerator");
+            const screenGame = document.getElementById("screenGame");
+            const screenResult = document.getElementById("screenResult");
+            const tabPlay = document.getElementById("navTabPlay");
+            const tabGen = document.getElementById("navTabGenerator");
+            const tabGenIcon = document.getElementById("navTabGeneratorIcon");
+
+            screenGame.classList.add("hidden");
+            screenGame.classList.remove("flex");
+            screenResult.classList.add("hidden");
+
+            if (viewName === 'generator') {
+                screenWelcome.classList.add("hidden");
+                screenGenerator.classList.remove("hidden");
+                screenGenerator.classList.add("flex");
+                tabGen.className = "flex-1 lg:flex-initial bg-amber-500 text-slate-950 font-extrabold px-4 py-2 rounded-xl text-xs md:text-sm flex items-center justify-center space-x-2 transition shadow";
+                tabGenIcon.className = "fa-solid fa-wand-magic-sparkles text-slate-950";
+                tabPlay.className = "flex-1 lg:flex-initial text-slate-300 hover:text-white font-bold px-4 py-2 rounded-xl text-xs md:text-sm flex items-center justify-center space-x-2 transition";
+                renderGeneratorPreviewList();
+            } else {
+                screenGenerator.classList.add("hidden");
+                screenGenerator.classList.remove("flex");
+                screenWelcome.classList.remove("hidden");
+                tabPlay.className = "flex-1 lg:flex-initial bg-amber-500 text-slate-950 font-extrabold px-4 py-2 rounded-xl text-xs md:text-sm flex items-center justify-center space-x-2 transition shadow";
+                tabGen.className = "flex-1 lg:flex-initial text-slate-300 hover:text-white font-bold px-4 py-2 rounded-xl text-xs md:text-sm flex items-center justify-center space-x-2 transition";
+                tabGenIcon.className = "fa-solid fa-wand-magic-sparkles text-amber-400";
+            }
+        }
+
+        function getStoredApiKey() {
+            try { return localStorage.getItem("gemini_api_key") || ""; } catch (e) { return ""; }
+        }
+
+        function refreshApiKeyStatusUI() {
+            const key = getStoredApiKey();
+            const headerStatus = document.getElementById("apiKeyHeaderStatus");
+            const dot = document.getElementById("apiKeyDot");
+            const badge = document.getElementById("modalApiKeyStatusBadge");
+
+            if (key && key.trim().length > 10) {
+                headerStatus.innerText = "API Key Tersimpan";
+                dot.className = "w-2.5 h-2.5 rounded-full bg-green-400 shadow-sm shadow-green-400";
+                if (badge) {
+                    badge.innerText = "Tersimpan";
+                    badge.className = "text-xs font-bold px-2.5 py-1 rounded-lg bg-green-500/20 text-green-400 border border-green-500/30";
+                }
+            } else {
+                headerStatus.innerText = "Atur API Key";
+                dot.className = "w-2.5 h-2.5 rounded-full bg-red-500";
+                if (badge) {
+                    badge.innerText = "Belum Diatur";
+                    badge.className = "text-xs font-bold px-2.5 py-1 rounded-lg bg-red-500/20 text-red-400 border border-red-500/30";
+                }
+            }
+        }
+
+        function openApiKeyModal() {
+            playSound('click');
+            document.getElementById("geminiApiKeyInput").value = getStoredApiKey();
+            refreshApiKeyStatusUI();
+            document.getElementById("apiKeyModal").classList.remove("hidden");
+        }
+
+        function closeApiKeyModal() {
+            playSound('click');
+            document.getElementById("apiKeyModal").classList.add("hidden");
+        }
+
+        function toggleApiKeyVisibility() {
+            const input = document.getElementById("geminiApiKeyInput");
+            const icon = document.getElementById("apiKeyEyeIcon");
+            if (input.type === "password") {
+                input.type = "text";
+                icon.className = "fa-solid fa-eye-slash";
+            } else {
+                input.type = "password";
+                icon.className = "fa-solid fa-eye";
+            }
+        }
+
+        function saveApiKey() {
+            playSound('click');
+            const val = document.getElementById("geminiApiKeyInput").value.trim();
+            if (!val) {
+                showInfoModal("Peringatan", "Masukkan Gemini API Key terlebih dahulu.");
+                return;
+            }
+            try { localStorage.setItem("gemini_api_key", val); } catch (e) {}
+            refreshApiKeyStatusUI();
+            closeApiKeyModal();
+            showInfoModal("API Key Tersimpan", "Gemini API Key berhasil disimpan.");
+        }
+
+        function deleteApiKey() {
+            playSound('click');
+            try { localStorage.removeItem("gemini_api_key"); } catch (e) {}
+            document.getElementById("geminiApiKeyInput").value = "";
+            refreshApiKeyStatusUI();
+            showInfoModal("API Key Dihapus", "Gemini API Key telah dihapus.");
+        }
+
+        function updateClassOptions() {
+            const jenjang = document.getElementById("aiJenjangSelect").value;
+            const kelasSelect = document.getElementById("aiKelasSelect");
+            kelasSelect.innerHTML = "";
+            let start = 1, end = 6;
+            if (jenjang === "SMP") { start = 7; end = 9; }
+            else if (jenjang === "SMA") { start = 10; end = 12; }
+            for (let k = start; k <= end; k++) {
+                const opt = document.createElement("option");
+                opt.value = k;
+                opt.textContent = "Kelas " + k;
+                kelasSelect.appendChild(opt);
+            }
+        }
+
+        // Generator menggunakan model gemini-3.8-flash sesuai permintaan
+        async function generateAiQuestions() {
+            playSound('click');
+            const apiKey = getStoredApiKey();
+            if (!apiKey) {
+                openApiKeyModal();
+                return;
+            }
+
+            const jenjang = document.getElementById("aiJenjangSelect").value;
+            const kelas = document.getElementById("aiKelasSelect").value;
+            const mapel = document.getElementById("aiMapelInput").value.trim();
+            const materi = document.getElementById("aiMateriInput").value.trim();
+            const difficulty = document.getElementById("aiDifficultySelect").value;
+
+            if (!mapel || !materi) {
+                showInfoModal("Data Belum Lengkap", "Harap isi Mata Pelajaran dan Materi Pokok.");
+                return;
+            }
+
+            const btn = document.getElementById("generateAiBtn");
+            const btnIcon = document.getElementById("generateAiIcon");
+            const btnText = document.getElementById("generateAiText");
+            const statusMsg = document.getElementById("aiStatusMessage");
+
+            btn.disabled = true;
+            btn.classList.add("opacity-75", "cursor-wait");
+            btnIcon.className = "fa-solid fa-spinner fa-spin";
+            btnText.innerText = "Membuat Soal (gemini-3.8-flash)...";
+            statusMsg.classList.remove("hidden");
+            statusMsg.className = "text-xs text-amber-400 mt-2.5 text-center animate-pulse";
+            statusMsg.innerText = `Memanggil gemini-3.8-flash untuk ${mapel} (${jenjang} Kelas ${kelas})...`;
+
+            const prompt = `Anda adalah guru profesional. Buatlah tepat 15 soal pilihan ganda untuk kuis dengan rincian:
+- Jenjang: ${jenjang}
+- Kelas: ${kelas}
+- Mata Pelajaran: ${mapel}
+- Materi: ${materi}
+- Tingkat Kesulitan: ${difficulty}
+
+Ketentuan:
+1. Hasilkan tepat 15 objek soal dalam array JSON.
+2. Setiap soal memiliki:
+   - "q": teks pertanyaan string.
+   - "options": array 4 pilihan jawaban string (A, B, C, D).
+   - "correct": indeks jawaban benar (0 sampai 3).
+   - "explanation": pembahasan singkat.
+   - "hint": petunjuk singkat.
+3. Kembalikan HANYA array JSON murni.`;
+
+            try {
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key=${encodeURIComponent(apiKey)}`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: prompt }] }],
+                        generationConfig: {
+                            responseMimeType: "application/json",
+                            temperature: 0.7
+                        }
+                    })
+                });
+
+                const data = await response.json();
+                if (!response.ok) {
+                    throw new Error(data?.error?.message || "Gagal terhubung ke Gemini API.");
+                }
+
+                const rawText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+                if (!rawText) throw new Error("Respons AI kosong.");
+
+                const parsed = JSON.parse(rawText);
+                const list = Array.isArray(parsed) ? parsed : (parsed.questions || []);
+                if (!Array.isArray(list) || list.length < 15) {
+                    throw new Error("Jumlah soal kurang dari 15. Silakan generate ulang.");
+                }
+
+                const cleanQuestions = list.slice(0, 15).map((item, idx) => ({
+                    q: String(item.q || `Pertanyaan ${idx + 1}`),
+                    options: Array.isArray(item.options) && item.options.length === 4 ? item.options.map(String) : ["A", "B", "C", "D"],
+                    correct: (typeof item.correct === "number" && item.correct >= 0 && item.correct <= 3) ? item.correct : 0,
+                    explanation: String(item.explanation || "Pembahasan soal."),
+                    hint: String(item.hint || "Perhatikan kata kunci.")
+                }));
+
+                applyCustomQuestionPack(cleanQuestions, { jenjang, kelas, mapel, materi, difficulty });
+                statusMsg.className = "text-xs text-green-400 mt-2.5 text-center font-semibold";
+                statusMsg.innerText = "Berhasil dibuat dengan gemini-3.8-flash!";
+                playSound('correct');
+                showInfoModal("Sukses!", "15 soal baru berhasil dibuat oleh gemini-3.8-flash!");
+            } catch (err) {
+                statusMsg.className = "text-xs text-red-400 mt-2.5 text-center";
+                statusMsg.innerText = "Gagal: " + err.message;
+                playSound('wrong');
+                showInfoModal("Gagal", err.message);
+            } finally {
+                btn.disabled = false;
+                btn.classList.remove("opacity-75", "cursor-wait");
+                btnIcon.className = "fa-solid fa-wand-magic-sparkles";
+                btnText.innerText = "Generate 15 Soal dengan gemini-3.8-flash";
+            }
+        }
+
+        function applyCustomQuestionPack(questionsArray, meta) {
+            gameState.isCustomAiPack = true;
+            gameState.customQuestionPool = questionsArray;
+            gameState.customPackMeta = meta;
+            editingQuestionIndex = null;
+            document.getElementById("activePackLabel").innerText = `${meta.mapel} (${meta.jenjang} Kelas ${meta.kelas})`;
+            document.getElementById("headerSubtitle").innerText = `${meta.mapel} • ${meta.jenjang} Kelas ${meta.kelas}`;
+            renderGeneratorPreviewList();
+        }
+
+        function resetToDefaultQuestions() {
+            playSound('click');
+            activeDefaultBank = JSON.parse(JSON.stringify(defaultQuestionBank));
+            gameState.isCustomAiPack = false;
+            gameState.customQuestionPool = [];
+            gameState.customPackMeta = null;
+            editingQuestionIndex = null;
+            document.getElementById("activePackLabel").innerText = "Bank Soal Bawaan: Bahasa Indonesia Kelas 6 SD (15 Soal)";
+            document.getElementById("headerSubtitle").innerText = "Bank Soal Bawaan: Bahasa Indonesia Kelas 6 SD";
+            document.getElementById("aiStatusMessage").classList.add("hidden");
+            renderGeneratorPreviewList();
+            showInfoModal("Direset", "Paket soal dikembalikan ke soal bawaan.");
+        }
+
+        function exportQuestionsJSON() {
+            playSound('click');
+            const activeList = gameState.isCustomAiPack ? gameState.customQuestionPool : activeDefaultBank;
+            const meta = gameState.isCustomAiPack ? gameState.customPackMeta : { mapel: "Bahasa_Indonesia" };
+            const blob = new Blob([JSON.stringify({ meta, questions: activeList }, null, 2)], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = `Millionaire_${meta.mapel || "Soal"}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function importQuestionsJSON(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const parsed = JSON.parse(e.target.result);
+                    const qList = Array.isArray(parsed) ? parsed : parsed.questions;
+                    const meta = parsed.meta || { jenjang: "Umum", kelas: "-", mapel: file.name.replace(".json", ""), materi: "Impor" };
+                    if (!Array.isArray(qList) || qList.length < 15) throw new Error("Minimal 15 soal.");
+                    const normalized = qList.slice(0, 15).map((item, idx) => ({
+                        q: String(item.q || `Soal ${idx + 1}`),
+                        options: Array.isArray(item.options) && item.options.length === 4 ? item.options.map(String) : ["A", "B", "C", "D"],
+                        correct: (typeof item.correct === "number" && item.correct >= 0 && item.correct <= 3) ? item.correct : 0,
+                        explanation: String(item.explanation || "Pembahasan"),
+                        hint: String(item.hint || "Petunjuk")
+                    }));
+                    applyCustomQuestionPack(normalized, meta);
+                    playSound('correct');
+                    showInfoModal("Berhasil", "Soal JSON berhasil dimuat.");
+                } catch (err) {
+                    playSound('wrong');
+                    showInfoModal("Gagal", err.message);
+                }
+                event.target.value = "";
+            };
+            reader.readAsText(file);
+        }
+
+        function renderGeneratorPreviewList() {
+            const listContainer = document.getElementById("generatorQuestionsList");
+            const summaryMeta = document.getElementById("generatorSummaryMeta");
+            const countBadge = document.getElementById("generatorQuestionCountBadge");
+            if (!listContainer) return;
+
+            const isCustom = gameState.isCustomAiPack && gameState.customQuestionPool.length > 0;
+            const questionsToRender = isCustom ? gameState.customQuestionPool : activeDefaultBank;
+
+            if (isCustom && gameState.customPackMeta) {
+                summaryMeta.innerText = `Paket AI: ${gameState.customPackMeta.mapel} (${gameState.customPackMeta.jenjang} Kelas ${gameState.customPackMeta.kelas})`;
+                countBadge.innerText = `${questionsToRender.length} Soal`;
+            } else {
+                summaryMeta.innerText = "Bank Soal Bawaan: Bahasa Indonesia Kelas 6 SD";
+                countBadge.innerText = `${questionsToRender.length} Soal`;
+            }
+
+            const optionLetters = ["A", "B", "C", "D"];
+            listContainer.innerHTML = "";
+
+            questionsToRender.forEach((item, idx) => {
+                const isEditing = editingQuestionIndex === idx;
+                const levelLabel = `Level ${idx + 1} (${prizeValues[idx] || ''})`;
+
+                if (isEditing) {
+                    listContainer.innerHTML += `
+                        <div class="bg-slate-950 border-2 border-amber-400 rounded-2xl p-4 space-y-3 shadow-lg">
+                            <div class="flex justify-between items-center">
+                                <span class="text-xs font-black text-amber-400 uppercase">Edit ${levelLabel}</span>
+                                <button onclick="cancelEditQuestion()" class="text-xs text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i> Batal</button>
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-bold text-slate-400 mb-1">Pertanyaan:</label>
+                                <textarea id="editQText_${idx}" rows="2" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white text-xs focus:outline-none focus:border-amber-400">${escapeHtml(item.q)}</textarea>
+                            </div>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                ${[0, 1, 2, 3].map(optIdx => `
+                                    <div>
+                                        <label class="block text-[10px] font-bold text-slate-400 mb-0.5">Pilihan ${optionLetters[optIdx]}:</label>
+                                        <input type="text" id="editOpt_${idx}_${optIdx}" value="${escapeHtml(item.options[optIdx])}" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-white text-xs focus:outline-none focus:border-amber-400">
+                                    </div>
+                                `).join("")}
+                            </div>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                <div>
+                                    <label class="block text-[11px] font-bold text-slate-400 mb-1">Kunci Jawaban:</label>
+                                    <select id="editCorrect_${idx}" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-1.5 text-white text-xs">
+                                        ${[0, 1, 2, 3].map(optIdx => `<option value="${optIdx}" ${item.correct === optIdx ? 'selected' : ''}>Pilihan ${optionLetters[optIdx]}</option>`).join("")}
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-[11px] font-bold text-slate-400 mb-1">Petunjuk:</label>
+                                    <input type="text" id="editHint_${idx}" value="${escapeHtml(item.hint || '')}" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-1.5 text-white text-xs">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-bold text-slate-400 mb-1">Pembahasan:</label>
+                                <textarea id="editExp_${idx}" rows="2" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-1.5 text-white text-xs">${escapeHtml(item.explanation || '')}</textarea>
+                            </div>
+                            <div class="flex justify-end space-x-2 pt-1">
+                                <button onclick="cancelEditQuestion()" class="bg-slate-800 text-slate-300 px-3.5 py-1.5 rounded-xl text-xs font-bold">Batal</button>
+                                <button onclick="saveEditedQuestion(${idx})" class="bg-amber-500 text-slate-950 px-4 py-1.5 rounded-xl text-xs font-black">Simpan</button>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    listContainer.innerHTML += `
+                        <div class="bg-slate-950/80 border border-slate-800 hover:border-slate-700 rounded-2xl p-4 transition">
+                            <div class="flex justify-between items-start gap-2 mb-2">
+                                <span class="bg-amber-500/15 text-amber-400 border border-amber-500/30 px-2.5 py-0.5 rounded-lg text-[11px] font-bold">${levelLabel}</span>
+                                <button onclick="startEditQuestion(${idx})" class="text-blue-400 bg-slate-900 border border-slate-800 px-2.5 py-1 rounded-lg text-[11px] font-bold flex items-center space-x-1">
+                                    <i class="fa-solid fa-pen-to-square"></i><span>Edit Soal</span>
+                                </button>
+                            </div>
+                            <p class="text-xs md:text-sm font-bold text-white mb-2.5 leading-relaxed">${escapeHtml(item.q)}</p>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-1.5 mb-2.5">
+                                ${item.options.map((opt, optIdx) => {
+                                    const isCorrectOpt = optIdx === item.correct;
+                                    return `
+                                        <div class="px-3 py-1.5 rounded-xl text-xs flex items-center space-x-2 ${isCorrectOpt ? 'bg-green-500/20 border border-green-500/40 text-green-300 font-bold' : 'bg-slate-900/90 border border-slate-800 text-slate-300'}">
+                                            <span class="font-black ${isCorrectOpt ? 'text-green-400' : 'text-slate-500'}">${optionLetters[optIdx]}.</span>
+                                            <span class="flex-grow">${escapeHtml(opt)}</span>
+                                        </div>
+                                    `;
+                                }).join("")}
+                            </div>
+                            <div class="text-[11px] text-slate-400 bg-slate-900/60 px-3 py-2 rounded-xl border border-slate-800">
+                                <strong class="text-slate-300">Pembahasan:</strong> ${escapeHtml(item.explanation)}
+                            </div>
+                        </div>
+                    `;
+                }
+            });
+        }
+
+        function escapeHtml(str) {
+            return String(str || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+        }
+
+        function startEditQuestion(idx) { playSound('click'); editingQuestionIndex = idx; renderGeneratorPreviewList(); }
+        function cancelEditQuestion() { playSound('click'); editingQuestionIndex = null; renderGeneratorPreviewList(); }
+        function saveEditedQuestion(idx) {
+            playSound('click');
+            const newQ = document.getElementById(`editQText_${idx}`).value.trim();
+            const newOpts = [0, 1, 2, 3].map(i => document.getElementById(`editOpt_${idx}_${i}`).value.trim() || `Pilihan ${i + 1}`);
+            const newCorrect = parseInt(document.getElementById(`editCorrect_${idx}`).value, 10);
+            const newHint = document.getElementById(`editHint_${idx}`).value.trim();
+            const newExp = document.getElementById(`editExp_${idx}`).value.trim();
+
+            if (!newQ) return;
+            const updatedObj = { q: newQ, options: newOpts, correct: newCorrect, explanation: newExp || "Pembahasan", hint: newHint || "Petunjuk" };
+
+            if (gameState.isCustomAiPack && gameState.customQuestionPool.length > idx) {
+                gameState.customQuestionPool[idx] = updatedObj;
+            } else {
+                activeDefaultBank[idx] = updatedObj;
+            }
+            editingQuestionIndex = null;
+            renderGeneratorPreviewList();
+        }
+
         let synth = null;
         let bassSynth = null;
 
-        let isMusicPlaying = false;
-
-        function toggleBgMusic() {
-            const audio = document.getElementById("bgMusic");
-            const icon = document.getElementById("bgMusicIcon");
-            const text = document.getElementById("bgMusicText");
-
-            if (isMusicPlaying) {
-                audio.pause();
-                isMusicPlaying = false;
-                icon.className = "fa-solid fa-music";
-                text.innerText = "Musik: Mati";
-            } else {
-                audio.play().then(() => {
-                    isMusicPlaying = true;
-                    icon.className = "fa-solid fa-compact-disc animate-spin";
-                    text.innerText = "Musik: Nyala";
-                }).catch(error => {
-                    console.log("Gagal memutar musik. Pastikan file music.mp3 ada di folder yang sama:", error);
-                    alert("File 'music.mp3' belum ditemukan di folder yang sama atau diblokir browser. Silakan letakkan file music.mp3 di folder yang sama dengan index.html.");
-                });
-            }
-            playSound('click');
-        }
-
         function initAudio() {
             try {
-                if (!synth) {
+                if (!synth && typeof Tone !== "undefined") {
                     synth = new Tone.PolySynth(Tone.Synth, {
                         oscillator: { type: "triangle" },
-                        envelope: { attack: 0.1, decay: 0.3, sustain: 0.4, release: 0.8 }
+                        envelope: { attack: 0.08, decay: 0.25, sustain: 0.3, release: 0.6 }
                     }).toDestination();
-                    synth.volume.value = -12;
+                    synth.volume.value = -10;
 
                     bassSynth = new Tone.MembraneSynth({
-                        pitchDecay: 0.05,
-                        octaves: 4,
+                        pitchDecay: 0.05, octaves: 4,
                         oscillator: { type: "sine" },
                         envelope: { attack: 0.01, decay: 0.4, sustain: 0.01, release: 0.4 }
                     }).toDestination();
                     bassSynth.volume.value = -6;
                 }
-            } catch (e) {
-                console.log("Audio context not initialized yet.");
-            }
+            } catch (e) {}
         }
 
         function playSound(type) {
-            if (!gameState.soundEnabled) return;
+            if (!gameState.soundEnabled || typeof Tone === "undefined") return;
             try {
-                if (Tone.context.state !== 'running') {
-                    Tone.start();
-                }
+                if (Tone.context.state !== 'running') Tone.start();
                 if (!synth) initAudio();
-
-                let now = Tone.now();
-                if (type === 'click') {
-                    synth.triggerAttackRelease(["C5"], "16n", now);
-                } else if (type === 'correct') {
-                    synth.triggerAttackRelease(["C4", "E4", "G4", "C5"], "4n", now);
-                } else if (type === 'wrong') {
+                const now = Tone.now();
+                if (type === 'click') synth.triggerAttackRelease(["C5"], "16n", now);
+                else if (type === 'lock') synth.triggerAttackRelease(["G4", "B4"], "8n", now);
+                else if (type === 'correct') synth.triggerAttackRelease(["C4", "E4", "G4", "C5"], "4n", now);
+                else if (type === 'wrong') {
                     bassSynth.triggerAttackRelease("F1", "2n", now);
                     synth.triggerAttackRelease(["C3", "F#3"], "2n", now);
-                } else if (type === 'lifeline') {
-                    synth.triggerAttackRelease(["G4", "C5", "E5"], "8n", now);
-                }
-            } catch (e) {
-                console.log("Audio play error:", e);
-            }
+                } else if (type === 'lifeline') synth.triggerAttackRelease(["G4", "C5", "E5"], "8n", now);
+            } catch (e) {}
         }
 
         function toggleSound() {
             gameState.soundEnabled = !gameState.soundEnabled;
             const icon = document.getElementById("soundIcon");
             const text = document.getElementById("soundText");
-            if (gameState.soundEnabled) {
-                icon.className = "fa-solid fa-volume-high";
-                text.innerText = "Suara: Nyala";
-            } else {
-                icon.className = "fa-solid fa-volume-xmark";
-                text.innerText = "Suara: Mati";
-            }
+            icon.className = gameState.soundEnabled ? "fa-solid fa-volume-high" : "fa-solid fa-volume-xmark";
+            text.innerText = gameState.soundEnabled ? "Suara: Nyala" : "Suara: Mati";
             playSound('click');
         }
 
         function toggleFullScreen() {
-            if (!document.fullscreenElement) {
-                document.documentElement.requestFullscreen().catch(err => {
-                    console.log("Error attempting to enable fullscreen:", err);
-                });
-            } else {
-                if (document.exitFullscreen) {
-                    document.exitFullscreen();
-                }
-            }
+            if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(() => {});
+            else if (document.exitFullscreen) document.exitFullscreen();
         }
 
-        // --- UI NAVIGATION & SETUP ---
         function setGameMode(mode) {
             gameState.gameMode = mode;
             playSound('click');
             const soloBtn = document.getElementById("modeSoloBtn");
             const duoBtn = document.getElementById("modeDuoBtn");
             const teamContainer = document.getElementById("teamNamesContainer");
-
             if (mode === 'solo') {
                 soloBtn.className = "bg-amber-500 text-slate-950 border-2 border-amber-400 font-bold py-3 px-4 rounded-xl text-sm flex items-center justify-center space-x-2 transition shadow-md";
                 duoBtn.className = "bg-slate-800 text-slate-300 border-2 border-slate-700 font-bold py-3 px-4 rounded-xl text-sm flex items-center justify-center space-x-2 transition hover:bg-slate-700";
@@ -715,25 +1144,12 @@
             }
         }
 
-        function openInstructions() {
-            playSound('click');
-            document.getElementById("instructionModal").classList.remove("hidden");
-        }
-
-        function closeInstructions() {
-            playSound('click');
-            document.getElementById("instructionModal").classList.add("hidden");
-        }
+        function openInstructions() { playSound('click'); document.getElementById("instructionModal").classList.remove("hidden"); }
+        function closeInstructions() { playSound('click'); document.getElementById("instructionModal").classList.add("hidden"); }
 
         function startGame() {
             playSound('click');
-            const nameInput = document.getElementById("playerNameInput").value.trim();
-            if (nameInput) {
-                gameState.playerName = nameInput;
-            } else {
-                gameState.playerName = gameState.gameMode === 'solo' ? "Pemain Solo" : "Tim Peserta";
-            }
-
+            gameState.playerName = document.getElementById("playerNameInput").value.trim() || (gameState.gameMode === 'solo' ? "Pemain" : "Tim");
             if (gameState.gameMode === 'duo') {
                 gameState.team1Name = document.getElementById("team1Input").value.trim() || "Tim A";
                 gameState.team2Name = document.getElementById("team2Input").value.trim() || "Tim B";
@@ -743,12 +1159,16 @@
             gameState.level = 1;
             gameState.correctAnswersCount = 0;
             gameState.lifelines = { fifty: true, teacher: true, hint: true };
-            
-            // Randomly select 15 unique questions from the 30-question bank without repetition for this session
-            let shuffledPool = [...questionBank].sort(() => Math.random() - 0.5);
-            gameState.shuffledQuestions = shuffledPool.slice(0, 15);
+
+            if (gameState.isCustomAiPack && gameState.customQuestionPool.length >= 15) {
+                gameState.shuffledQuestions = [...gameState.customQuestionPool.slice(0, 15)];
+            } else {
+                const pool = [...activeDefaultBank].sort(() => Math.random() - 0.5);
+                gameState.shuffledQuestions = pool.slice(0, 15);
+            }
 
             document.getElementById("screenWelcome").classList.add("hidden");
+            document.getElementById("screenGenerator").classList.add("hidden");
             document.getElementById("screenResult").classList.add("hidden");
             document.getElementById("screenGame").classList.remove("hidden");
             document.getElementById("screenGame").classList.add("flex");
@@ -771,42 +1191,30 @@
             }
         }
 
-        // --- RENDER PRIZE LADDER (15 Levels) ---
         function renderPrizeLadder() {
             const ladderContainer = document.getElementById("prizeLadderList");
             ladderContainer.innerHTML = "";
-
             for (let i = 15; i >= 1; i--) {
                 const isCurrent = i === gameState.level;
                 const isPassed = i < gameState.level;
-                
                 let itemClass = "flex justify-between items-center px-3 py-1.5 rounded-xl text-xs font-semibold transition ";
-                if (isCurrent) {
-                    itemClass += "bg-amber-500 text-slate-950 font-bold shadow-lg shadow-amber-500/20 scale-[1.02] border border-amber-300";
-                } else if (isPassed) {
-                    itemClass += "bg-slate-950/40 text-slate-500 line-through border border-slate-900";
-                } else {
-                    itemClass += "bg-slate-950/80 text-slate-300 border border-slate-800/60";
-                }
+                if (isCurrent) itemClass += "bg-amber-500 text-slate-950 font-bold shadow-lg scale-[1.02] border border-amber-300";
+                else if (isPassed) itemClass += "bg-slate-950/40 text-slate-500 line-through border border-slate-900";
+                else itemClass += "bg-slate-950/80 text-slate-300 border border-slate-800/60";
 
-                const itemHtml = `
+                ladderContainer.innerHTML += `
                     <div id="ladderItem${i}" class="${itemClass}">
-                        <span class="${isCurrent ? 'text-slate-950 font-bold' : (i % 5 === 0 ? 'text-amber-400 font-bold' : 'text-slate-400')}">Level ${i}</span>
-                        <span class="${isCurrent ? 'text-slate-950 font-black' : 'text-amber-400 font-bold'}">${prizeValues[i-1]}</span>
+                        <span class="${isCurrent ? 'text-slate-950 font-bold' : 'text-slate-400'}">Level ${i}</span>
+                        <span class="${isCurrent ? 'text-slate-950 font-black' : 'text-amber-400 font-bold'}">${prizeValues[i - 1]}</span>
                     </div>
                 `;
-                ladderContainer.innerHTML += itemHtml;
             }
-
             setTimeout(() => {
                 const activeElem = document.getElementById(`ladderItem${gameState.level}`);
-                if (activeElem) {
-                    activeElem.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                }
+                if (activeElem) activeElem.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
             }, 50);
         }
 
-        // --- LOAD QUESTION ---
         function loadQuestion() {
             gameState.selectedOptionIndex = null;
             const qData = gameState.shuffledQuestions[gameState.level - 1];
@@ -830,69 +1238,62 @@
             lockBtn.className = "bg-slate-800 text-slate-500 font-bold px-8 py-3 rounded-2xl text-sm transition shadow cursor-not-allowed";
             lockBtn.innerText = "Kunci Jawaban";
 
-            document.getElementById("lifeline50Btn").disabled = !gameState.lifelines.fifty;
-            document.getElementById("lifelineTeacherBtn").disabled = !gameState.lifelines.teacher;
-            document.getElementById("lifelineHintBtn").disabled = !gameState.lifelines.hint;
-            
-            if (!gameState.lifelines.fifty) document.getElementById("lifeline50Btn").classList.add("opacity-40", "cursor-not-allowed");
-            if (!gameState.lifelines.teacher) document.getElementById("lifelineTeacherBtn").classList.add("opacity-40", "cursor-not-allowed");
-            if (!gameState.lifelines.hint) document.getElementById("lifelineHintBtn").classList.add("opacity-40", "cursor-not-allowed");
-
+            updateLifelineButtonsUI();
+            updatePlayerTag();
             renderPrizeLadder();
         }
 
-        // --- SELECT OPTION & LOCK IN ---
+        function updateLifelineButtonsUI() {
+            const configs = [
+                { id: "lifeline50Btn", active: gameState.lifelines.fifty },
+                { id: "lifelineTeacherBtn", active: gameState.lifelines.teacher },
+                { id: "lifelineHintBtn", active: gameState.lifelines.hint }
+            ];
+            configs.forEach(c => {
+                const el = document.getElementById(c.id);
+                el.disabled = !c.active;
+                if (!c.active) el.classList.add("opacity-40", "cursor-not-allowed");
+                else el.classList.remove("opacity-40", "cursor-not-allowed");
+            });
+        }
+
         function selectOption(index) {
             playSound('click');
             gameState.selectedOptionIndex = index;
-
             for (let i = 0; i < 4; i++) {
                 const btn = document.getElementById("optionBtn" + i);
-                if (i === index) {
-                    btn.classList.add("selected");
-                } else {
-                    btn.classList.remove("selected");
-                }
+                if (i === index) btn.classList.add("selected");
+                else btn.classList.remove("selected");
             }
-
             const lockBtn = document.getElementById("lockInBtn");
             lockBtn.disabled = false;
-            lockBtn.className = "bg-gradient-to-r from-amber-500 to-yellow-400 hover:from-amber-400 hover:to-yellow-300 text-slate-950 font-black px-8 py-3 rounded-2xl text-sm transition shadow-lg cursor-pointer transform hover:-translate-y-0.5";
-            lockBtn.innerText = "Kunci Jawaban";
+            lockBtn.className = "bg-gradient-to-r from-amber-500 to-yellow-400 hover:from-amber-400 hover:to-yellow-300 text-slate-950 font-black px-8 py-3 rounded-2xl text-sm transition shadow-lg cursor-pointer";
         }
 
         function lockInAnswer() {
             if (gameState.selectedOptionIndex === null) return;
-            playSound('click');
-
+            playSound('lock');
             const selected = gameState.selectedOptionIndex;
             const correct = currentActiveQuestion.correct;
 
-            for (let i = 0; i < 4; i++) {
-                document.getElementById("optionBtn" + i).disabled = true;
-            }
-
+            for (let i = 0; i < 4; i++) document.getElementById("optionBtn" + i).disabled = true;
             document.getElementById("lockInBtn").disabled = true;
 
-            if (selected === correct) {
-                document.getElementById("optionBtn" + selected).classList.add("correct");
-                document.getElementById("optionBtn" + selected).classList.remove("selected");
-                playSound('correct');
-                gameState.correctAnswersCount++;
-
-                setTimeout(() => {
-                    showFeedbackModal(true, currentActiveQuestion.explanation);
-                }, 800);
-            } else {
-                document.getElementById("optionBtn" + selected).classList.add("wrong");
-                document.getElementById("optionBtn" + selected).classList.remove("selected");
-                document.getElementById("optionBtn" + correct).classList.add("correct");
-                playSound('wrong');
-
-                setTimeout(() => {
-                    showFeedbackModal(false, currentActiveQuestion.explanation);
-                }, 800);
-            }
+            setTimeout(() => {
+                if (selected === correct) {
+                    document.getElementById("optionBtn" + selected).classList.add("correct");
+                    document.getElementById("optionBtn" + selected).classList.remove("selected");
+                    playSound('correct');
+                    gameState.correctAnswersCount++;
+                    setTimeout(() => showFeedbackModal(true, currentActiveQuestion.explanation), 700);
+                } else {
+                    document.getElementById("optionBtn" + selected).classList.add("wrong");
+                    document.getElementById("optionBtn" + selected).classList.remove("selected");
+                    document.getElementById("optionBtn" + correct).classList.add("correct");
+                    playSound('wrong');
+                    setTimeout(() => showFeedbackModal(false, currentActiveQuestion.explanation), 800);
+                }
+            }, 450);
         }
 
         function showFeedbackModal(isCorrect, explanationText) {
@@ -912,7 +1313,6 @@
                 title.innerText = "JAWABAN SALAH!";
                 title.className = "text-xl font-black text-red-400 mb-2";
             }
-
             explanation.innerText = explanationText;
             modal.classList.remove("hidden");
         }
@@ -920,18 +1320,14 @@
         function proceedNextStep() {
             playSound('click');
             document.getElementById("feedbackModal").classList.add("hidden");
-
             const selected = gameState.selectedOptionIndex;
             const correct = currentActiveQuestion.correct;
 
             if (selected === correct) {
-                if (gameState.level >= 15) {
-                    endGame(true);
-                } else {
+                if (gameState.level >= 15) endGame(true);
+                else {
                     gameState.level++;
-                    if (gameState.gameMode === 'duo') {
-                        gameState.currentTeam = gameState.currentTeam === 1 ? 2 : 1;
-                    }
+                    if (gameState.gameMode === 'duo') gameState.currentTeam = gameState.currentTeam === 1 ? 2 : 1;
                     loadQuestion();
                 }
             } else {
@@ -939,68 +1335,41 @@
             }
         }
 
-        // --- LIFELINES ---
         function useLifeline5050() {
             if (!gameState.lifelines.fifty) return;
             gameState.lifelines.fifty = false;
             playSound('lifeline');
-            document.getElementById("lifeline50Btn").disabled = true;
-            document.getElementById("lifeline50Btn").classList.add("opacity-40", "cursor-not-allowed");
-
+            updateLifelineButtonsUI();
             const correct = currentActiveQuestion.correct;
-            let wrongIndices = [0, 1, 2, 3].filter(i => i !== correct);
-            wrongIndices.sort(() => Math.random() - 0.5);
-            const toHide = wrongIndices.slice(0, 2);
-
-            toHide.forEach(idx => {
-                const btn = document.getElementById("optionBtn" + idx);
-                btn.style.display = "none";
-            });
-
-            showLifelineModal("Bantuan 50:50", "Dua pilihan jawaban yang salah telah disingkirkan!");
+            const wrongIndices = [0, 1, 2, 3].filter(i => i !== correct).sort(() => Math.random() - 0.5);
+            wrongIndices.slice(0, 2).forEach(idx => document.getElementById("optionBtn" + idx).style.display = "none");
+            showInfoModal("Bantuan 50:50", "Dua pilihan salah telah dihilangkan.");
         }
 
         function useLifelineTeacher() {
             if (!gameState.lifelines.teacher) return;
             gameState.lifelines.teacher = false;
             playSound('lifeline');
-            document.getElementById("lifelineTeacherBtn").disabled = true;
-            document.getElementById("lifelineTeacherBtn").classList.add("opacity-40", "cursor-not-allowed");
-
-            showLifelineModal("Pendapat Guru", "Bapak/Ibu Guru menyarankan agar kamu membaca kembali dengan teliti kalimat atau teks yang ada pada soal sebelum memilih jawaban.");
+            updateLifelineButtonsUI();
+            showInfoModal("Tanya Guru", "Saran Guru: Analisis kembali kata kunci soal secara teliti.");
         }
 
         function useLifelineHint() {
             if (!gameState.lifelines.hint) return;
             gameState.lifelines.hint = false;
             playSound('lifeline');
-            document.getElementById("lifelineHintBtn").disabled = true;
-            document.getElementById("lifelineHintBtn").classList.add("opacity-40", "cursor-not-allowed");
-
-            let hintText = "Perhatikan kembali kata kunci pada pertanyaan.";
-            if (currentActiveQuestion.q.includes("Unsur")) {
-                hintText = "Petunjuk: Pikirkan kembali definisi unsur intrinsik cerita seperti tokoh, latar, tema, dan amanat.";
-            } else if (currentActiveQuestion.q.includes("surat") || currentActiveQuestion.q.includes("Kop")) {
-                hintText = "Petunjuk: Ingat kembali perbedaan ciri surat resmi (formal/baku) dan surat pribadi.";
-            } else if (currentActiveQuestion.q.includes("Formulir")) {
-                hintText = "Petunjuk: Ingat kembali ketentuan pengisian data diri dan formulir pendaftaran secara faktual.";
-            }
-
-            showLifelineModal("Petunjuk Soal", hintText);
+            updateLifelineButtonsUI();
+            showInfoModal("Petunjuk", currentActiveQuestion.hint || "Perhatikan inti pertanyaan.");
         }
 
-        function showLifelineModal(title, text) {
+        function showInfoModal(title, text) {
             document.getElementById("lifelineModalTitle").innerText = title;
             document.getElementById("lifelineModalText").innerText = text;
             document.getElementById("lifelineModal").classList.remove("hidden");
         }
 
-        function closeLifelineModal() {
-            playSound('click');
-            document.getElementById("lifelineModal").classList.add("hidden");
-        }
+        function closeLifelineModal() { playSound('click'); document.getElementById("lifelineModal").classList.add("hidden"); }
 
-        // --- END GAME ---
         function endGame(isWon) {
             document.getElementById("screenGame").classList.add("hidden");
             document.getElementById("screenGame").classList.remove("flex");
@@ -1013,56 +1382,32 @@
             const resLevel = document.getElementById("resLevel");
             const resCorrect = document.getElementById("resCorrectCount");
             const resPrize = document.getElementById("resPrize");
-            const motivation = document.getElementById("resMotivation");
 
-            let finalLvl = isWon ? 15 : Math.max(1, gameState.level - 1);
-            let prizeWon = prizeValues[finalLvl - 1] || "Rp100.000";
-
-            if (gameState.gameMode === 'solo') {
-                resName.innerText = gameState.playerName;
-            } else {
-                resName.innerText = gameState.playerName + " (" + (gameState.currentTeam === 1 ? gameState.team1Name : gameState.team2Name) + " giliran terakhir)";
-            }
-
-            resLevel.innerText = "Level " + finalLvl;
-            resCorrect.innerText = gameState.correctAnswersCount + " / 15";
-            resPrize.innerText = prizeWon;
+            const finalLvl = isWon ? 15 : Math.max(0, gameState.level - 1);
+            resName.innerText = gameState.gameMode === 'solo' ? gameState.playerName : `${gameState.playerName} (${gameState.currentTeam === 1 ? gameState.team1Name : gameState.team2Name})`;
+            resLevel.innerText = `Level ${finalLvl}`;
+            resCorrect.innerText = `${gameState.correctAnswersCount} / 15`;
+            resPrize.innerText = finalLvl > 0 ? prizeValues[finalLvl - 1] : "Rp0";
 
             if (isWon) {
                 iconBadge.className = "w-20 h-20 mx-auto rounded-3xl bg-amber-500/20 border border-amber-500/40 text-amber-400 flex items-center justify-center text-3xl mb-4 shadow-xl";
                 iconBadge.innerHTML = '<i class="fa-solid fa-trophy"></i>';
-                title.innerText = "LUAR BIASA! JUTAWAN SEJATI!";
-                subtitle.innerText = "Kamu berhasil menaklukkan 15 Level Bahasa Indonesia Kelas 6 SD hingga Rp1.000.000.000!";
-                motivation.innerText = "Hebat sekali! Penguasaan materi Unsur Cerita, Surat, dan Formulir milikmu sudah sangat sempurna!";
+                title.innerText = "JUTAWAN SEJATI!";
+                subtitle.innerText = "Berhasil menaklukkan seluruh 15 Level hingga Rp1.000.000.000!";
             } else {
                 iconBadge.className = "w-20 h-20 mx-auto rounded-3xl bg-blue-500/20 border border-blue-500/40 text-blue-400 flex items-center justify-center text-3xl mb-4 shadow-xl";
                 iconBadge.innerHTML = '<i class="fa-solid fa-award"></i>';
                 title.innerText = "PERMAINAN SELESAI";
-                subtitle.innerText = "Usaha yang sangat hebat! Teruslah berlatih.";
-                motivation.innerText = "Tetap semangat belajar! Semakin sering berlatih soal Bahasa Indonesia, nilai ujianmu pasti akan semakin memuaskan.";
+                subtitle.innerText = "Kerja bagus! Teruslah berlatih.";
             }
         }
 
-        function restartGame() {
-            playSound('click');
-            startGame();
-        }
-
-        function goToMenu() {
-            playSound('click');
-            document.getElementById("screenResult").classList.add("hidden");
-            document.getElementById("screenWelcome").classList.remove("hidden");
-        }
-
+        function restartGame() { playSound('click'); startGame(); }
+        function goToMenu() { playSound('click'); switchMainView('play'); }
         function toggleSidebarMobile() {
             const sidebar = document.getElementById("prizeSidebar");
-            if (sidebar.classList.contains("hidden")) {
-                sidebar.classList.remove("hidden");
-                sidebar.classList.add("flex");
-            } else {
-                sidebar.classList.add("hidden");
-                sidebar.classList.remove("flex");
-            }
+            if (sidebar.classList.contains("hidden")) { sidebar.classList.remove("hidden"); sidebar.classList.add("flex"); }
+            else { sidebar.classList.add("hidden"); sidebar.classList.remove("flex"); }
         }
     </script>
 </body>
