@@ -745,6 +745,15 @@
             </button>
           </div>
 
+          <!-- Tombol Konfirmasi Kunci Jawaban (Final Answer) -->
+          <div id="final-answer-bar" class="hidden pt-1 flex flex-col sm:flex-row items-center justify-center gap-3">
+            <button id="btn-confirm-final" onclick="confirmFinalAnswer()" class="btn-gold w-full sm:w-auto px-8 py-3.5 rounded-full text-sm sm:text-base tracking-wider flex items-center justify-center gap-2 shadow-2xl cursor-pointer">
+              <span>🔒</span>
+              <span id="final-answer-label">KUNCI JAWABAN (FINAL ANSWER)</span>
+            </button>
+            <span class="text-[11px] text-sky-300/90">Masih bisa ganti pilihan sebelum dikunci</span>
+          </div>
+
           <!-- Panel Grafik Tanya Audiens (Muncul saat dipakai) -->
           <div id="audience-panel" class="hidden studio-card rounded-2xl p-4 border-yellow-400/50 space-y-3">
             <div class="flex items-center justify-between">
@@ -1829,6 +1838,7 @@ Keterangan: "correct" adalah indeks 0, 1, 2, atau 3. "difficulty" adalah 1 (Muda
       backupQuestions: [],
       ladder: [],
       currentIndex: 0,
+      selectedOption: null,
       locked: false,
       timerSeconds: 30,
       timeLeft: 30,
@@ -1886,6 +1896,7 @@ Keterangan: "correct" adalah indeks 0, 1, 2, atau 3. "difficulty" adalah 1 (Muda
         backupQuestions: backups,
         ladder,
         currentIndex: 0,
+        selectedOption: null,
         locked: false,
         timerSeconds: timerSetting,
         timeLeft: timerSetting,
@@ -1930,8 +1941,10 @@ Keterangan: "correct" adalah indeks 0, 1, 2, atau 3. "difficulty" adalah 1 (Muda
     function loadCurrentQuestion() {
       const q = gameState.questions[gameState.currentIndex];
       const step = gameState.ladder[gameState.currentIndex];
+      gameState.selectedOption = null;
       gameState.locked = false;
 
+      document.getElementById('final-answer-bar').classList.add('hidden');
       document.getElementById('audience-panel').classList.add('hidden');
       document.getElementById('explanation-box').classList.add('hidden');
 
@@ -2015,13 +2028,96 @@ Keterangan: "correct" adalah indeks 0, 1, 2, atau 3. "difficulty" adalah 1 (Muda
 
     function selectAnswer(chosenIndex) {
       if (gameState.locked) return;
+      const optBtn = document.getElementById(`opt-btn-${chosenIndex}`);
+      if (optBtn.classList.contains('opt-eliminated')) return;
+
+      AudioEngine.playClick();
+      gameState.selectedOption = chosenIndex;
+
+      // Sorot pilihan yang sedang dipilih (belum dikunci)
+      for (let i = 0; i < 4; i++) {
+        const btn = document.getElementById(`opt-btn-${i}`);
+        btn.classList.remove('opt-locked');
+      }
+      optBtn.classList.add('opt-locked');
+
+      // Tampilkan tombol Kunci Jawaban (Final Answer)
+      const letters = ['A', 'B', 'C', 'D'];
+      document.getElementById('final-answer-label').textContent = `KUNCI JAWABAN ${letters[chosenIndex]}? (FINAL ANSWER)`;
+      document.getElementById('final-answer-bar').classList.remove('hidden');
+    }
+
+    function confirmFinalAnswer() {
+      if (gameState.locked || gameState.selectedOption === null) return;
+      const chosenIndex = gameState.selectedOption;
       gameState.locked = true;
       stopQuestionTimer();
+
+      document.getElementById('final-answer-bar').classList.add('hidden');
 
       // Disable semua tombol jawaban
       for (let i = 0; i < 4; i++) {
         document.getElementById(`opt-btn-${i}`).disabled = true;
       }
+
+      const chosenBtn = document.getElementById(`opt-btn-${chosenIndex}`);
+      chosenBtn.classList.add('opt-locked');
+      AudioEngine.playLockAnswer();
+
+      const q = gameState.questions[gameState.currentIndex];
+
+      // Ketegangan TV sebelum membuka jawaban (1.8 detik)
+      setTimeout(() => {
+        chosenBtn.classList.remove('opt-locked');
+        const correctBtn = document.getElementById(`opt-btn-${q.correct}`);
+
+        if (q.explanation) {
+          document.getElementById('explanation-text').textContent = q.explanation;
+          document.getElementById('explanation-box').classList.remove('hidden');
+        }
+
+        if (chosenIndex === q.correct) {
+          // BENAR!
+          correctBtn.classList.add('opt-correct');
+          const wonAmount = gameState.ladder[gameState.currentIndex].amount;
+
+          if (gameState.currentIndex === gameState.questions.length - 1) {
+            // MENANG 1 MILIAR!
+            AudioEngine.playBigWin();
+            setTimeout(() => {
+              endGame({
+                won: true,
+                prize: wonAmount,
+                title: 'JUARA 1 MILIAR!',
+                subtitle: 'Luar biasa! Anda menaklukkan seluruh pertanyaan!'
+              });
+            }, 2200);
+          } else {
+            AudioEngine.playCorrect();
+            showToast(`Benar! Hadiah Anda mencapai ${formatRupiah(wonAmount)}`, 'success');
+            setTimeout(() => {
+              gameState.currentIndex++;
+              loadCurrentQuestion();
+            }, 1900);
+          }
+        } else {
+          // SALAH!
+          chosenBtn.classList.add('opt-wrong');
+          correctBtn.classList.add('opt-correct');
+          AudioEngine.playWrong();
+
+          setTimeout(() => {
+            const safePrize = getGuaranteedSafePrize();
+            endGame({
+              won: false,
+              prize: safePrize,
+              title: 'JAWABAN KURANG TEPAT',
+              subtitle: `Jawaban yang benar adalah ${['A', 'B', 'C', 'D'][q.correct]}. ${q.options[q.correct]}`
+            });
+          }, 2400);
+        }
+      }, 1800);
+    }
 
       const chosenBtn = document.getElementById(`opt-btn-${chosenIndex}`);
       chosenBtn.classList.add('opt-locked');
@@ -2147,7 +2243,12 @@ Keterangan: "correct" adalah indeks 0, 1, 2, atau 3. "difficulty" adalah 1 (Muda
       toRemove.forEach(idx => {
         const optBtn = document.getElementById(`opt-btn-${idx}`);
         optBtn.disabled = true;
+        optBtn.classList.remove('opt-locked');
         optBtn.classList.add('opt-eliminated');
+        if (gameState.selectedOption === idx) {
+          gameState.selectedOption = null;
+          document.getElementById('final-answer-bar').classList.add('hidden');
+        }
       });
 
       showToast('Bantuan 50:50 digunakan! Dua jawaban salah dihilangkan.', 'info');
