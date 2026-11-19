@@ -101,6 +101,61 @@ button {
   box-shadow: inset 0 0 12px rgba(246, 196, 83, 0.1);
 }
 
+.top-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.api-badge-btn {
+  background: rgba(15, 39, 77, 0.85);
+  border: 1px solid rgba(77, 238, 234, 0.45);
+  border-radius: 99px;
+  padding: 7px 15px;
+  color: var(--cyan);
+  font-weight: 700;
+  font-size: 13px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+
+.api-badge-btn:hover {
+  border-color: var(--gold);
+  color: var(--gold-light);
+  background: rgba(25, 58, 110, 0.95);
+  transform: translateY(-1px);
+}
+
+.api-badge-btn.missing {
+  border-color: rgba(245, 158, 11, 0.7);
+  color: #fde68a;
+  box-shadow: 0 0 12px rgba(245, 158, 11, 0.22);
+}
+
+.api-link {
+  color: var(--cyan);
+  font-weight: 700;
+  text-decoration: underline;
+  word-break: break-all;
+}
+
+.api-link:hover {
+  color: var(--gold-light);
+}
+
+.input-group {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.input-group input {
+  flex: 1;
+}
+
 /* Screens */
 .screen {
   display: none;
@@ -901,7 +956,10 @@ body:has(#game.active) .top {
 <div class="wrap">
   <header class="top">
     <div class="brand">MILLIONAIRE CLASSROOM<small>MEDIA KUIS INTERAKTIF • SD • SMP • SMA</small></div>
-    <div class="pill" id="bankCount">15 soal tersedia</div>
+    <div class="top-right">
+      <button class="api-badge-btn missing" id="topApiBtn" onclick="openApiSettingsModal(false)">🔑 Pengaturan API Key</button>
+      <div class="pill" id="bankCount">15 soal tersedia</div>
+    </div>
   </header>
 
   <section id="home" class="screen active">
@@ -1054,23 +1112,19 @@ body:has(#game.active) .top {
         <textarea id="genNotes" placeholder="Tempel ringkasan materi, capaian pembelajaran, atau catatan guru di sini..."></textarea>
       </div>
       <div class="panel" style="margin-top:16px;background:rgba(7, 20, 46, 0.7)">
-        <h3>Konfigurasi AI (Opsional)</h3>
-        <div class="row">
-          <div class="field">
-            <label>Provider AI</label>
-            <select id="aiProvider">
-              <option value="builtin">Generator Materi Bawaan (Offline / Tanpa API)</option>
-              <option value="gemini">Google Gemini API</option>
-              <option value="openai">OpenAI Compatible API</option>
-            </select>
-          </div>
-          <div class="field">
-            <label>API Key (disimpan di browser ini saja)</label>
-            <input id="aiKey" type="password" placeholder="AIza... atau sk-...">
-          </div>
-          <div class="field">
-            <label>Model</label>
-            <input id="aiModel" value="gemini-2.5-flash">
+        <div class="game-head" style="margin-bottom:8px">
+          <h3 style="margin:0">Konfigurasi AI</h3>
+          <button type="button" class="btn ghost" style="padding:7px 14px;font-size:12.5px" onclick="openApiSettingsModal(false)">🔑 Kelola API Key & Panduan</button>
+        </div>
+        <p class="small muted" style="margin:0 0 12px">
+          Belum punya API Key? Dapatkan gratis di Google AI Studio:
+          <a class="api-link" href="https://aistudio.google.com/api-keys" target="_blank" rel="noopener noreferrer">https://aistudio.google.com/api-keys</a>
+        </p>
+        <div class="field" style="margin-bottom:0">
+          <label>API Key Google Gemini (tersimpan otomatis di browser ini)</label>
+          <div class="input-group">
+            <input id="aiKey" type="password" placeholder="Tempel API Key Anda di sini (contoh: AIza...)" oninput="syncAiConfigFromForm()">
+            <button type="button" class="btn ghost" style="padding:11px 13px" onclick="toggleInputVisibility('aiKey', this)">👁</button>
           </div>
         </div>
       </div>
@@ -1172,7 +1226,7 @@ body:has(#game.active) .top {
     </div>
   </div>
 </div>
-
+<audio id="bgMusic" src="music.mp3" loop preload="auto"></audio>
 <button class="music-toggle" id="musicBtn" onclick="toggleMusic()">🔇 Musik Latar</button>
 
 <script>
@@ -1196,7 +1250,137 @@ const DEFAULT_QUESTIONS=[
 {id:'d15',level:'SMA / MA / SMK',grade:'Kelas 12',subject:'Matematika',topic:'Turunan Fungsi',q:'Turunan pertama dari fungsi f(x) = 3x² + 4x - 7 adalah ...',options:['6x + 4','3x + 4','6x² + 4','6x - 7'],answer:0,exp:'Turunan 3x² adalah 6x, turunan 4x adalah 4, dan turunan konstanta -7 adalah 0.'}
 ];
 const KEY='wwtbm_bank_v1';
+const AI_CFG_KEY='wwtbm_ai_config';
 let bank=loadBank(),generatedCache=[],game=null,editId=null;
+let aiConfig=loadAiConfig();
+
+function loadAiConfig(){
+  try{
+    const raw=localStorage.getItem(AI_CFG_KEY);
+    if(raw){
+      const parsed=JSON.parse(raw);
+      return {
+        provider: parsed.offlineAck ? 'builtin' : 'gemini',
+        key: parsed.key || '',
+        model: 'gemini-2.5-flash',
+        offlineAck: Boolean(parsed.offlineAck)
+      };
+    }
+  }catch(e){}
+  return {provider:'gemini',key:'',model:'gemini-2.5-flash',offlineAck:false};
+}
+
+function saveAiConfig(){
+  localStorage.setItem(AI_CFG_KEY,JSON.stringify(aiConfig));
+  applyAiConfigToUI();
+}
+
+function applyAiConfigToUI(){
+  const kEl=document.getElementById('aiKey');
+  const topBtn=document.getElementById('topApiBtn');
+  if(kEl)kEl.value=aiConfig.key;
+  if(topBtn){
+    if(aiConfig.key.trim()){
+      topBtn.classList.remove('missing');
+      topBtn.textContent='🔑 API Key Aktif';
+    }else if(aiConfig.offlineAck){
+      topBtn.classList.remove('missing');
+      topBtn.textContent='🔑 Mode Offline (Atur API)';
+    }else{
+      topBtn.classList.add('missing');
+      topBtn.textContent='🔑 Pengaturan API Key';
+    }
+  }
+}
+
+function syncAiConfigFromForm(){
+  aiConfig.key=document.getElementById('aiKey').value.trim();
+  aiConfig.model='gemini-2.5-flash';
+  if(aiConfig.key){
+    aiConfig.provider='gemini';
+    aiConfig.offlineAck=false;
+  }
+  saveAiConfig();
+}
+
+function toggleInputVisibility(inputId, btn){
+  const inp=document.getElementById(inputId);
+  if(!inp)return;
+  if(inp.type==='password'){
+    inp.type='text';
+    btn.textContent='🙈';
+  }else{
+    inp.type='password';
+    btn.textContent='👁';
+  }
+}
+
+function openApiSettingsModal(isRequiredPrompt=false){
+  const title=isRequiredPrompt?'⚠️ API Key Belum Diatur':'🔑 Pengaturan API Key AI';
+  const body=isRequiredPrompt
+    ?'Untuk membuat soal otomatis menggunakan AI, silakan masukkan <b>API Key</b> terlebih dahulu. Anda juga dapat memilih mode offline bawaan jika belum memiliki API Key.'
+    :'Atur API Key Google Gemini Anda. Pengaturan ini disimpan secara lokal di browser Anda.';
+
+  const extra=`
+    <div class="notice" style="text-align:left;margin-bottom:14px">
+      <b>Cara Mendapatkan API Key Gratis (Google Gemini):</b><br>
+      1. Buka tautan resmi Google AI Studio berikut:<br>
+      <a class="api-link" href="https://aistudio.google.com/api-keys" target="_blank" rel="noopener noreferrer">https://aistudio.google.com/api-keys</a><br>
+      2. Login dengan akun Google Anda, klik <b>Create API key</b>, lalu salin kodenya dan tempel pada kolom di bawah ini.
+    </div>
+    <div style="text-align:left">
+      <div class="field">
+        <label>API Key Google Gemini</label>
+        <div class="input-group">
+          <input id="modalAiKey" type="password" value="${esc(aiConfig.key)}" placeholder="Tempel API Key Anda di sini (contoh: AIza...)">
+          <button type="button" class="btn ghost" style="padding:11px 13px" onclick="toggleInputVisibility('modalAiKey', this)">👁</button>
+        </div>
+      </div>
+      <div class="status" id="modalApiStatus"></div>
+    </div>
+  `;
+
+  const actions=`
+    <button type="button" class="btn" onclick="saveApiSettingsFromModal()">Simpan Pengaturan</button>
+    <button type="button" class="btn secondary" onclick="useOfflineModeFromModal()">Gunakan Mode Offline Saja</button>
+    <button type="button" class="btn ghost" onclick="closeModal()">Tutup</button>
+  `;
+
+  openModal(title, body, extra, actions);
+}
+
+function saveApiSettingsFromModal(){
+  const key=document.getElementById('modalAiKey').value.trim();
+  const st=document.getElementById('modalApiStatus');
+
+  if(!key){
+    st.className='status err';
+    st.textContent='API Key masih kosong. Silakan isi API Key atau pilih "Gunakan Mode Offline Saja".';
+    return;
+  }
+
+  aiConfig={provider:'gemini',key,model:'gemini-2.5-flash',offlineAck:false};
+  saveAiConfig();
+  closeModal();
+
+  const genSt=document.getElementById('genStatus');
+  if(genSt){
+    genSt.className='status ok';
+    genSt.textContent='Pengaturan API Key Google Gemini berhasil disimpan!';
+  }
+}
+
+function useOfflineModeFromModal(){
+  aiConfig.provider='builtin';
+  aiConfig.offlineAck=true;
+  saveAiConfig();
+  closeModal();
+  const genSt=document.getElementById('genStatus');
+  if(genSt){
+    genSt.className='status ok';
+    genSt.textContent='Mode Offline aktif. Anda dapat langsung menekan tombol Generate Soal tanpa API Key.';
+  }
+}
 
 function showNotice(title, msg, actions='<button class="btn" onclick="closeModal()">Tutup</button>'){
   openModal(title, esc(msg), '', actions);
@@ -1240,7 +1424,16 @@ function showScreen(id){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   if(id==='bank')renderBank();
-  if(id==='gameSetup')populateSetupTopics();
+  if(id==='gameSetup'){
+    populateSetupTopics();
+    tryAutoStartMusic();
+  }
+  if(id==='generator'){
+    applyAiConfigToUI();
+    if(aiConfig.provider!=='builtin'&&!aiConfig.key.trim()&&!aiConfig.offlineAck){
+      openApiSettingsModal(true);
+    }
+  }
 }
 function formatPrize(n){
   return n.toLocaleString('id-ID')+' Poin';
@@ -1262,6 +1455,7 @@ function startGame(customList=null){
     showNotice('Soal Belum Tersedia', 'Materi yang dipilih belum memiliki soal. Silakan buat soal di Generator AI terlebih dahulu.');
     return;
   }
+  tryAutoStartMusic();
   const ordered=customList?[...pool]:shuffle(pool);
   const questions=ordered.slice(0,Math.min(15,ordered.length));
   game={player,questions,idx:0,selected:null,locked:false,lifelines:{5050:true,aud:true,swap:true},reserve:ordered.slice(questions.length),earned:0};
@@ -1485,13 +1679,19 @@ function importBank(e){
 
 async function generateQuestions(){
   const level=document.getElementById('genLevel').value,grade=document.getElementById('genGrade').value,subject=document.getElementById('genSubject').value.trim()||'Pengetahuan Umum',topic=document.getElementById('genTopic').value.trim()||'Materi Utama',count=Number(document.getElementById('genCount').value),diff=document.getElementById('genDiff').value,notes=document.getElementById('genNotes').value.trim();
-  const provider=document.getElementById('aiProvider').value,key=document.getElementById('aiKey').value.trim(),model=document.getElementById('aiModel').value.trim()||'gemini-2.5-flash';
+  const key=document.getElementById('aiKey').value.trim(),model='gemini-2.5-flash';
   const st=document.getElementById('genStatus'),btn=document.getElementById('genBtn');
+
+  if(!key&&!aiConfig.offlineAck){
+    openApiSettingsModal(true);
+    return;
+  }
+
   btn.disabled=true;st.className='status';st.textContent='Sedang menyusun soal pembelajaran...';
   try{
     let items=[];
-    if(provider!=='builtin'&&key){
-      items=await generateWithAI({provider,key,model,level,grade,subject,topic,count,diff,notes});
+    if(key){
+      items=await generateWithAI({provider:'gemini',key,model,level,grade,subject,topic,count,diff,notes});
     }else{
       items=generateOfflineQuestions({level,grade,subject,topic,count,diff,notes});
     }
@@ -1561,9 +1761,13 @@ function esc(s){
 }
 updateBankCount();
 populateSetupTopics();
+applyAiConfigToUI();
 
-/* === Millionaire WebAudio music & suspense sound effects === */
-let audioCtx=null,musicOn=false,musicTimer=null,beatStep=0;
+/* === Millionaire music.mp3 player + WebAudio fallback & sound effects === */
+let audioCtx=null,musicOn=false,musicMode='none',musicTimer=null,beatStep=0,userAttemptedMusic=false;
+const bgMusicEl=document.getElementById('bgMusic');
+if(bgMusicEl)bgMusicEl.volume=0.45;
+
 function ensureAudio(){
   if(!audioCtx){
     const Ctx=window.AudioContext||window.webkitAudioContext;
@@ -1583,7 +1787,7 @@ function tone(freq,dur=0.22,type='triangle',vol=0.05,delay=0){
   osc.start(now);osc.stop(now+dur+0.03);
 }
 function playMusicPulse(){
-  if(!musicOn)return;
+  if(!musicOn||musicMode!=='synth')return;
   ensureAudio();
   const inGame=document.getElementById('game').classList.contains('active');
   const lvl=game?game.idx:0;
@@ -1594,18 +1798,86 @@ function playMusicPulse(){
   if(inGame&&beatStep%4===3)tone(note*3,0.12,'sine',0.018,0.12);
   beatStep++;
 }
-function toggleMusic(){
+function startSynthFallback(showToast=false){
+  musicMode='synth';
   ensureAudio();
-  musicOn=!musicOn;
+  if(musicTimer)clearInterval(musicTimer);
+  playMusicPulse();
+  musicTimer=setInterval(playMusicPulse,540);
   const btn=document.getElementById('musicBtn');
-  if(musicOn){
-    btn.textContent='🔊 Musik Aktif';btn.classList.add('playing');
-    playMusicPulse();
-    musicTimer=setInterval(playMusicPulse,540);
-  }else{
-    btn.textContent='🔇 Musik Latar';btn.classList.remove('playing');
-    clearInterval(musicTimer);musicTimer=null;
+  btn.textContent='🔊 Musik Aktif (Synth)';
+  btn.classList.add('playing');
+  if(showToast){
+    showMusicToast('File music.mp3 tidak ditemukan/gagal dimuat, beralih ke musik latar bawaan.');
   }
+}
+function showMusicToast(text){
+  let toast=document.getElementById('musicToast');
+  if(!toast){
+    toast=document.createElement('div');
+    toast.id='musicToast';
+    toast.style.cssText='position:fixed;right:20px;bottom:68px;z-index:35;max-width:300px;background:rgba(11,29,66,0.95);border:1px solid var(--gold);color:var(--gold-light);padding:10px 14px;border-radius:12px;font-size:12px;box-shadow:0 8px 24px rgba(0,0,0,0.45);transition:opacity 0.3s ease;';
+    document.body.appendChild(toast);
+  }
+  toast.textContent=text;
+  toast.style.opacity='1';
+  clearTimeout(toast._hideTimer);
+  toast._hideTimer=setTimeout(()=>{toast.style.opacity='0';},3500);
+}
+async function startBackgroundMusic(isAuto=false){
+  const btn=document.getElementById('musicBtn');
+  musicOn=true;
+  if(bgMusicEl){
+    try{
+      bgMusicEl.currentTime=bgMusicEl.currentTime||0;
+      await bgMusicEl.play();
+      musicMode='mp3';
+      if(musicTimer){clearInterval(musicTimer);musicTimer=null;}
+      btn.textContent='🔊 Musik Aktif';
+      btn.classList.add('playing');
+      if(!isAuto)showMusicToast('Memutar musik latar (music.mp3)');
+      return;
+    }catch(err){
+      startSynthFallback(!isAuto);
+      return;
+    }
+  }
+  startSynthFallback(!isAuto);
+}
+function stopBackgroundMusic(){
+  musicOn=false;
+  musicMode='none';
+  if(bgMusicEl){
+    bgMusicEl.pause();
+  }
+  if(musicTimer){
+    clearInterval(musicTimer);
+    musicTimer=null;
+  }
+  const btn=document.getElementById('musicBtn');
+  btn.textContent='🔇 Musik Latar';
+  btn.classList.remove('playing');
+}
+function toggleMusic(){
+  userAttemptedMusic=true;
+  if(!musicOn){
+    startBackgroundMusic(false);
+  }else{
+    stopBackgroundMusic();
+  }
+}
+function tryAutoStartMusic(){
+  if(!musicOn&&!userAttemptedMusic){
+    userAttemptedMusic=true;
+    startBackgroundMusic(true);
+  }
+}
+if(bgMusicEl){
+  bgMusicEl.addEventListener('error',()=>{
+    if(musicOn&&musicMode==='mp3'){
+      startSynthFallback(true);
+    }
+  });
 }
 function playSelectSound(){ensureAudio();tone(523.25,0.12,'triangle',0.07,0);tone(659.25,0.16,'triangle',0.07,0.07);}
 function playLockSound(){ensureAudio();[220,277.18,329.63,440].forEach((f,i)=>tone(f,0.28,'sawtooth',0.04,i*0.09));}
