@@ -541,8 +541,14 @@
                 <button onclick="saveApiKey()" class="btn-studio px-2.5 py-1.5 rounded-lg text-xs font-bold">Simpan</button>
                 <button onclick="clearApiKey()" class="px-2 py-1.5 rounded-lg text-xs bg-rose-950/80 border border-rose-500/40 text-rose-200 hover:bg-rose-900" title="Hapus API Key">✕</button>
               </div>
+              <div class="flex flex-wrap items-center justify-between gap-2 pt-0.5">
+                <a href="https://aistudio.google.com/api-keys" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 text-[11px] font-bold text-yellow-300 hover:text-yellow-200 underline">
+                  <span>↗ Dapatkan API Key Gratis (Google AI Studio)</span>
+                </a>
+                <span class="text-[10px] text-slate-400">Model: <strong class="text-sky-300">gemini-3-flash-preview</strong></span>
+              </div>
               <p class="text-[11px] text-slate-400 leading-relaxed">
-                Menggunakan model <span class="text-sky-300 font-semibold">gemini-3-flash-preview</span> dengan retry otomatis &amp; JSON terstruktur. Key tersimpan aman di browser Anda.
+                Key tersimpan aman secara lokal di browser Anda.
               </p>
             </div>
 
@@ -590,7 +596,7 @@
                       Agar soal yang dihasilkan benar-benar faktual, akurat, dan tidak mengada-ada sesuai topik maupun teks materi Anda, masukkan Google Gemini API Key gratis:
                     </p>
                     <ol class="list-decimal list-inside text-xs text-sky-200 space-y-1 pt-1">
-                      <li>Buka <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer" class="text-yellow-300 underline font-semibold">aistudio.google.com/apikey</a> dan login akun Google.</li>
+                      <li>Buka <a href="https://aistudio.google.com/api-keys" target="_blank" rel="noopener noreferrer" class="text-yellow-300 underline font-semibold">aistudio.google.com/api-keys</a> dan login akun Google.</li>
                       <li>Klik <strong>Create API Key</strong>, lalu salin kodenya.</li>
                       <li>Tempelkan pada kolom <strong>Google Gemini API Key</strong> di sebelah kiri dan klik <strong>Simpan</strong>.</li>
                     </ol>
@@ -2117,65 +2123,6 @@ Keterangan: "correct" adalah indeks 0, 1, 2, atau 3. "difficulty" adalah 1 (Muda
           }, 2400);
         }
       }, 1800);
-    }
-
-      const chosenBtn = document.getElementById(`opt-btn-${chosenIndex}`);
-      chosenBtn.classList.add('opt-locked');
-      AudioEngine.playLockAnswer();
-
-      const q = gameState.questions[gameState.currentIndex];
-
-      // Ketegangan TV sebelum membuka jawaban (1.3 detik)
-      setTimeout(() => {
-        chosenBtn.classList.remove('opt-locked');
-        const correctBtn = document.getElementById(`opt-btn-${q.correct}`);
-
-        if (q.explanation) {
-          document.getElementById('explanation-text').textContent = q.explanation;
-          document.getElementById('explanation-box').classList.remove('hidden');
-        }
-
-        if (chosenIndex === q.correct) {
-          // BENAR!
-          correctBtn.classList.add('opt-correct');
-          const wonAmount = gameState.ladder[gameState.currentIndex].amount;
-
-          if (gameState.currentIndex === gameState.questions.length - 1) {
-            // MENANG 1 MILIAR!
-            AudioEngine.playBigWin();
-            setTimeout(() => {
-              endGame({
-                won: true,
-                prize: wonAmount,
-                title: 'JUARA 1 MILIAR!',
-                subtitle: 'Luar biasa! Anda menaklukkan seluruh pertanyaan!'
-              });
-            }, 2200);
-          } else {
-            AudioEngine.playCorrect();
-            showToast(`Benar! Hadiah Anda mencapai ${formatRupiah(wonAmount)}`, 'success');
-            setTimeout(() => {
-              gameState.currentIndex++;
-              loadCurrentQuestion();
-            }, 1900);
-          }
-        } else {
-          // SALAH!
-          chosenBtn.classList.add('opt-wrong');
-          correctBtn.classList.add('opt-correct');
-          AudioEngine.playWrong();
-
-          setTimeout(() => {
-            const safePrize = getGuaranteedSafePrize();
-            endGame({
-              won: false,
-              prize: safePrize,
-              title: 'JAWABAN KURANG TEPAT',
-              subtitle: `Jawaban yang benar adalah ${['A', 'B', 'C', 'D'][q.correct]}. ${q.options[q.correct]}`
-            });
-          }, 2400);
-        }
-      }, 1350);
     }
 
     function getGuaranteedSafePrize() {
