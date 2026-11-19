@@ -1,1891 +1,2187 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Who Wants to Be a Millionaire? — Kuis Semua Jenjang</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<style>
-:root {
-  --navy: #040d21;
-  --navy-mid: #0a1d42;
-  --panel: rgba(14, 34, 71, 0.78);
-  --panel2: rgba(20, 48, 99, 0.85);
-  --gold: #f6c453;
-  --gold-light: #ffe89e;
-  --gold-dark: #c88a1e;
-  --cyan: #4deeea;
-  --white: #f8faff;
-  --muted: #9eb3d6;
-  --green: #10b981;
-  --red: #ef4444;
-  --border-glass: rgba(114, 159, 224, 0.25);
-}
-
-* {
-  box-sizing: border-box;
-}
-
-body {
-  margin: 0;
-  background: 
-    radial-gradient(circle at 50% -10%, #1d4e96 0%, #091c42 45%, #030917 100%);
-  background-attachment: fixed;
-  color: var(--white);
-  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
-  min-height: 100vh;
-  line-height: 1.5;
-  -webkit-font-smoothing: antialiased;
-}
-
-button, input, select, textarea {
-  font: inherit;
-}
-
-button {
-  cursor: pointer;
-  border: 0;
-}
-
-.wrap {
-  max-width: 1180px;
-  margin: auto;
-  padding: 24px;
-}
-
-/* Header Top */
-.top {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  margin-bottom: 24px;
-  padding: 14px 22px;
-  background: rgba(8, 22, 48, 0.65);
-  backdrop-filter: blur(12px);
-  border: 1px solid var(--border-glass);
-  border-radius: 16px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-}
-
-.brand {
-  font-family: 'Cinzel', Georgia, serif;
-  font-weight: 900;
-  font-size: 18px;
-  letter-spacing: 0.08em;
-  color: var(--gold);
-  text-shadow: 0 2px 10px rgba(246, 196, 83, 0.3);
-}
-
-.brand small {
-  display: block;
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  color: var(--cyan);
-  font-weight: 700;
-  font-size: 11px;
-  letter-spacing: 0.12em;
-  margin-top: 2px;
-}
-
-.pill {
-  background: rgba(22, 52, 95, 0.6);
-  border: 1px solid rgba(246, 196, 83, 0.35);
-  border-radius: 99px;
-  padding: 7px 16px;
-  color: var(--gold-light);
-  font-weight: 700;
-  font-size: 13px;
-  letter-spacing: 0.02em;
-  box-shadow: inset 0 0 12px rgba(246, 196, 83, 0.1);
-}
-
-.top-right {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-.api-badge-btn {
-  background: rgba(15, 39, 77, 0.85);
-  border: 1px solid rgba(77, 238, 234, 0.45);
-  border-radius: 99px;
-  padding: 7px 15px;
-  color: var(--cyan);
-  font-weight: 700;
-  font-size: 13px;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  transition: all 0.2s ease;
-}
-
-.api-badge-btn:hover {
-  border-color: var(--gold);
-  color: var(--gold-light);
-  background: rgba(25, 58, 110, 0.95);
-  transform: translateY(-1px);
-}
-
-.api-badge-btn.missing {
-  border-color: rgba(245, 158, 11, 0.7);
-  color: #fde68a;
-  box-shadow: 0 0 12px rgba(245, 158, 11, 0.22);
-}
-
-.api-link {
-  color: var(--cyan);
-  font-weight: 700;
-  text-decoration: underline;
-  word-break: break-all;
-}
-
-.api-link:hover {
-  color: var(--gold-light);
-}
-
-.input-group {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-}
-
-.input-group input {
-  flex: 1;
-}
-
-/* Screens */
-.screen {
-  display: none;
-}
-
-.screen.active {
-  display: block;
-  animation: screenIn 0.45s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-@keyframes screenIn {
-  from { opacity: 0; transform: translateY(12px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* Hero Section */
-.hero {
-  text-align: center;
-  padding: 36px 20px 36px;
-  position: relative;
-}
-
-.orb {
-  width: 124px;
-  height: 124px;
-  border-radius: 50%;
-  margin: 0 auto 24px;
-  border: 3px solid var(--gold);
-  background: radial-gradient(circle at 35% 35%, #1e4b8f, #071636 75%);
-  box-shadow: 
-    0 0 0 6px rgba(246, 196, 83, 0.12),
-    0 0 40px rgba(246, 196, 83, 0.45),
-    inset 0 0 24px rgba(77, 238, 234, 0.35);
-  display: grid;
-  place-items: center;
-  font-size: 46px;
-  color: var(--gold);
-  font-weight: 900;
-  animation: orbFloat 4s ease-in-out infinite;
-}
-
-@keyframes orbFloat {
-  0%, 100% { transform: translateY(0); box-shadow: 0 0 0 6px rgba(246, 196, 83, 0.12), 0 0 35px rgba(246, 196, 83, 0.45); }
-  50% { transform: translateY(-6px); box-shadow: 0 0 0 8px rgba(246, 196, 83, 0.18), 0 0 50px rgba(246, 196, 83, 0.65); }
-}
-
-.hero h1 {
-  font-family: 'Cinzel', Georgia, serif;
-  font-size: clamp(30px, 5vw, 54px);
-  line-height: 1.1;
-  margin: 0;
-  background: linear-gradient(180deg, #fff5d6 0%, #f6c453 55%, #c88a1e 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 4px 18px rgba(246, 196, 83, 0.25));
-}
-
-.hero p {
-  color: var(--muted);
-  font-size: 16px;
-  max-width: 620px;
-  margin: 16px auto 28px;
-}
-
-.actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 14px;
-  justify-content: center;
-}
-
-/* Buttons */
-.btn {
-  padding: 13px 24px;
-  border-radius: 12px;
-  background: linear-gradient(135deg, #ffe082 0%, #f6c453 50%, #d99720 100%);
-  color: #0e172a;
-  font-weight: 800;
-  font-size: 14px;
-  letter-spacing: 0.03em;
-  box-shadow: 0 6px 20px rgba(246, 196, 83, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.6);
-  transition: all 0.2s ease;
-}
-
-.btn:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 26px rgba(246, 196, 83, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.8);
-  filter: brightness(1.05);
-}
-
-.btn:active:not(:disabled) {
-  transform: translateY(0);
-}
-
-.btn.secondary {
-  background: linear-gradient(145deg, #173766, #0f2547);
-  color: var(--white);
-  border: 1px solid rgba(101, 217, 232, 0.35);
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
-}
-
-.btn.secondary:hover:not(:disabled) {
-  border-color: var(--cyan);
-  background: linear-gradient(145deg, #1d447d, #132e57);
-  box-shadow: 0 8px 22px rgba(77, 238, 234, 0.2);
-}
-
-.btn.ghost {
-  background: rgba(255, 255, 255, 0.04);
-  color: var(--muted);
-  border: 1px solid var(--border-glass);
-  box-shadow: none;
-}
-
-.btn.ghost:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.09);
-  color: var(--white);
-  border-color: rgba(255, 255, 255, 0.3);
-}
-
-.btn:disabled {
-  opacity: 0.45;
-  cursor: not-allowed;
-}
-
-/* Cards & Grid */
-.grid {
-  display: grid;
-  grid-template-columns: 1.45fr 1fr;
-  gap: 20px;
-}
-
-.panel {
-  background: var(--panel);
-  backdrop-filter: blur(14px);
-  border: 1px solid var(--border-glass);
-  border-radius: 20px;
-  padding: 24px;
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
-}
-
-.panel h2, .panel h3 {
-  margin: 0 0 16px;
-  color: var(--gold-light);
-  font-weight: 800;
-}
-
-.panel ol {
-  padding-left: 20px;
-  margin: 0;
-  display: grid;
-  gap: 8px;
-}
-
-.muted {
-  color: var(--muted);
-}
-
-.small {
-  font-size: 13.5px;
-}
-
-.game-head {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 12px;
-  margin-bottom: 14px;
-}
-
-/* Form Elements */
-.field {
-  display: grid;
-  gap: 8px;
-  margin: 14px 0;
-}
-
-.field label {
-  font-size: 13px;
-  color: var(--gold-light);
-  font-weight: 700;
-}
-
-.field input, .field select, .field textarea {
-  width: 100%;
-  padding: 12px 14px;
-  border-radius: 12px;
-  border: 1px solid rgba(101, 217, 232, 0.25);
-  background: rgba(5, 15, 36, 0.8);
-  color: var(--white);
-  outline: none;
-  transition: border-color 0.2s, box-shadow 0.2s;
-}
-
-.field input:focus, .field select:focus, .field textarea:focus {
-  border-color: var(--gold);
-  box-shadow: 0 0 0 3px rgba(246, 196, 83, 0.18);
-}
-
-.field textarea {
-  min-height: 90px;
-  resize: vertical;
-}
-
-.row {
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-
-.row > * {
-  flex: 1;
-}
-
-.notice {
-  padding: 14px 16px;
-  border-radius: 12px;
-  background: rgba(20, 48, 92, 0.65);
-  color: #d2e2fa;
-  border-left: 4px solid var(--cyan);
-  border-top: 1px solid rgba(77, 238, 234, 0.2);
-  border-right: 1px solid rgba(77, 238, 234, 0.2);
-  border-bottom: 1px solid rgba(77, 238, 234, 0.2);
-  font-size: 13.5px;
-  line-height: 1.55;
-}
-
-.status {
-  margin-top: 10px;
-  font-size: 13.5px;
-  font-weight: 600;
-  min-height: 20px;
-}
-
-.status.ok {
-  color: #34d399;
-}
-
-.status.err {
-  color: #f87171;
-}
-
-/* Toolbar & Tables (Bank Soal) */
-.toolbar {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-  margin-bottom: 18px;
-}
-
-.table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 13.5px;
-}
-
-.table th, .table td {
-  padding: 12px;
-  border-bottom: 1px solid var(--border-glass);
-  text-align: left;
-  vertical-align: top;
-}
-
-.table th {
-  color: var(--gold);
-  font-weight: 800;
-  background: rgba(6, 18, 43, 0.5);
-}
-
-.question-item {
-  padding: 16px;
-  border: 1px solid var(--border-glass);
-  border-radius: 14px;
-  margin: 12px 0;
-  background: rgba(7, 20, 46, 0.75);
-  transition: border-color 0.2s;
-}
-
-.question-item:hover {
-  border-color: rgba(246, 196, 83, 0.4);
-}
-
-.question-item p {
-  margin: 0 0 8px;
-}
-
-.question-item .meta {
-  font-size: 12px;
-  color: var(--cyan);
-  font-weight: 600;
-}
-
-/* Music Toggle Button */
-.music-toggle {
-  position: fixed;
-  right: 20px;
-  bottom: 20px;
-  z-index: 30;
-  border: 1px solid var(--gold);
-  background: rgba(11, 29, 66, 0.9);
-  backdrop-filter: blur(8px);
-  color: var(--gold-light);
-  border-radius: 999px;
-  padding: 11px 18px;
-  font-weight: 800;
-  font-size: 13px;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
-  transition: all 0.2s ease;
-}
-
-.music-toggle:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 28px rgba(246, 196, 83, 0.35);
-}
-
-.music-toggle.playing {
-  background: linear-gradient(135deg, #b8831d, #704d0c);
-  color: #fff;
-  border-color: #ffe89e;
-}
-
-/* Modal */
-.modal {
-  position: fixed;
-  inset: 0;
-  background: rgba(2, 7, 20, 0.82);
-  backdrop-filter: blur(6px);
-  display: none;
-  place-items: center;
-  padding: 18px;
-  z-index: 50;
-}
-
-.modal.show {
-  display: grid;
-  animation: screenIn 0.25s ease;
-}
-
-.modal-card {
-  max-width: 520px;
-  width: 100%;
-  background: linear-gradient(160deg, #132e61 0%, #091836 100%);
-  border: 1px solid var(--gold);
-  border-radius: 22px;
-  padding: 28px;
-  text-align: center;
-  box-shadow: 0 25px 70px rgba(0, 0, 0, 0.7), 0 0 30px rgba(246, 196, 83, 0.2);
-}
-
-.modal-card h2 {
-  font-family: 'Cinzel', Georgia, serif;
-  color: var(--gold);
-  margin-top: 0;
-}
-
-.footer {
-  text-align: center;
-  color: #6c85ad;
-  font-size: 12px;
-  padding: 32px 10px 16px;
-}
-
-.hidden {
-  display: none !important;
-}
-
-/* =========================================================
-   MILLIONAIRE TV GAME STAGE (PANGGUNG KUIS UTAMA)
-   ========================================================= */
-#game.screen.active {
-  display: block;
-  min-height: 100vh;
-}
-
-body:has(#game.active) {
-  background: 
-    radial-gradient(ellipse at 50% 35%, #1c246b 0%, #0a1b4d 48%, #02081c 100%);
-  overflow-x: hidden;
-}
-
-body:has(#game.active) .top {
-  background: rgba(5, 14, 38, 0.75);
-  border-color: rgba(246, 196, 83, 0.25);
-  margin-bottom: 10px;
-  padding: 10px 18px;
-}
-
-#game .millionaire-stage {
-  width: min(100%, 1200px);
-  min-height: calc(100vh - 90px);
-  margin: 0 auto;
-  padding: 4px 12px 24px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-#game .game-columns {
-  width: 100%;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 250px;
-  gap: 24px;
-  align-items: start;
-}
-
-#game .game-main {
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  min-width: 0;
-}
-
-/* Meta Bar (Pertanyaan X/15 & Nama Pemain) */
-#game .game-main .stage-meta {
-  order: 0;
-  width: 100%;
-  min-height: 32px;
-  margin: 0 0 12px;
-  padding: 0 8px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-#game .level {
-  color: var(--gold);
-  text-shadow: 0 0 12px rgba(246, 196, 83, 0.5);
-  font-size: 14px;
-  font-weight: 800;
-  letter-spacing: 0.14em;
-}
-
-/* Kotak Pertanyaan Segi Enam TV Show */
-#game .game-main .question-wrap {
-  order: 1;
-  width: 100%;
-  position: relative;
-  margin: 0 0 18px;
-}
-
-#game .question-wrap::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 50%;
-  height: 2px;
-  background: linear-gradient(90deg, transparent 0%, #f6c453 15%, #f6c453 85%, transparent 100%);
-  transform: translateY(-50%);
-  box-shadow: 0 0 10px rgba(246, 196, 83, 0.6);
-  z-index: 0;
-}
-
-#game .question {
-  position: relative;
-  z-index: 1;
-  width: 94%;
-  min-height: 88px;
-  margin: 0 auto;
-  padding: 22px 8%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  font-size: clamp(17px, 1.7vw, 22px);
-  font-weight: 700;
-  line-height: 1.4;
-  color: #ffffff;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
-  background: linear-gradient(180deg, #0f449c 0%, #061e4d 50%, #0a2d70 100%);
-  clip-path: polygon(5% 0%, 95% 0%, 100% 50%, 95% 100%, 5% 100%, 0% 50%);
-  filter: drop-shadow(0 0 1.5px #f6c453) drop-shadow(0 0 1.5px #f6c453) drop-shadow(0 6px 16px rgba(0, 0, 0, 0.6));
-  animation: questionIn 0.45s ease;
-}
-
-@keyframes questionIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* Pilihan Jawaban A, B, C, D */
-#game .game-main .answers {
-  order: 2;
-  width: 96%;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 14px 22px;
-  margin: 0 auto;
-}
-
-#game .answer {
-  position: relative;
-  min-height: 68px;
-  padding: 14px 10%;
-  border: 0;
-  border-radius: 0;
-  clip-path: polygon(7% 0%, 93% 0%, 100% 50%, 93% 100%, 7% 100%, 0% 50%);
-  background: linear-gradient(180deg, #0d3d8c 0%, #051b45 100%);
-  color: #ffffff;
-  text-align: left;
-  display: flex;
-  align-items: center;
-  font-size: clamp(15px, 1.45vw, 19px);
-  font-weight: 600;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
-  filter: drop-shadow(0 0 1.5px #d8b863) drop-shadow(0 0 1px #d8b863);
-  transition: transform 0.2s ease, filter 0.2s ease, background 0.2s ease;
-  animation: questionIn 0.4s ease both;
-}
-
-#game .answer:nth-child(2) { animation-delay: 0.05s; }
-#game .answer:nth-child(3) { animation-delay: 0.1s; }
-#game .answer:nth-child(4) { animation-delay: 0.15s; }
-
-#game .answer b {
-  color: var(--gold);
-  font-weight: 900;
-  margin-right: 10px;
-  font-size: 1.05em;
-}
-
-#game .answer:hover:not(:disabled) {
-  background: linear-gradient(180deg, #1b59bd 0%, #0c3175 100%);
-  transform: scale(1.018);
-  filter: drop-shadow(0 0 3px #ffe082) drop-shadow(0 0 8px rgba(246, 196, 83, 0.55));
-}
-
-#game .answer:disabled {
-  cursor: default;
-}
-
-/* Jawaban Terpilih (Kunci Jawaban - Oranye Emas) */
-#game .answer.selected {
-  background: linear-gradient(180deg, #f59e0b 0%, #b45309 100%);
-  color: #ffffff;
-  filter: drop-shadow(0 0 4px #fde68a) drop-shadow(0 0 12px rgba(245, 158, 11, 0.8));
-  animation: answerPulse 0.9s infinite alternate;
-}
-
-#game .answer.selected b {
-  color: #fffbeb;
-}
-
-/* Jawaban Benar (Hijau Menyala) */
-#game .answer.reveal-correct,
-#game .answer.correct {
-  background: linear-gradient(180deg, #10b981 0%, #047857 100%);
-  color: #ffffff;
-  filter: drop-shadow(0 0 4px #a7f3d0) drop-shadow(0 0 14px rgba(16, 185, 129, 0.85));
-  animation: revealPop 0.5s ease;
-}
-
-#game .answer.reveal-correct b {
-  color: #ffffff;
-}
-
-/* Jawaban Salah (Merah Menyala) */
-#game .answer.reveal-wrong,
-#game .answer.wrong {
-  background: linear-gradient(180deg, #ef4444 0%, #991b1b 100%);
-  color: #ffffff;
-  filter: drop-shadow(0 0 4px #fecaca) drop-shadow(0 0 14px rgba(239, 68, 68, 0.85));
-  animation: revealPop 0.5s ease;
-}
-
-@keyframes answerPulse {
-  from { filter: drop-shadow(0 0 2px #fde68a) drop-shadow(0 0 6px rgba(245, 158, 11, 0.5)); }
-  to { filter: drop-shadow(0 0 4px #fde68a) drop-shadow(0 0 16px rgba(245, 158, 11, 0.95)); }
-}
-
-@keyframes revealPop {
-  0% { transform: scale(0.97); }
-  55% { transform: scale(1.03); }
-  100% { transform: scale(1); }
-}
-
-/* Kontrol Bantuan & Kunci Jawaban */
-#game .game-main .stage-controls {
-  order: 3;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
-  margin-top: 18px;
-}
-
-#game .lifelines {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-  justify-content: center;
-  margin: 0;
-}
-
-#game .life {
-  padding: 9px 16px;
-  background: linear-gradient(180deg, #163d7a 0%, #0a1f44 100%);
-  color: #e2eeff;
-  border: 1.5px solid #5989cc;
-  border-radius: 999px;
-  font-weight: 700;
-  font-size: 13px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
-  transition: all 0.2s ease;
-}
-
-#game .life:hover:not(:disabled) {
-  border-color: var(--gold);
-  color: var(--gold-light);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(246, 196, 83, 0.25);
-}
-
-#game .life:disabled {
-  opacity: 0.35;
-  text-decoration: line-through;
-  cursor: not-allowed;
-}
-
-#game .lock-stage {
-  min-width: 220px;
-  padding: 12px 24px;
-  font-size: 14px;
-  letter-spacing: 0.06em;
-  border-radius: 999px;
-}
-
-#game .status {
-  text-align: center;
-  color: var(--gold-light);
-  min-height: 22px;
-  margin: 0;
-}
-
-#game .stage-exit {
-  align-self: center;
-  margin-top: 2px;
-}
-
-#game .stage-exit .btn {
-  padding: 7px 14px;
-  font-size: 12px;
-}
-
-/* Sidebar Tangga Hadiah (Kanan) */
-#game .game-sidebar {
-  grid-column: 2;
-  grid-row: 1;
-  position: sticky;
-  top: 16px;
-  margin-top: 0;
-  border: 1px solid rgba(246, 196, 83, 0.45);
-  border-radius: 16px;
-  background: linear-gradient(180deg, rgba(11, 31, 69, 0.9) 0%, rgba(6, 16, 41, 0.95) 100%);
-  backdrop-filter: blur(12px);
-  padding: 14px;
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
-}
-
-#game .prize-summary {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 2px;
-  text-align: center;
-  padding: 10px 8px;
-  border: 1px solid var(--gold);
-  border-radius: 12px;
-  background: linear-gradient(145deg, #193e78 0%, #0b1c40 100%);
-  box-shadow: 0 0 18px rgba(246, 196, 83, 0.2);
-  margin-bottom: 12px;
-}
-
-#game .summary-label {
-  font-size: 10px;
-  font-weight: 800;
-  letter-spacing: 0.12em;
-  color: var(--cyan);
-}
-
-#game .prize-summary strong {
-  font-size: 24px;
-  font-weight: 900;
-  color: var(--gold);
-  line-height: 1.25;
-  text-shadow: 0 2px 8px rgba(246, 196, 83, 0.35);
-}
-
-#game .ladder-title {
-  font-size: 11px;
-  font-weight: 800;
-  text-align: center;
-  color: var(--gold-light);
-  margin: 4px 0 8px;
-  letter-spacing: 0.14em;
-}
-
-#game .ladder {
-  display: flex;
-  flex-direction: column-reverse;
-  gap: 3px;
-}
-
-#game .rung {
-  padding: 5px 10px;
-  border-radius: 7px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  color: #8fa6cc;
-  font-size: 12px;
-  font-weight: 600;
-  transition: all 0.2s ease;
-}
-
-#game .rung.safe {
-  color: var(--gold);
-  font-weight: 800;
-}
-
-#game .rung.current {
-  background: linear-gradient(90deg, #f59e0b 0%, #d97706 100%);
-  color: #ffffff;
-  font-weight: 900;
-  box-shadow: 0 0 12px rgba(245, 158, 11, 0.55);
-  transform: scale(1.02);
-}
-
-/* Responsive Mobile & Tablet */
-@media (max-width: 820px) {
-  .grid {
-    grid-template-columns: 1fr;
-  }
-
-  .wrap {
-    padding: 14px;
-  }
-
-  .hero {
-    padding: 24px 12px;
-  }
-
-  #game .millionaire-stage {
-    padding: 4px 6px 18px;
-  }
-
-  #game .game-columns {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 14px;
-  }
-
-  #game .game-main {
-    grid-column: 1;
-    grid-row: 1;
-  }
-
-  #game .question {
-    width: 98%;
-    min-height: 76px;
-    padding: 16px 8%;
-    font-size: 16px;
-  }
-
-  #game .game-main .answers {
-    width: 100%;
-    grid-template-columns: 1fr;
-    gap: 10px;
-  }
-
-  #game .answer {
-    min-height: 56px;
-    padding: 12px 9%;
-    font-size: 15px;
-  }
-
-  #game .game-sidebar {
-    grid-column: 1;
-    grid-row: 2;
-    position: static;
-    margin-top: 6px;
-    padding: 10px;
-  }
-
-  #game .ladder {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 4px;
-  }
-
-  #game .rung {
-    font-size: 10.5px;
-    padding: 5px 6px;
-  }
-}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Who Wants to Be a Millionaire? — Kuis Semua Jenjang</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg-deep: #04091a;
+      --bg-navy: #0a1736;
+      --blue-glow: #1d4ed8;
+      --gold-light: #fde047;
+      --gold-main: #eab308;
+      --gold-dark: #a16207;
+      --hex-border: #38bdf8;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: radial-gradient(circle at 50% 18%, #162e6b 0%, #07112b 48%, #020510 100%);
+      color: #f8fafc;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    .font-display {
+      font-family: 'Cinzel', serif;
+    }
+
+    /* Efek sinar panggung TV */
+    .stage-spotlights {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background:
+        conic-gradient(from 155deg at 15% -5%, transparent 0deg, rgba(56, 189, 248, 0.08) 12deg, transparent 25deg),
+        conic-gradient(from 185deg at 85% -5%, transparent 0deg, rgba(234, 179, 8, 0.07) 12deg, transparent 25deg),
+        radial-gradient(ellipse at 50% 45%, rgba(37, 99, 235, 0.18), transparent 65%);
+    }
+
+    /* Tombol Emas Mewah */
+    .btn-gold {
+      background: linear-gradient(180deg, #fef08a 0%, #eab308 48%, #b45309 100%);
+      color: #090d16;
+      font-weight: 800;
+      border: 1px solid #fef9c3;
+      box-shadow: 0 0 22px rgba(234, 179, 8, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.8);
+      transition: all 0.2s ease;
+    }
+    .btn-gold:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 0 30px rgba(250, 204, 21, 0.7), inset 0 1px 2px #fff;
+      filter: brightness(1.06);
+    }
+    .btn-gold:active:not(:disabled) {
+      transform: translateY(0);
+    }
+    .btn-gold:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    /* Tombol Biru Studio */
+    .btn-studio {
+      background: linear-gradient(145deg, #173b70, #0b1d42);
+      border: 1.5px solid #38bdf8;
+      color: #f0f9ff;
+      box-shadow: 0 4px 16px rgba(2, 6, 23, 0.6), inset 0 0 12px rgba(56, 189, 248, 0.2);
+      transition: all 0.2s ease;
+    }
+    .btn-studio:hover:not(:disabled) {
+      border-color: #fde047;
+      box-shadow: 0 0 20px rgba(56, 189, 248, 0.45);
+      transform: translateY(-1px);
+    }
+    .btn-studio:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    /* Panel Kaca Biru Tua */
+    .studio-card {
+      background: linear-gradient(160deg, rgba(15, 34, 78, 0.88), rgba(6, 14, 36, 0.94));
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(12px);
+    }
+
+    /* Logo Medali Millionaire */
+    .millionaire-crest {
+      position: relative;
+      width: 148px;
+      height: 148px;
+      border-radius: 9999px;
+      background: radial-gradient(circle at 35% 30%, #1e40af, #09132e 72%);
+      border: 4px solid #eab308;
+      box-shadow:
+        0 0 0 4px rgba(30, 58, 138, 0.8),
+        0 0 0 6px rgba(250, 204, 21, 0.55),
+        0 0 45px rgba(234, 179, 8, 0.45);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto;
+    }
+    .millionaire-crest::before {
+      content: "";
+      position: absolute;
+      inset: 8px;
+      border-radius: 9999px;
+      border: 1.5px dashed rgba(253, 224, 71, 0.65);
+      animation: spinSlow 28s linear infinite;
+    }
+    @keyframes spinSlow {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Kotak Pertanyaan & Pilihan Jawaban Khas Millionaire */
+    .hex-question {
+      position: relative;
+      background: linear-gradient(180deg, #0f295c 0%, #071433 50%, #0d2452 100%);
+      border: 2px solid #38bdf8;
+      border-radius: 20px;
+      box-shadow: 0 0 25px rgba(14, 165, 233, 0.3), inset 0 0 18px rgba(56, 189, 248, 0.22);
+    }
+
+    .hex-option {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      width: 100%;
+      text-align: left;
+      padding: 0.9rem 1.25rem;
+      background: linear-gradient(180deg, #102a63 0%, #081536 52%, #0e2454 100%);
+      border: 2px solid #38bdf8;
+      border-radius: 9999px;
+      color: #ffffff;
+      font-weight: 600;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5), inset 0 0 10px rgba(56, 189, 248, 0.18);
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+    .hex-option:hover:not(:disabled):not(.opt-locked):not(.opt-correct):not(.opt-wrong) {
+      border-color: #fde047;
+      background: linear-gradient(180deg, #1a3f8f 0%, #0d2357 100%);
+      box-shadow: 0 0 18px rgba(250, 204, 21, 0.45);
+      transform: scale(1.01);
+    }
+    .hex-option:disabled {
+      cursor: default;
+    }
+
+    /* Status Jawaban */
+    .opt-locked {
+      background: linear-gradient(180deg, #f59e0b 0%, #b45309 100%) !important;
+      border-color: #fef08a !important;
+      color: #090d16 !important;
+      box-shadow: 0 0 25px rgba(245, 158, 11, 0.8) !important;
+    }
+    .opt-locked .opt-letter {
+      color: #090d16 !important;
+    }
+
+    .opt-correct {
+      background: linear-gradient(180deg, #22c55e 0%, #15803d 100%) !important;
+      border-color: #bbf7d0 !important;
+      color: #ffffff !important;
+      box-shadow: 0 0 28px rgba(34, 197, 94, 0.9) !important;
+      animation: pulseCorrect 0.45s ease-in-out 3;
+    }
+    .opt-correct .opt-letter {
+      color: #fef08a !important;
+    }
+
+    .opt-wrong {
+      background: linear-gradient(180deg, #ef4444 0%, #991b1b 100%) !important;
+      border-color: #fecaca !important;
+      color: #ffffff !important;
+      box-shadow: 0 0 24px rgba(239, 68, 68, 0.75) !important;
+    }
+
+    .opt-eliminated {
+      opacity: 0.22 !important;
+      pointer-events: none;
+      filter: grayscale(1);
+    }
+
+    @keyframes pulseCorrect {
+      0%, 100% { filter: brightness(1); transform: scale(1); }
+      50% { filter: brightness(1.32); transform: scale(1.015); }
+    }
+
+    /* Lifeline Circle */
+    .lifeline-btn {
+      width: 68px;
+      height: 46px;
+      border-radius: 9999px;
+      background: radial-gradient(circle at 50% 30%, #1d4ed8, #091638);
+      border: 2px solid #38bdf8;
+      color: #fef08a;
+      font-weight: 800;
+      font-size: 0.85rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 14px rgba(56, 189, 248, 0.35);
+      transition: all 0.2s ease;
+      position: relative;
+    }
+    .lifeline-btn:hover:not(:disabled) {
+      border-color: #fde047;
+      transform: scale(1.06);
+      box-shadow: 0 0 20px rgba(250, 204, 21, 0.55);
+    }
+    .lifeline-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+    .lifeline-used::after {
+      content: "✕";
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ef4444;
+      font-size: 1.9rem;
+      font-weight: 900;
+      text-shadow: 0 0 6px #000;
+    }
+
+    /* Tangga Hadiah */
+    .ladder-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.28rem 0.75rem;
+      border-radius: 8px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      transition: all 0.2s ease;
+    }
+    .ladder-safe {
+      color: #fde047;
+    }
+    .ladder-normal {
+      color: #93c5fd;
+    }
+    .ladder-passed {
+      color: #4ade80;
+      opacity: 0.85;
+    }
+    .ladder-active {
+      background: linear-gradient(90deg, #f59e0b, #eab308, #f59e0b);
+      color: #090d16 !important;
+      box-shadow: 0 0 15px rgba(234, 179, 8, 0.75);
+      transform: scale(1.02);
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 7px;
+      height: 7px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #04091a;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #1e3a8a;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #eab308;
+    }
+
+    .screen {
+      display: none;
+      animation: fadeIn 0.28s ease-out;
+    }
+    .screen.active {
+      display: block;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
 </head>
-<body>
-<div class="wrap">
-  <header class="top">
-    <div class="brand">MILLIONAIRE CLASSROOM<small>MEDIA KUIS INTERAKTIF • SD • SMP • SMA</small></div>
-    <div class="top-right">
-      <button class="api-badge-btn missing" id="topApiBtn" onclick="openApiSettingsModal(false)">🔑 Pengaturan API Key</button>
-      <div class="pill" id="bankCount">15 soal tersedia</div>
+<body class="relative selection:bg-yellow-400 selection:text-slate-950">
+  <div class="stage-spotlights"></div>
+
+  <!-- Toast Notifikasi Non-Blocking -->
+  <div id="toast-container" class="fixed top-4 right-4 z-50 flex flex-col gap-2 max-w-sm w-full pointer-events-none px-4 sm:px-0"></div>
+
+  <!-- Header Top Bar -->
+  <header class="relative z-10 border-b border-sky-500/20 bg-slate-950/60 backdrop-blur-md">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
+      <button onclick="showScreen('home')" class="flex items-center gap-2.5 text-left group">
+        <div class="w-9 h-9 rounded-full bg-gradient-to-br from-yellow-300 via-yellow-500 to-amber-700 flex items-center justify-center text-slate-950 font-black text-sm shadow-md group-hover:scale-105 transition">
+          Rp
+        </div>
+        <div>
+          <span class="font-display font-bold text-sm sm:text-base tracking-wider text-yellow-300 block leading-tight">
+            MILLIONAIRE INDONESIA
+          </span>
+          <span class="text-[11px] text-sky-300/80 block">Edisi Edukasi &amp; Pengetahuan Umum</span>
+        </div>
+      </button>
+
+      <div class="flex items-center gap-2">
+        <!-- Toggle Suara & Musik -->
+        <button id="btn-sound" onclick="toggleSound()" class="btn-studio px-3 py-1.5 rounded-full text-xs font-bold flex items-center gap-1.5" title="Aktifkan/Matikan Efek Suara">
+          <span id="sound-icon">🔊</span>
+          <span id="sound-label" class="hidden sm:inline">Suara: ON</span>
+        </button>
+        <button id="btn-music" onclick="toggleMusic()" class="btn-studio px-3 py-1.5 rounded-full text-xs font-bold flex items-center gap-1.5" title="Aktifkan/Matikan Musik Latar">
+          <span id="music-icon">🎵</span>
+          <span id="music-label" class="hidden sm:inline">Musik: ON</span>
+        </button>
+      </div>
     </div>
   </header>
 
-  <section id="home" class="screen active">
-    <div class="hero">
-      <div class="orb">★</div>
-      <h1>WHO WANTS TO BE<br>A MILLIONAIRE?</h1>
-      <p>Uji pengetahuanmu melalui tantangan pilihan ganda. Pilih jenjang, mata pelajaran, dan materi, lalu raih posisi tertinggi di tangga hadiah!</p>
-      <div class="actions">
-        <button class="btn" onclick="showScreen('gameSetup')">▶ MULAI BERMAIN</button>
-        <button class="btn secondary" onclick="showScreen('generator')">✦ GENERATE SOAL AI</button>
-      </div>
-    </div>
-    <div class="grid">
-      <div class="panel">
-        <h3>🎯 Cara Bermain</h3>
-        <ol class="muted">
-          <li>Jawab hingga 15 pertanyaan pilihan ganda.</li>
-          <li>Setiap pertanyaan memiliki empat pilihan jawaban.</li>
-          <li>Gunakan bantuan 50:50, tanya audiens, atau ganti soal.</li>
-          <li>Jawaban benar menaikkan level dan hadiah.</li>
-          <li>Jawaban salah mengakhiri permainan.</li>
-        </ol>
-      </div>
-      <div class="panel">
-        <h3>📚 Materi Pembelajaran</h3>
-        <p class="muted small">Bank soal dapat memuat berbagai jenjang, kelas, mata pelajaran, dan topik sesuai soal yang dibuat melalui Generator AI.</p>
-        <button class="btn secondary" onclick="showScreen('bank')">Lihat Bank Soal</button>
-      </div>
-    </div>
-  </section>
-
-  <section id="gameSetup" class="screen">
-    <div class="panel" style="max-width:600px;margin:24px auto">
-      <h2>Siapkan Permainan</h2>
-      <div class="field">
-        <label>Nama pemain</label>
-        <input id="playerName" placeholder="Masukkan nama pemain">
-      </div>
-      <div class="field">
-        <label>Pilih materi dari soal yang sudah di-generate</label>
-        <select id="gameTopic">
-          <option value="Semua">Semua materi tersimpan</option>
-        </select>
-        <small class="muted" id="topicHelp">Daftar materi diambil otomatis dari Bank Soal yang sudah disimpan.</small>
-      </div>
-      <div class="notice">Pilih materi yang sudah dibuat melalui Generator AI. Permainan akan menggunakan soal dari materi tersebut (maksimal 15 soal).</div>
-      <div class="actions" style="margin-top:20px">
-        <button class="btn" onclick="startGame()">Mulai Tantangan</button>
-        <button class="btn ghost" onclick="showScreen('home')">Kembali</button>
-      </div>
-    </div>
-  </section>
-
-  <section id="game" class="screen">
-    <div class="millionaire-stage">
-      <div class="game-columns">
-        <main class="game-main">
-          <div class="stage-meta">
-            <span class="level" id="levelLabel">PERTANYAAN 1 / 15</span>
-            <span class="pill" id="playerLabel">Pemain</span>
-          </div>
-          <div class="question-wrap">
-            <div class="question" id="questionText">Siap memulai?</div>
-          </div>
-          <div class="answers" id="answersBox"></div>
-          <div class="stage-controls">
-            <div class="lifelines">
-              <button class="life" id="life5050" onclick="use5050()">50 : 50</button>
-              <button class="life" id="lifeAudience" onclick="useAudience()">👥 Tanya Audiens</button>
-              <button class="life" id="lifeSwap" onclick="useSwap()">🔄 Ganti Soal</button>
-            </div>
-            <button class="btn lock-stage" id="lockBtn" onclick="lockAnswer()" disabled>KUNCI JAWABAN</button>
-            <div class="status" id="gameStatus"></div>
-            <div class="stage-exit">
-              <button class="btn ghost" onclick="confirmExitGame()">Keluar Permainan</button>
+  <main class="relative z-10 max-w-7xl mx-auto px-4 py-6 sm:py-8">
+    <!-- ==================== 1. LAYAR BERANDA (#home) ==================== -->
+    <section id="home" class="screen active">
+      <div class="max-w-4xl mx-auto text-center space-y-6">
+        <!-- Crest Logo -->
+        <div class="pt-2">
+          <div class="millionaire-crest">
+            <div class="text-center px-2">
+              <div class="text-[10px] tracking-[0.22em] text-sky-300 font-bold uppercase">Kuis TV</div>
+              <div class="font-display font-black text-lg sm:text-xl text-transparent bg-clip-text bg-gradient-to-b from-yellow-200 via-yellow-400 to-amber-500 leading-tight mt-0.5">
+                1 MILIAR
+              </div>
+              <div class="text-[10px] tracking-[0.18em] text-yellow-300/90 font-semibold mt-0.5">INDONESIA</div>
             </div>
           </div>
-        </main>
-        <aside class="game-sidebar">
-          <div class="prize-summary">
-            <span class="summary-label">PEROLEHAN POIN</span>
-            <strong id="earnedPoints">0</strong>
-          </div>
-          <div class="ladder-title">TANGGA HADIAH</div>
-          <div class="ladder" id="ladder"></div>
-        </aside>
-      </div>
-    </div>
-  </section>
+        </div>
 
-  <section id="generator" class="screen">
-    <div class="panel">
-      <div class="game-head">
-        <div>
-          <h2>✦ Generator Soal AI</h2>
-          <p class="muted small">Buat soal pilihan ganda sesuai jenjang, mata pelajaran, dan materi pembelajaran.</p>
+        <div class="space-y-2">
+          <h1 class="font-display text-2xl sm:text-4xl md:text-5xl font-black tracking-wide text-transparent bg-clip-text bg-gradient-to-b from-white via-yellow-100 to-yellow-400 drop-shadow">
+            WHO WANTS TO BE A MILLIONAIRE?
+          </h1>
+          <p class="text-sky-200/90 text-sm sm:text-base max-w-2xl mx-auto">
+            Uji wawasan dari jenjang SD, SMP, SMA hingga Pengetahuan Umum. Jawab pertanyaan bertingkat dan raih hadiah puncak <span class="text-yellow-300 font-bold">Rp 1.000.000.000!</span>
+          </p>
         </div>
-        <button class="btn ghost" onclick="showScreen('home')">Kembali</button>
-      </div>
-      <div class="row">
-        <div class="field">
-          <label>Jenjang</label>
-          <select id="genLevel">
-            <option>SD / MI</option>
-            <option>SMP / MTs</option>
-            <option>SMA / MA / SMK</option>
-            <option>Umum</option>
-          </select>
+
+        <!-- Pengaturan Cepat Sesi Permainan -->
+        <div class="studio-card rounded-2xl p-5 sm:p-6 max-w-2xl mx-auto text-left space-y-4">
+          <div class="flex items-center justify-between border-b border-sky-500/20 pb-3">
+            <h2 class="font-bold text-yellow-300 text-sm sm:text-base flex items-center gap-2">
+              <span>⚙️</span> Pengaturan Permainan
+            </h2>
+            <span id="active-pack-badge" class="text-xs px-2.5 py-1 rounded-full bg-sky-900/80 border border-sky-400/40 text-sky-200 font-semibold">
+              Bank Soal: 0 Soal
+            </span>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div>
+              <label class="block text-xs text-sky-300 font-semibold mb-1">Paket / Filter Soal</label>
+              <select id="home-filter-subject" class="w-full bg-slate-900/90 border border-sky-500/40 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-yellow-400">
+                <option value="ALL">Semua Mapel (Campuran)</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs text-sky-300 font-semibold mb-1">Jumlah Babak / Soal</label>
+              <select id="home-question-count" class="w-full bg-slate-900/90 border border-sky-500/40 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-yellow-400">
+                <option value="15" selected>15 Soal (Klasik Rp 1 Miliar)</option>
+                <option value="10">10 Soal (Mode Cepat)</option>
+                <option value="5">5 Soal (Mode Kilat)</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs text-sky-300 font-semibold mb-1">Timer per Soal</label>
+              <select id="home-timer-setting" class="w-full bg-slate-900/90 border border-sky-500/40 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-yellow-400">
+                <option value="30" selected>30 Detik</option>
+                <option value="60">60 Detik</option>
+                <option value="0">Tanpa Batas Waktu</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Tombol Navigasi Utama -->
+          <div class="pt-2 flex flex-col sm:flex-row gap-3">
+            <button onclick="startNewGame()" class="btn-gold flex-1 py-3.5 px-6 rounded-xl text-base tracking-wide flex items-center justify-center gap-2 cursor-pointer">
+              <span>▶</span> MULAI BERMAIN
+            </button>
+            <button onclick="showScreen('generator')" class="btn-studio flex-1 py-3.5 px-5 rounded-xl text-sm sm:text-base font-bold text-yellow-300 border-yellow-400/70 flex items-center justify-center gap-2 cursor-pointer">
+              <span>✦</span> GENERATE SOAL AI
+            </button>
+            <button onclick="showScreen('bank')" class="btn-studio py-3.5 px-5 rounded-xl text-sm sm:text-base font-bold flex items-center justify-center gap-2 cursor-pointer">
+              <span>📚</span> BANK SOAL
+            </button>
+          </div>
         </div>
-        <div class="field">
-          <label>Kelas</label>
-          <select id="genGrade">
-            <option>Kelas 1</option><option>Kelas 2</option><option>Kelas 3</option>
-            <option>Kelas 4</option><option>Kelas 5</option><option>Kelas 6</option>
-            <option>Kelas 7</option><option>Kelas 8</option><option>Kelas 9</option>
-            <option>Kelas 10</option><option>Kelas 11</option><option>Kelas 12</option>
-            <option>Semua Kelas</option>
-          </select>
-        </div>
-        <div class="field">
-          <label>Mata Pelajaran</label>
-          <input id="genSubject" value="Ilmu Pengetahuan Alam">
-        </div>
-      </div>
-      <div class="row">
-        <div class="field">
-          <label>Topik / Materi</label>
-          <input id="genTopic" value="Tata Surya dan Planet">
-        </div>
-        <div class="field">
-          <label>Jumlah Soal</label>
-          <select id="genCount">
-            <option value="5">5 Soal</option>
-            <option value="10">10 Soal</option>
-            <option value="15" selected>15 Soal</option>
-          </select>
-        </div>
-        <div class="field">
-          <label>Tingkat Kesulitan</label>
-          <select id="genDiff">
-            <option>Bertahap (Mudah ke Sulit)</option>
-            <option>Mudah</option>
-            <option>Sedang</option>
-            <option>Sulit / HOTS</option>
-          </select>
-        </div>
-      </div>
-      <div class="field">
-        <label>Ringkasan materi / kisi-kisi (opsional, untuk hasil lebih akurat)</label>
-        <textarea id="genNotes" placeholder="Tempel ringkasan materi, capaian pembelajaran, atau catatan guru di sini..."></textarea>
-      </div>
-      <div class="panel" style="margin-top:16px;background:rgba(7, 20, 46, 0.7)">
-        <div class="game-head" style="margin-bottom:8px">
-          <h3 style="margin:0">Konfigurasi AI</h3>
-          <button type="button" class="btn ghost" style="padding:7px 14px;font-size:12.5px" onclick="openApiSettingsModal(false)">🔑 Kelola API Key & Panduan</button>
-        </div>
-        <p class="small muted" style="margin:0 0 12px">
-          Belum punya API Key? Dapatkan gratis di Google AI Studio:
-          <a class="api-link" href="https://aistudio.google.com/api-keys" target="_blank" rel="noopener noreferrer">https://aistudio.google.com/api-keys</a>
-        </p>
-        <div class="field" style="margin-bottom:0">
-          <label>API Key Google Gemini (tersimpan otomatis di browser ini)</label>
-          <div class="input-group">
-            <input id="aiKey" type="password" placeholder="Tempel API Key Anda di sini (contoh: AIza...)" oninput="syncAiConfigFromForm()">
-            <button type="button" class="btn ghost" style="padding:11px 13px" onclick="toggleInputVisibility('aiKey', this)">👁</button>
+
+        <!-- Ringkasan Statistik Cepat -->
+        <div class="grid grid-cols-3 gap-3 max-w-2xl mx-auto text-center">
+          <div class="studio-card rounded-xl p-3">
+            <div id="stat-total-questions" class="text-xl sm:text-2xl font-extrabold text-yellow-300">0</div>
+            <div class="text-[11px] sm:text-xs text-sky-300">Total Soal Tersimpan</div>
+          </div>
+          <div class="studio-card rounded-xl p-3">
+            <div class="text-xl sm:text-2xl font-extrabold text-sky-300">3</div>
+            <div class="text-[11px] sm:text-xs text-sky-300">Bantuan (50:50, Audiens, Ganti)</div>
+          </div>
+          <div class="studio-card rounded-xl p-3">
+            <div id="stat-best-prize" class="text-sm sm:text-lg font-extrabold text-emerald-400 pt-1">Rp 0</div>
+            <div class="text-[11px] sm:text-xs text-sky-300">Rekor Hadiah Tertinggi</div>
           </div>
         </div>
       </div>
-      <div class="actions" style="margin-top:18px;justify-content:flex-start">
-        <button class="btn" id="genBtn" onclick="generateQuestions()">✦ Generate Soal</button>
-        <button class="btn secondary hidden" id="saveGenBtn" onclick="saveGenerated()">Simpan ke Bank Soal</button>
-        <button class="btn ghost hidden" id="playGenBtn" onclick="playGenerated()">Mainkan Soal Ini</button>
-      </div>
-      <div class="status" id="genStatus"></div>
-      <div id="genPreview"></div>
-    </div>
-  </section>
+    </section>
 
-  <section id="bank" class="screen">
-    <div class="panel">
-      <div class="game-head">
-        <div>
-          <h2>📚 Bank Soal Tersimpan</h2>
-          <p class="muted small">Kelola soal bawaan, soal buatan AI, atau tambah soal baru secara manual.</p>
+    <!-- ==================== 2. LAYAR GENERATOR SOAL AI (#generator) ==================== -->
+    <section id="generator" class="screen">
+      <div class="max-w-5xl mx-auto space-y-6">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h2 class="font-display text-xl sm:text-2xl font-bold text-yellow-300 flex items-center gap-2">
+              <span>✦</span> Generator Soal Cerdas &amp; AI
+            </h2>
+            <p class="text-xs sm:text-sm text-sky-200/80">
+              Buat paket soal otomatis sesuai jenjang, kelas, mata pelajaran, dan topik pilihan Anda.
+            </p>
+          </div>
+          <button onclick="showScreen('home')" class="btn-studio px-4 py-2 rounded-xl text-xs sm:text-sm font-bold">
+            ← Kembali ke Beranda
+          </button>
         </div>
-        <button class="btn ghost" onclick="showScreen('home')">Kembali</button>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <!-- Form Konfigurasi (Kiri) -->
+          <div class="lg:col-span-5 studio-card rounded-2xl p-5 space-y-4 h-fit">
+            <h3 class="font-bold text-yellow-300 text-sm border-b border-sky-500/20 pb-2">
+              1. Konfigurasi Materi Soal
+            </h3>
+
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs text-sky-300 font-semibold mb-1">Jenjang Pendidikan</label>
+                <select id="gen-level" onchange="updateClassOptions()" class="w-full bg-slate-900 border border-sky-500/40 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-yellow-400">
+                  <option value="SD">SD / MI</option>
+                  <option value="SMP" selected>SMP / MTs</option>
+                  <option value="SMA">SMA / SMK / MA</option>
+                  <option value="UMUM">Umum / Mahasiswa</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-xs text-sky-300 font-semibold mb-1">Kelas / Tingkat</label>
+                <select id="gen-grade" class="w-full bg-slate-900 border border-sky-500/40 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-yellow-400"></select>
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-xs text-sky-300 font-semibold mb-1">Mata Pelajaran</label>
+              <select id="gen-subject" class="w-full bg-slate-900 border border-sky-500/40 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-yellow-400">
+                <option value="Matematika">Matematika</option>
+                <option value="IPA">IPA (Ilmu Pengetahuan Alam)</option>
+                <option value="IPS">IPS (Ilmu Pengetahuan Sosial)</option>
+                <option value="Bahasa Indonesia">Bahasa Indonesia</option>
+                <option value="Bahasa Inggris">Bahasa Inggris</option>
+                <option value="Sejarah">Sejarah</option>
+                <option value="PPKn">PPKn (Pendidikan Pancasila)</option>
+                <option value="Informatika">Informatika &amp; Teknologi</option>
+                <option value="Pengetahuan Umum" selected>Pengetahuan Umum</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-xs text-sky-300 font-semibold mb-1">Topik Spesifik (Opsional)</label>
+              <input id="gen-topic" type="text" placeholder="Contoh: Tata Surya, Pecahan, Kemerdekaan RI..." class="w-full bg-slate-900 border border-sky-500/40 rounded-xl px-3 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-yellow-400" />
+            </div>
+
+            <div>
+              <label class="block text-xs text-sky-300 font-semibold mb-1">Jumlah Soal</label>
+              <select id="gen-count" class="w-full bg-slate-900 border border-sky-500/40 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-yellow-400">
+                <option value="5">5 Soal (Babak Kilat)</option>
+                <option value="10" selected>10 Soal (Babak Standar)</option>
+                <option value="15">15 Soal (Babak Penuh 1 Miliar)</option>
+              </select>
+            </div>
+
+            <!-- Pengaturan Gemini API Key (Opsional + Fallback Otomatis) -->
+            <div class="bg-slate-950/70 border border-sky-500/25 rounded-xl p-3 space-y-2">
+              <div class="flex items-center justify-between">
+                <label class="text-xs font-bold text-sky-300 flex items-center gap-1.5">
+                  <span>🔑</span> Gemini API Key (Opsional)
+                </label>
+                <span id="api-status-badge" class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-950 text-emerald-300 border border-emerald-500/30">
+                  Mode Otomatis Siap
+                </span>
+              </div>
+              <div class="flex gap-1.5">
+                <input id="gemini-api-key" type="password" placeholder="Tempel AIzaSy... (kosongkan untuk Mode Otomatis)" class="flex-1 bg-slate-900 border border-sky-500/30 rounded-lg px-2.5 py-1.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-yellow-400" />
+                <button onclick="saveApiKey()" class="btn-studio px-2.5 py-1.5 rounded-lg text-xs font-bold">Simpan</button>
+                <button onclick="clearApiKey()" class="px-2 py-1.5 rounded-lg text-xs bg-rose-950/80 border border-rose-500/40 text-rose-200 hover:bg-rose-900" title="Hapus API Key">✕</button>
+              </div>
+              <p class="text-[11px] text-slate-400 leading-relaxed">
+                Jika API Key diisi, soal dibuat langsung oleh <strong class="text-sky-300">Gemini AI</strong>. Jika dikosongkan atau offline, <strong class="text-yellow-300">Mesin Pembuat Soal Cerdas</strong> tetap menghasilkan soal yang relevan secara instan!
+              </p>
+            </div>
+
+            <button id="btn-run-generate" onclick="generateQuestions()" class="btn-gold w-full py-3 rounded-xl text-sm sm:text-base flex items-center justify-center gap-2 cursor-pointer">
+              <span>✦</span> GENERATE SOAL SEKARANG
+            </button>
+          </div>
+
+          <!-- Area Pratinjau Hasil Generate (Kanan) -->
+          <div class="lg:col-span-7 studio-card rounded-2xl p-5 flex flex-col justify-between min-h-[420px]">
+            <div>
+              <div class="flex flex-wrap items-center justify-between gap-2 border-b border-sky-500/20 pb-3 mb-4">
+                <div>
+                  <h3 class="font-bold text-yellow-300 text-sm">2. Pratinjau Soal Hasil Generate</h3>
+                  <p id="gen-source-info" class="text-[11px] text-sky-300/80">Belum ada soal yang di-generate.</p>
+                </div>
+                <div id="gen-actions" class="hidden flex flex-wrap gap-2">
+                  <button onclick="saveGeneratedToBank(false)" class="btn-studio px-3 py-1.5 rounded-lg text-xs font-bold">
+                    💾 Simpan ke Bank Soal
+                  </button>
+                  <button onclick="saveGeneratedToBank(true)" class="btn-gold px-3.5 py-1.5 rounded-lg text-xs font-extrabold">
+                    ▶ Langsung Mainkan
+                  </button>
+                </div>
+              </div>
+
+              <!-- Loading State -->
+              <div id="gen-loading" class="hidden py-16 text-center space-y-3">
+                <div class="w-12 h-12 border-4 border-yellow-400 border-t-transparent rounded-full animate-spin mx-auto"></div>
+                <p class="text-sm font-bold text-yellow-300">Sedang menyusun pertanyaan bertingkat...</p>
+                <p class="text-xs text-sky-300">Menyesuaikan tingkat kesulitan dari mudah hingga Rp 1 Miliar</p>
+              </div>
+
+              <!-- Empty State -->
+              <div id="gen-empty" class="py-16 text-center space-y-2 text-slate-400">
+                <div class="text-4xl">✨</div>
+                <p class="text-sm font-semibold text-sky-200">Siap Membuat Soal Baru</p>
+                <p class="text-xs max-w-md mx-auto">Pilih jenjang, mata pelajaran, dan topik di sebelah kiri, lalu klik tombol <span class="text-yellow-300 font-semibold">Generate Soal Sekarang</span>.</p>
+              </div>
+
+              <!-- Daftar Hasil Pratinjau -->
+              <div id="gen-preview-list" class="space-y-3 max-h-[480px] overflow-y-auto pr-1"></div>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="toolbar">
-        <button class="btn" onclick="openManualForm()">+ Tambah Soal Manual</button>
-        <button class="btn secondary" onclick="exportBank()">Ekspor JSON</button>
-        <label class="btn ghost" style="display:inline-flex;align-items:center">
-          Impor JSON<input type="file" accept=".json" onchange="importBank(event)" style="display:none">
-        </label>
-        <button class="btn ghost" onclick="resetDefaultBank()">Reset Soal Bawaan</button>
-      </div>
-      <div id="manualBox" class="panel hidden" style="margin-bottom:18px;background:rgba(7, 20, 46, 0.75)">
-        <h3>Tambah / Edit Soal</h3>
-        <div class="row">
-          <div class="field">
-            <label>Jenjang</label>
-            <select id="mLevel">
-              <option>SD / MI</option><option>SMP / MTs</option><option>SMA / MA / SMK</option><option>Umum</option>
+    </section>
+
+    <!-- ==================== 3. LAYAR BANK SOAL (#bank) ==================== -->
+    <section id="bank" class="screen">
+      <div class="max-w-6xl mx-auto space-y-5">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h2 class="font-display text-xl sm:text-2xl font-bold text-yellow-300 flex items-center gap-2">
+              <span>📚</span> Bank Soal Tersimpan
+            </h2>
+            <p class="text-xs sm:text-sm text-sky-200/80">Kelola soal kuis, tambah soal manual, edit, atau ekspor/impor file JSON.</p>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            <button onclick="openQuestionModal()" class="btn-gold px-3.5 py-2 rounded-xl text-xs sm:text-sm font-extrabold">
+              + Tambah Soal Manual
+            </button>
+            <button onclick="showScreen('home')" class="btn-studio px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold">
+              ← Beranda
+            </button>
+          </div>
+        </div>
+
+        <!-- Toolbar Filter & Export/Import -->
+        <div class="studio-card rounded-2xl p-4 flex flex-wrap items-center justify-between gap-3">
+          <div class="flex flex-wrap items-center gap-2 flex-1 min-w-[240px]">
+            <input id="bank-search" oninput="renderBankList()" type="text" placeholder="Cari pertanyaan atau topik..." class="bg-slate-900 border border-sky-500/40 rounded-xl px-3 py-2 text-xs sm:text-sm text-white placeholder-slate-500 focus:outline-none focus:border-yellow-400 flex-1 min-w-[180px]" />
+            <select id="bank-filter-subject" onchange="renderBankList()" class="bg-slate-900 border border-sky-500/40 rounded-xl px-3 py-2 text-xs sm:text-sm text-white focus:outline-none focus:border-yellow-400">
+              <option value="ALL">Semua Mapel</option>
+            </select>
+            <select id="bank-filter-level" onchange="renderBankList()" class="bg-slate-900 border border-sky-500/40 rounded-xl px-3 py-2 text-xs sm:text-sm text-white focus:outline-none focus:border-yellow-400">
+              <option value="ALL">Semua Jenjang</option>
+              <option value="SD">SD</option>
+              <option value="SMP">SMP</option>
+              <option value="SMA">SMA</option>
+              <option value="UMUM">UMUM</option>
             </select>
           </div>
-          <div class="field">
-            <label>Mata Pelajaran</label>
-            <input id="mSubject" value="Pengetahuan Umum">
-          </div>
-          <div class="field">
-            <label>Topik</label>
-            <input id="mTopic" value="Materi Kelas">
-          </div>
-        </div>
-        <div class="field">
-          <label>Pertanyaan</label>
-          <textarea id="mQ"></textarea>
-        </div>
-        <div class="row">
-          <div class="field"><label>Pilihan A</label><input id="mA"></div>
-          <div class="field"><label>Pilihan B</label><input id="mB"></div>
-        </div>
-        <div class="row">
-          <div class="field"><label>Pilihan C</label><input id="mC"></div>
-          <div class="field"><label>Pilihan D</label><input id="mD"></div>
-        </div>
-        <div class="row">
-          <div class="field">
-            <label>Jawaban Benar</label>
-            <select id="mAns">
-              <option value="0">A</option><option value="1">B</option><option value="2">C</option><option value="3">D</option>
-            </select>
-          </div>
-          <div class="field">
-            <label>Pembahasan Singkat</label>
-            <input id="mExp">
+
+          <div class="flex flex-wrap items-center gap-2">
+            <button onclick="exportBankJSON()" class="btn-studio px-3 py-2 rounded-xl text-xs font-bold">⬇ Export JSON</button>
+            <label class="btn-studio px-3 py-2 rounded-xl text-xs font-bold cursor-pointer">
+              ⬆ Import JSON
+              <input type="file" accept=".json" onchange="importBankJSON(event)" class="hidden" />
+            </label>
+            <button onclick="confirmResetBank()" class="px-3 py-2 rounded-xl text-xs font-bold bg-rose-950/80 border border-rose-500/40 text-rose-200 hover:bg-rose-900">
+              ↺ Reset Default
+            </button>
           </div>
         </div>
-        <div class="actions" style="justify-content:flex-start">
-          <button class="btn" onclick="saveManualQuestion()">Simpan Soal</button>
-          <button class="btn ghost" onclick="closeManualForm()">Batal</button>
+
+        <!-- List Soal -->
+        <div id="bank-list" class="grid grid-cols-1 md:grid-cols-2 gap-3.5 max-h-[62vh] overflow-y-auto pr-1"></div>
+      </div>
+    </section>
+
+    <!-- ==================== 4. LAYAR PERMAINAN (#game) ==================== -->
+    <section id="game" class="screen">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+        <!-- Area Panggung Kuis (Kiri 8 Kolom) -->
+        <div class="lg:col-span-8 space-y-5">
+          <!-- Bar Atas: Lifelines, Timer, & Ambil Uang -->
+          <div class="studio-card rounded-2xl p-3.5 sm:p-4 flex flex-wrap items-center justify-between gap-3">
+            <!-- 3 Bantuan -->
+            <div class="flex items-center gap-2.5">
+              <button id="life-5050" onclick="useLifeline5050()" class="lifeline-btn" title="50:50 — Hilangkan 2 jawaban salah">
+                50:50
+              </button>
+              <button id="life-audience" onclick="useLifelineAudience()" class="lifeline-btn" title="Tanya Audiens — Lihat polling penonton">
+                👥
+              </button>
+              <button id="life-switch" onclick="useLifelineSwitch()" class="lifeline-btn" title="Ganti Soal — Tukar dengan soal cadangan">
+                🔄
+              </button>
+            </div>
+
+            <!-- Indikator Timer -->
+            <div id="timer-box" class="flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-950/90 border border-sky-400/50">
+              <span class="text-xs text-sky-300 font-semibold">WAKTU</span>
+              <span id="game-timer" class="font-display font-black text-xl text-yellow-300 min-w-[2.2rem] text-center">30</span>
+            </div>
+
+            <!-- Tombol Walk Away -->
+            <button id="btn-walk-away" onclick="walkAway()" class="btn-studio px-3.5 py-2 rounded-xl text-xs font-bold text-amber-300 border-amber-400/50">
+              💰 Ambil Uang (<span id="walk-away-amount">Rp 0</span>)
+            </button>
+          </div>
+
+          <!-- Info Metadata Soal Aktif -->
+          <div class="flex flex-wrap items-center justify-between gap-2 px-1 text-xs">
+            <div class="flex items-center gap-2">
+              <span id="q-progress-badge" class="px-3 py-1 rounded-full bg-yellow-400/15 border border-yellow-400/40 text-yellow-300 font-bold">
+                Pertanyaan 1 / 15
+              </span>
+              <span id="q-meta-badge" class="px-3 py-1 rounded-full bg-sky-900/70 border border-sky-500/30 text-sky-200 font-semibold">
+                Pengetahuan Umum • UMUM
+              </span>
+            </div>
+            <div class="text-sky-300 font-semibold">
+              Memperebutkan: <span id="q-current-prize" class="text-yellow-300 font-extrabold">Rp 100.000</span>
+            </div>
+          </div>
+
+          <!-- Kotak Pertanyaan Utama -->
+          <div class="hex-question p-5 sm:p-7 min-h-[130px] flex items-center justify-center text-center">
+            <p id="question-text" class="text-base sm:text-xl md:text-2xl font-bold leading-relaxed text-white">
+              Memuat pertanyaan...
+            </p>
+          </div>
+
+          <!-- 4 Pilihan Jawaban (A, B, C, D) -->
+          <div id="options-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+            <button id="opt-btn-0" onclick="selectAnswer(0)" class="hex-option">
+              <span class="opt-letter text-yellow-400 font-extrabold text-base sm:text-lg">A:</span>
+              <span id="opt-text-0" class="text-sm sm:text-base flex-1">Pilihan A</span>
+            </button>
+            <button id="opt-btn-1" onclick="selectAnswer(1)" class="hex-option">
+              <span class="opt-letter text-yellow-400 font-extrabold text-base sm:text-lg">B:</span>
+              <span id="opt-text-1" class="text-sm sm:text-base flex-1">Pilihan B</span>
+            </button>
+            <button id="opt-btn-2" onclick="selectAnswer(2)" class="hex-option">
+              <span class="opt-letter text-yellow-400 font-extrabold text-base sm:text-lg">C:</span>
+              <span id="opt-text-2" class="text-sm sm:text-base flex-1">Pilihan C</span>
+            </button>
+            <button id="opt-btn-3" onclick="selectAnswer(3)" class="hex-option">
+              <span class="opt-letter text-yellow-400 font-extrabold text-base sm:text-lg">D:</span>
+              <span id="opt-text-3" class="text-sm sm:text-base flex-1">Pilihan D</span>
+            </button>
+          </div>
+
+          <!-- Panel Grafik Tanya Audiens (Muncul saat dipakai) -->
+          <div id="audience-panel" class="hidden studio-card rounded-2xl p-4 border-yellow-400/50 space-y-3">
+            <div class="flex items-center justify-between">
+              <h4 class="text-xs sm:text-sm font-bold text-yellow-300 flex items-center gap-2">
+                <span>👥</span> Hasil Polling Audiens Studio
+              </h4>
+              <button onclick="document.getElementById('audience-panel').classList.add('hidden')" class="text-xs text-slate-400 hover:text-white">Tutup ✕</button>
+            </div>
+            <div id="audience-bars" class="grid grid-cols-4 gap-3 pt-2 items-end h-32"></div>
+          </div>
+
+          <!-- Banner Penjelasan Jawaban (Muncul setelah jawaban terungkap) -->
+          <div id="explanation-box" class="hidden studio-card rounded-2xl p-4 border-sky-400/50 text-xs sm:text-sm text-sky-100">
+            <span class="font-bold text-yellow-300">💡 Pembahasan: </span>
+            <span id="explanation-text"></span>
+          </div>
+        </div>
+
+        <!-- Tangga Hadiah / Prize Ladder (Kanan 4 Kolom) -->
+        <div class="lg:col-span-4 studio-card rounded-2xl p-4">
+          <div class="flex items-center justify-between border-b border-sky-500/20 pb-2.5 mb-2.5">
+            <h3 class="font-display font-bold text-sm text-yellow-300 tracking-wide">TANGGA HADIAH</h3>
+            <span class="text-[11px] text-sky-300">★ = Titik Aman</span>
+          </div>
+          <div id="prize-ladder" class="flex flex-col-reverse gap-1"></div>
         </div>
       </div>
-      <div style="overflow:auto">
-        <table class="table">
-          <thead>
-            <tr><th>No</th><th>Jenjang & Mapel</th><th>Pertanyaan</th><th>Jawaban</th><th>Aksi</th></tr>
-          </thead>
-          <tbody id="bankTable"></tbody>
-        </table>
+    </section>
+
+    <!-- ==================== 5. LAYAR HASIL AKHIR (#result) ==================== -->
+    <section id="result" class="screen">
+      <div class="max-w-xl mx-auto studio-card rounded-3xl p-6 sm:p-8 text-center space-y-5 border-yellow-400/40">
+        <div id="result-icon" class="text-5xl sm:text-6xl">🏆</div>
+        <div class="space-y-1">
+          <h2 id="result-title" class="font-display text-2xl sm:text-3xl font-black text-yellow-300">
+            SELAMAT!
+          </h2>
+          <p id="result-subtitle" class="text-xs sm:text-sm text-sky-200">
+            Anda berhasil membawa pulang hadiah luar biasa!
+          </p>
+        </div>
+
+        <div class="bg-slate-950/80 border border-yellow-400/40 rounded-2xl p-5">
+          <div class="text-xs uppercase tracking-widest text-sky-300 font-semibold">Total Hadiah Dimenangkan</div>
+          <div id="result-prize" class="font-display text-2xl sm:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-b from-yellow-200 via-yellow-400 to-amber-500 mt-1">
+            Rp 0
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3 text-xs sm:text-sm">
+          <div class="bg-slate-900/80 rounded-xl p-3 border border-sky-500/20">
+            <div class="text-slate-400">Jawaban Benar</div>
+            <div id="result-correct-count" class="font-extrabold text-emerald-400 text-lg mt-0.5">0 / 15</div>
+          </div>
+          <div class="bg-slate-900/80 rounded-xl p-3 border border-sky-500/20">
+            <div class="text-slate-400">Status Akhir</div>
+            <div id="result-status-text" class="font-extrabold text-sky-300 text-sm sm:text-base mt-1">Selesai</div>
+          </div>
+        </div>
+
+        <div class="flex flex-col sm:flex-row gap-3 pt-2">
+          <button onclick="startNewGame()" class="btn-gold flex-1 py-3 rounded-xl text-sm font-extrabold">
+            ↺ Main Lagi
+          </button>
+          <button onclick="showScreen('home')" class="btn-studio flex-1 py-3 rounded-xl text-sm font-bold">
+            🏠 Kembali ke Beranda
+          </button>
+        </div>
       </div>
-    </div>
-  </section>
+    </section>
+  </main>
 
-  <footer class="footer">Media Pembelajaran Interaktif — Who Wants to Be a Millionaire? • Offline-ready HTML5</footer>
-</div>
+  <!-- ==================== MODAL TAMBAH / EDIT SOAL ==================== -->
+  <div id="question-modal" class="hidden fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="studio-card rounded-2xl max-w-lg w-full p-5 sm:p-6 space-y-4 border-yellow-400/40 max-h-[92vh] overflow-y-auto">
+      <div class="flex items-center justify-between border-b border-sky-500/20 pb-3">
+        <h3 id="modal-title" class="font-bold text-yellow-300 text-base">Tambah Soal Baru</h3>
+        <button onclick="closeQuestionModal()" class="text-slate-400 hover:text-white text-lg">✕</button>
+      </div>
 
-<div class="modal" id="modal">
-  <div class="modal-card">
-    <h2 id="modalTitle">Informasi</h2>
-    <p id="modalBody" class="muted"></p>
-    <div id="modalExtra"></div>
-    <div class="actions" style="margin-top:20px" id="modalActions">
-      <button class="btn" onclick="closeModal()">Tutup</button>
+      <input type="hidden" id="edit-question-id" />
+
+      <div class="grid grid-cols-3 gap-2.5">
+        <div>
+          <label class="block text-[11px] text-sky-300 mb-1">Jenjang</label>
+          <select id="modal-level" class="w-full bg-slate-900 border border-sky-500/40 rounded-lg px-2.5 py-2 text-xs text-white">
+            <option value="SD">SD</option>
+            <option value="SMP">SMP</option>
+            <option value="SMA">SMA</option>
+            <option value="UMUM">UMUM</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-[11px] text-sky-300 mb-1">Mata Pelajaran</label>
+          <select id="modal-subject" class="w-full bg-slate-900 border border-sky-500/40 rounded-lg px-2.5 py-2 text-xs text-white">
+            <option value="Matematika">Matematika</option>
+            <option value="IPA">IPA</option>
+            <option value="IPS">IPS</option>
+            <option value="Bahasa Indonesia">Bahasa Indonesia</option>
+            <option value="Bahasa Inggris">Bahasa Inggris</option>
+            <option value="Sejarah">Sejarah</option>
+            <option value="PPKn">PPKn</option>
+            <option value="Informatika">Informatika</option>
+            <option value="Pengetahuan Umum">Pengetahuan Umum</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-[11px] text-sky-300 mb-1">Kesulitan</label>
+          <select id="modal-difficulty" class="w-full bg-slate-900 border border-sky-500/40 rounded-lg px-2.5 py-2 text-xs text-white">
+            <option value="1">Mudah (1-5)</option>
+            <option value="2">Menengah (6-10)</option>
+            <option value="3">Sulit (11-15)</option>
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-xs text-sky-300 mb-1">Pertanyaan</label>
+        <textarea id="modal-question" rows="2" placeholder="Tulis pertanyaan di sini..." class="w-full bg-slate-900 border border-sky-500/40 rounded-xl p-2.5 text-sm text-white focus:outline-none focus:border-yellow-400"></textarea>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+        <div>
+          <label class="block text-xs text-yellow-300 mb-1">Pilihan A</label>
+          <input id="modal-opt-0" type="text" class="w-full bg-slate-900 border border-sky-500/40 rounded-lg px-3 py-2 text-xs text-white" />
+        </div>
+        <div>
+          <label class="block text-xs text-yellow-300 mb-1">Pilihan B</label>
+          <input id="modal-opt-1" type="text" class="w-full bg-slate-900 border border-sky-500/40 rounded-lg px-3 py-2 text-xs text-white" />
+        </div>
+        <div>
+          <label class="block text-xs text-yellow-300 mb-1">Pilihan C</label>
+          <input id="modal-opt-2" type="text" class="w-full bg-slate-900 border border-sky-500/40 rounded-lg px-3 py-2 text-xs text-white" />
+        </div>
+        <div>
+          <label class="block text-xs text-yellow-300 mb-1">Pilihan D</label>
+          <input id="modal-opt-3" type="text" class="w-full bg-slate-900 border border-sky-500/40 rounded-lg px-3 py-2 text-xs text-white" />
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+        <div>
+          <label class="block text-xs text-emerald-300 font-bold mb-1">Jawaban Benar</label>
+          <select id="modal-correct" class="w-full bg-slate-900 border border-emerald-500/40 rounded-lg px-3 py-2 text-xs text-white">
+            <option value="0">Pilihan A</option>
+            <option value="1">Pilihan B</option>
+            <option value="2">Pilihan C</option>
+            <option value="3">Pilihan D</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs text-sky-300 mb-1">Pembahasan Singkat (Opsional)</label>
+          <input id="modal-explanation" type="text" placeholder="Alasan jawaban benar..." class="w-full bg-slate-900 border border-sky-500/40 rounded-lg px-3 py-2 text-xs text-white" />
+        </div>
+      </div>
+
+      <div class="flex justify-end gap-2 pt-2">
+        <button onclick="closeQuestionModal()" class="btn-studio px-4 py-2 rounded-xl text-xs font-bold">Batal</button>
+        <button onclick="saveQuestionFromModal()" class="btn-gold px-5 py-2 rounded-xl text-xs font-extrabold">Simpan Soal</button>
+      </div>
     </div>
   </div>
-</div>
-<audio id="bgMusic" src="music.mp3" loop preload="auto"></audio>
-<button class="music-toggle" id="musicBtn" onclick="toggleMusic()">🔇 Musik Latar</button>
 
-<script>
-const PRIZES=[100,200,300,500,1000,2000,4000,8000,16000,32000,64000,125000,250000,500000,1000000];
-const SAFE_LEVELS=[4,9,14];
-const DEFAULT_MODEL='gemini-3.8-flash';
-const DEFAULT_QUESTIONS=[
-{id:'d1',level:'SD / MI',grade:'Kelas 4',subject:'IPA',topic:'Sumber Energi',q:'Sumber energi cahaya dan panas terbesar bagi kehidupan di Bumi adalah ...',options:['Bulan','Matahari','Angin','Batu bara'],answer:1,exp:'Matahari memancarkan cahaya dan panas utama bagi makhluk hidup di Bumi.'},
-{id:'d2',level:'SD / MI',grade:'Kelas 5',subject:'Bahasa Indonesia',topic:'Kosakata',q:'Sinonim dari kata "cerdas" adalah ...',options:['Pandai','Lambat','Malas','Ragu'],answer:0,exp:'Cerdas memiliki arti yang sama atau dekat dengan pandai.'},
-{id:'d3',level:'SD / MI',grade:'Kelas 6',subject:'Matematika',topic:'Bilangan',q:'Hasil dari 25 × 8 adalah ...',options:['180','200','220','250'],answer:1,exp:'25 × 8 = 200.'},
-{id:'d4',level:'SMP / MTs',grade:'Kelas 7',subject:'IPS',topic:'Letak Geografis',q:'Indonesia terletak di antara dua samudra, yaitu Samudra Hindia dan ...',options:['Samudra Atlantik','Samudra Arktik','Samudra Pasifik','Samudra Selatan'],answer:2,exp:'Indonesia diapit Samudra Hindia dan Samudra Pasifik.'},
-{id:'d5',level:'SMP / MTs',grade:'Kelas 7',subject:'IPA',topic:'Klasifikasi Makhluk Hidup',q:'Proses pembuatan makanan pada tumbuhan hijau dengan bantuan cahaya disebut ...',options:['Respirasi','Fotosintesis','Transpirasi','Adaptasi'],answer:1,exp:'Fotosintesis mengubah air dan karbon dioksida menjadi glukosa dengan bantuan cahaya.'},
-{id:'d6',level:'SMP / MTs',grade:'Kelas 8',subject:'PPKn',topic:'Konstitusi',q:'Dasar negara Republik Indonesia adalah ...',options:['UUD 1945','Pancasila','Bhinneka Tunggal Ika','Sumpah Pemuda'],answer:1,exp:'Pancasila merupakan dasar negara Indonesia.'},
-{id:'d7',level:'SMP / MTs',grade:'Kelas 8',subject:'Matematika',topic:'Pythagoras',q:'Jika sisi siku-siku segitiga adalah 6 cm dan 8 cm, panjang sisi miringnya adalah ...',options:['10 cm','12 cm','14 cm','48 cm'],answer:0,exp:'√(6² + 8²) = √(36 + 64) = √100 = 10 cm.'},
-{id:'d8',level:'SMP / MTs',grade:'Kelas 9',subject:'IPA',topic:'Listrik Dinamis',q:'Satuan hambatan listrik dalam Sistem Internasional adalah ...',options:['Volt','Ampere','Ohm','Watt'],answer:2,exp:'Hambatan listrik diukur dalam satuan Ohm (Ω).'},
-{id:'d9',level:'SMA / MA / SMK',grade:'Kelas 10',subject:'Biologi',topic:'Sel',q:'Organel sel yang berfungsi sebagai tempat respirasi seluler dan penghasil ATP adalah ...',options:['Ribosom','Mitokondria','Lisosom','Badan Golgi'],answer:1,exp:'Mitokondria menghasilkan energi ATP melalui respirasi sel.'},
-{id:'d10',level:'SMA / MA / SMK',grade:'Kelas 10',subject:'Kimia',topic:'Struktur Atom',q:'Partikel penyusun inti atom yang bermuatan positif disebut ...',options:['Elektron','Neutron','Proton','Ion'],answer:2,exp:'Proton bermuatan positif dan berada di inti atom bersama neutron.'},
-{id:'d11',level:'SMA / MA / SMK',grade:'Kelas 11',subject:'Sejarah',topic:'Pergerakan Nasional',q:'Organisasi pergerakan nasional pertama yang berdiri pada 20 Mei 1908 adalah ...',options:['Sarekat Islam','Budi Utomo','Indische Partij','Perhimpunan Indonesia'],answer:1,exp:'Budi Utomo didirikan pada 20 Mei 1908 dan diperingati sebagai Hari Kebangkitan Nasional.'},
-{id:'d12',level:'SMA / MA / SMK',grade:'Kelas 11',subject:'Fisika',topic:'Hukum Newton',q:'Kecenderungan benda untuk mempertahankan keadaan diam atau gerak lurus beraturannya disebut ...',options:['Impuls','Momentum','Inersia','Gesekan'],answer:2,exp:'Inersia atau kelembaman adalah inti Hukum I Newton.'},
-{id:'d13',level:'SMA / MA / SMK',grade:'Kelas 12',subject:'Ekonomi',topic:'Kebijakan Moneter',q:'Lembaga yang berwenang menetapkan kebijakan moneter dan menjaga stabilitas nilai rupiah adalah ...',options:['OJK','Kementerian Keuangan','Bank Indonesia','Bappenas'],answer:2,exp:'Bank Indonesia adalah bank sentral yang menjalankan kebijakan moneter.'},
-{id:'d14',level:'SMA / MA / SMK',grade:'Kelas 12',subject:'Geografi',topic:'Penginderaan Jauh',q:'Komponen penginderaan jauh yang berfungsi merekam pantulan gelombang elektromagnetik adalah ...',options:['Atmosfer','Sensor','Wahana','Sumber tenaga'],answer:1,exp:'Sensor merekam energi elektromagnetik yang dipantulkan objek di permukaan Bumi.'},
-{id:'d15',level:'SMA / MA / SMK',grade:'Kelas 12',subject:'Matematika',topic:'Turunan Fungsi',q:'Turunan pertama dari fungsi f(x) = 3x² + 4x - 7 adalah ...',options:['6x + 4','3x + 4','6x² + 4','6x - 7'],answer:0,exp:'Turunan 3x² adalah 6x, turunan 4x adalah 4, dan turunan konstanta -7 adalah 0.'}
-];
-const KEY='wwtbm_bank_v1';
-const AI_CFG_KEY='wwtbm_ai_config';
-let bank=loadBank(),generatedCache=[],game=null,editId=null;
-let aiConfig=loadAiConfig();
+  <!-- ==================== JAVASCRIPT LOGIKA LENGKAP ==================== -->
+  <script>
+    /* =========================================================================
+       1. SISTEM AUDIO WEB AUDIO API (EFEK SUARA & MUSIK TANPA FILE EKSTERNAL)
+       ========================================================================= */
+    const AudioEngine = {
+      ctx: null,
+      soundEnabled: true,
+      musicEnabled: true,
+      bgInterval: null,
+      bgStep: 0,
 
-function loadAiConfig(){
-  try{
-    const raw=localStorage.getItem(AI_CFG_KEY);
-    if(raw){
-      const parsed=JSON.parse(raw);
-      return {
-        provider: parsed.offlineAck ? 'builtin' : 'gemini',
-        key: parsed.key || '',
-        model: DEFAULT_MODEL,
-        offlineAck: Boolean(parsed.offlineAck)
-      };
+      init() {
+        if (!this.ctx) {
+          const AudioCtx = window.AudioContext || window.webkitAudioContext;
+          if (AudioCtx) this.ctx = new AudioCtx();
+        }
+        if (this.ctx && this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      },
+
+      playTone(freq, duration = 0.25, type = 'sine', gainVal = 0.14, delay = 0) {
+        if (!this.soundEnabled) return;
+        try {
+          this.init();
+          if (!this.ctx) return;
+          const now = this.ctx.currentTime + delay;
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = type;
+          osc.frequency.setValueAtTime(freq, now);
+          gain.gain.setValueAtTime(0.001, now);
+          gain.gain.exponentialRampToValueAtTime(gainVal, now + 0.02);
+          gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(now);
+          osc.stop(now + duration + 0.02);
+        } catch (e) {}
+      },
+
+      playClick() {
+        this.playTone(620, 0.08, 'triangle', 0.1);
+      },
+
+      playLockAnswer() {
+        // Suara dramatis saat mengunci jawaban (Final Answer)
+        this.playTone(220, 0.35, 'sawtooth', 0.12, 0);
+        this.playTone(277.18, 0.35, 'triangle', 0.14, 0.08);
+        this.playTone(329.63, 0.55, 'sine', 0.16, 0.16);
+      },
+
+      playCorrect() {
+        // Fanfare kemenangan tiap babak
+        const notes = [523.25, 659.25, 783.99, 1046.50];
+        notes.forEach((f, i) => this.playTone(f, 0.32, 'triangle', 0.16, i * 0.09));
+      },
+
+      playWrong() {
+        // Nada rendah dramatis saat salah
+        this.playTone(196, 0.4, 'sawtooth', 0.15, 0);
+        this.playTone(146.83, 0.75, 'sawtooth', 0.16, 0.22);
+      },
+
+      playBigWin() {
+        const chord = [523.25, 659.25, 783.99, 1046.5, 1318.5, 1567.98];
+        chord.forEach((f, i) => this.playTone(f, 0.55, 'triangle', 0.17, i * 0.1));
+      },
+
+      startSuspenseMusic() {
+        this.stopSuspenseMusic();
+        if (!this.musicEnabled) return;
+        const bassPattern = [110, 110, 130.81, 110, 146.83, 130.81, 110, 98];
+        this.bgInterval = setInterval(() => {
+          if (!this.musicEnabled || !document.getElementById('game').classList.contains('active')) return;
+          const freq = bassPattern[this.bgStep % bassPattern.length];
+          this.playTone(freq, 0.42, 'sine', 0.055, 0);
+          this.bgStep++;
+        }, 650);
+      },
+
+      stopSuspenseMusic() {
+        if (this.bgInterval) {
+          clearInterval(this.bgInterval);
+          this.bgInterval = null;
+        }
+      }
+    };
+
+    function toggleSound() {
+      AudioEngine.soundEnabled = !AudioEngine.soundEnabled;
+      document.getElementById('sound-icon').textContent = AudioEngine.soundEnabled ? '🔊' : '🔇';
+      document.getElementById('sound-label').textContent = AudioEngine.soundEnabled ? 'Suara: ON' : 'Suara: OFF';
+      if (AudioEngine.soundEnabled) AudioEngine.playClick();
     }
-  }catch(e){}
-  return {provider:'gemini',key:'',model:DEFAULT_MODEL,offlineAck:false};
-}
 
-function saveAiConfig(){
-  localStorage.setItem(AI_CFG_KEY,JSON.stringify(aiConfig));
-  applyAiConfigToUI();
-}
-
-function applyAiConfigToUI(){
-  const kEl=document.getElementById('aiKey');
-  const topBtn=document.getElementById('topApiBtn');
-  if(kEl)kEl.value=aiConfig.key;
-  if(topBtn){
-    if(aiConfig.key.trim()){
-      topBtn.classList.remove('missing');
-      topBtn.textContent='🔑 API Key Aktif';
-    }else if(aiConfig.offlineAck){
-      topBtn.classList.remove('missing');
-      topBtn.textContent='🔑 Mode Offline (Atur API)';
-    }else{
-      topBtn.classList.add('missing');
-      topBtn.textContent='🔑 Pengaturan API Key';
+    function toggleMusic() {
+      AudioEngine.musicEnabled = !AudioEngine.musicEnabled;
+      document.getElementById('music-icon').textContent = AudioEngine.musicEnabled ? '🎵' : '🔕';
+      document.getElementById('music-label').textContent = AudioEngine.musicEnabled ? 'Musik: ON' : 'Musik: OFF';
+      if (AudioEngine.musicEnabled) {
+        AudioEngine.init();
+        AudioEngine.startSuspenseMusic();
+      } else {
+        AudioEngine.stopSuspenseMusic();
+      }
     }
-  }
-}
 
-function syncAiConfigFromForm(){
-  aiConfig.key=document.getElementById('aiKey').value.trim();
-  aiConfig.model=DEFAULT_MODEL;
-  if(aiConfig.key){
-    aiConfig.provider='gemini';
-    aiConfig.offlineAck=false;
-  }
-  saveAiConfig();
-}
+    /* =========================================================================
+       2. BANK SOAL BAWAAN (DEFAULT) & STORAGE MANAGER
+       ========================================================================= */
+    const STORAGE_KEY_BANK = 'wwtbam_id_bank_v2';
+    const STORAGE_KEY_API = 'wwtbam_id_gemini_key';
+    const STORAGE_KEY_BEST = 'wwtbam_id_best_prize';
 
-function toggleInputVisibility(inputId, btn){
-  const inp=document.getElementById(inputId);
-  if(!inp)return;
-  if(inp.type==='password'){
-    inp.type='text';
-    btn.textContent='🙈';
-  }else{
-    inp.type='password';
-    btn.textContent='👁';
-  }
-}
+    const DEFAULT_QUESTIONS = [
+      // MUDAH (Difficulty 1)
+      { id: 'def-1', level: 'SD', subject: 'Pengetahuan Umum', difficulty: 1, question: 'Apa ibu kota negara Indonesia saat ini yang terletak di Pulau Jawa?', options: ['Bandung', 'Surabaya', 'Jakarta', 'Medan'], correct: 2, explanation: 'Jakarta merupakan ibu kota administratif Indonesia di Pulau Jawa.' },
+      { id: 'def-2', level: 'SD', subject: 'IPA', difficulty: 1, question: 'Planet manakah yang paling dekat dengan Matahari dalam tata surya kita?', options: ['Venus', 'Mars', 'Merkurius', 'Bumi'], correct: 2, explanation: 'Merkurius adalah planet pertama dan terdekat dari Matahari.' },
+      { id: 'def-3', level: 'SD', subject: 'Matematika', difficulty: 1, question: 'Berapakah hasil dari 15 × 6 + 10?', options: ['90', '100', '110', '85'], correct: 1, explanation: '15 × 6 = 90, kemudian 90 + 10 = 100.' },
+      { id: 'def-4', level: 'SD', subject: 'PPKn', difficulty: 1, question: 'Lambang sila pertama Pancasila adalah...', options: ['Rantai Emas', 'Pohon Beringin', 'Bintang Tunggal', 'Kepala Banteng'], correct: 2, explanation: 'Sila pertama "Ketuhanan Yang Maha Esa" dilambangkan dengan Bintang.' },
+      { id: 'def-5', level: 'SD', subject: 'Bahasa Indonesia', difficulty: 1, question: 'Sinonim dari kata "bahagia" adalah...', options: ['Sedih', 'Gembira', 'Marah', 'Kecewa'], correct: 1, explanation: 'Sinonim berarti persamaan makna kata; bahagia bersinonim dengan gembira.' },
+      { id: 'def-6', level: 'SMP', subject: 'IPS', difficulty: 1, question: 'Benua terluas di permukaan Bumi adalah...', options: ['Afrika', 'Amerika', 'Asia', 'Eropa'], correct: 2, explanation: 'Asia merupakan benua terbesar baik dari luas wilayah maupun jumlah penduduk.' },
+      { id: 'def-7', level: 'SMP', subject: 'IPA', difficulty: 1, question: 'Gas utama yang dibutuhkan tumbuhan untuk melakukan fotosintesis adalah...', options: ['Oksigen', 'Karbon dioksida', 'Nitrogen', 'Hidrogen'], correct: 1, explanation: 'Tumbuhan menyerap karbon dioksida (CO₂) dan air dengan bantuan cahaya matahari.' },
 
-function openApiSettingsModal(isRequiredPrompt=false){
-  const title=isRequiredPrompt?'⚠️ API Key Belum Diatur':'🔑 Pengaturan API Key AI';
-  const body=isRequiredPrompt
-    ?'Untuk membuat soal otomatis menggunakan AI, silakan masukkan <b>API Key</b> terlebih dahulu. Anda juga dapat memilih mode offline bawaan jika belum memiliki API Key.'
-    :'Atur API Key Google Gemini Anda. Pengaturan ini disimpan secara lokal di browser Anda.';
+      // MENENGAH (Difficulty 2)
+      { id: 'def-8', level: 'SMP', subject: 'Sejarah', difficulty: 2, question: 'Peristiwa Rengasdengklok terjadi pada tanggal...', options: ['14 Agustus 1945', '15 Agustus 1945', '16 Agustus 1945', '17 Agustus 1945'], correct: 2, explanation: 'Golongan muda mengamankan Soekarno-Hatta ke Rengasdengklok pada 16 Agustus 1945.' },
+      { id: 'def-9', level: 'SMP', subject: 'Matematika', difficulty: 2, question: 'Jika 3x + 7 = 28, maka nilai x adalah...', options: ['5', '6', '7', '8'], correct: 2, explanation: '3x = 28 - 7 = 21, sehingga x = 21 / 3 = 7.' },
+      { id: 'def-10', level: 'SMP', subject: 'Bahasa Inggris', difficulty: 2, question: 'What is the past participle (Verb 3) of the verb "write"?', options: ['Wrote', 'Written', 'Writing', 'Writes'], correct: 1, explanation: 'Bentuk kata kerja write adalah write (V1) - wrote (V2) - written (V3).' },
+      { id: 'def-11', level: 'SMA', subject: 'Informatika', difficulty: 2, question: 'Bilangan desimal 13 jika dikonversi ke dalam sistem bilangan biner adalah...', options: ['1011', '1100', '1101', '1110'], correct: 2, explanation: '13 = 8 + 4 + 0 + 1 = 1101 dalam biner.' },
+      { id: 'def-12', level: 'SMA', subject: 'IPA', difficulty: 2, question: 'Organel sel yang berfungsi sebagai tempat respirasi seluler dan penghasil energi (ATP) adalah...', options: ['Ribosom', 'Lisosom', 'Mitokondria', 'Badan Golgi'], correct: 2, explanation: 'Mitokondria dijuluki "the powerhouse of the cell" karena menghasilkan ATP.' },
+      { id: 'def-13', level: 'UMUM', subject: 'Pengetahuan Umum', difficulty: 2, question: 'Selat yang memisahkan Pulau Jawa dan Pulau Sumatra adalah...', options: ['Selat Bali', 'Selat Sunda', 'Selat Malaka', 'Selat Makassar'], correct: 1, explanation: 'Selat Sunda menghubungkan Laut Jawa dengan Samudra Hindia di antara Jawa dan Sumatra.' },
 
-  const extra=`
-    <div class="notice" style="text-align:left;margin-bottom:14px">
-      <b>Cara Mendapatkan API Key Gratis (Google Gemini):</b><br>
-      1. Buka tautan resmi Google AI Studio berikut:<br>
-      <a class="api-link" href="https://aistudio.google.com/api-keys" target="_blank" rel="noopener noreferrer">https://aistudio.google.com/api-keys</a><br>
-      2. Login dengan akun Google Anda, klik <b>Create API key</b>, lalu salin kodenya dan tempel pada kolom di bawah ini.
-    </div>
-    <div style="text-align:left">
-      <div class="field">
-        <label>API Key Google Gemini</label>
-        <div class="input-group">
-          <input id="modalAiKey" type="password" value="${esc(aiConfig.key)}" placeholder="Tempel API Key Anda di sini (contoh: AIza...)">
-          <button type="button" class="btn ghost" style="padding:11px 13px" onclick="toggleInputVisibility('modalAiKey', this)">👁</button>
-        </div>
-      </div>
-      <div class="status" id="modalApiStatus"></div>
-    </div>
-  `;
+      // SULIT (Difficulty 3)
+      { id: 'def-14', level: 'SMA', subject: 'Sejarah', difficulty: 3, question: 'Kerajaan maritim besar di Nusantara yang berpusat di Sumatra Selatan dan mencapai puncak kejayaan pada masa Raja Balaputradewa adalah...', options: ['Majapahit', 'Sriwijaya', 'Singhasari', 'Tarumanegara'], correct: 1, explanation: 'Kerajaan Sriwijaya mencapai masa keemasan di bawah pemerintahan Raja Balaputradewa pada abad ke-9.' },
+      { id: 'def-15', level: 'SMA', subject: 'IPA', difficulty: 3, question: 'Unsur kimia dengan nomor atom 79 dan simbol Au pada tabel periodik adalah...', options: ['Perak', 'Platina', 'Emas', 'Raksa'], correct: 2, explanation: 'Au berasal dari bahasa Latin "Aurum" yang berarti Emas.' },
+      { id: 'def-16', level: 'SMA', subject: 'Matematika', difficulty: 3, question: 'Turunan pertama dari fungsi f(x) = 4x³ - 5x² + 6x - 9 adalah...', options: ['12x² - 10x + 6', '12x² - 5x + 6', '4x² - 10x + 6', '12x³ - 10x² + 6'], correct: 0, explanation: 'Menggunakan aturan pangkat: 3·4x² - 2·5x + 6 = 12x² - 10x + 6.' },
+      { id: 'def-17', level: 'UMUM', subject: 'Pengetahuan Umum', difficulty: 3, question: 'Siapakah penulis novel klasik Indonesia "Bumi Manusia" yang merupakan bagian pertama dari Tetralogi Buru?', options: ['Andrea Hirata', 'Pramoedya Ananta Toer', 'Chairil Anwar', 'Mochtar Lubis'], correct: 1, explanation: 'Bumi Manusia diterbitkan pada tahun 1980 oleh sastrawan besar Pramoedya Ananta Toer.' },
+      { id: 'def-18', level: 'SMA', subject: 'IPS', difficulty: 3, question: 'Garis khayal yang memisahkan fauna tipe Asiatis dan tipe Peralihan di Indonesia disebut...', options: ['Garis Weber', 'Garis Wallace', 'Garis Khatulistiwa', 'Garis Lydekker'], correct: 1, explanation: 'Garis Wallace membatasi wilayah fauna Asiatis (barat) dengan fauna Peralihan (tengah).' }
+    ];
 
-  const actions=`
-    <button type="button" class="btn" onclick="saveApiSettingsFromModal()">Simpan Pengaturan</button>
-    <button type="button" class="btn secondary" onclick="useOfflineModeFromModal()">Gunakan Mode Offline Saja</button>
-    <button type="button" class="btn ghost" onclick="closeModal()">Tutup</button>
-  `;
+    let questionBank = [];
+    let generatedDraft = [];
 
-  openModal(title, body, extra, actions);
-}
-
-function saveApiSettingsFromModal(){
-  const key=document.getElementById('modalAiKey').value.trim();
-  const st=document.getElementById('modalApiStatus');
-
-  if(!key){
-    st.className='status err';
-    st.textContent='API Key masih kosong. Silakan isi API Key atau pilih "Gunakan Mode Offline Saja".';
-    return;
-  }
-
-  aiConfig={provider:'gemini',key,model:DEFAULT_MODEL,offlineAck:false};
-  saveAiConfig();
-  closeModal();
-
-  const genSt=document.getElementById('genStatus');
-  if(genSt){
-    genSt.className='status ok';
-    genSt.textContent='Pengaturan API Key Google Gemini berhasil disimpan!';
-  }
-}
-
-function useOfflineModeFromModal(){
-  aiConfig.provider='builtin';
-  aiConfig.offlineAck=true;
-  saveAiConfig();
-  closeModal();
-  const genSt=document.getElementById('genStatus');
-  if(genSt){
-    genSt.className='status ok';
-    genSt.textContent='Mode Offline aktif. Anda dapat langsung menekan tombol Generate Soal tanpa API Key.';
-  }
-}
-
-function showNotice(title, msg, actions='<button class="btn" onclick="closeModal()">Tutup</button>'){
-  openModal(title, esc(msg), '', actions);
-}
-
-function loadBank(){
-  try{
-    const raw=localStorage.getItem(KEY);
-    if(raw){
-      const arr=JSON.parse(raw);
-      if(Array.isArray(arr)&&arr.length)return arr;
-    }
-  }catch(e){}
-  return structuredClone(DEFAULT_QUESTIONS);
-}
-function saveBank(){
-  localStorage.setItem(KEY,JSON.stringify(bank));
-  updateBankCount();
-  renderBank();
-  populateSetupTopics();
-}
-function updateBankCount(){
-  document.getElementById('bankCount').textContent=bank.length+' soal tersedia';
-}
-function topicKey(q){
-  return `${q.level||'Umum'} • ${q.subject||'Umum'} • ${q.topic||'Umum'}`;
-}
-function populateSetupTopics(preferred=''){
-  const sel=document.getElementById('gameTopic');
-  if(!sel)return;
-  const groups={};
-  bank.forEach(q=>{const k=topicKey(q);groups[k]=(groups[k]||0)+1;});
-  const keys=Object.keys(groups).sort((a,b)=>a.localeCompare(b,'id'));
-  const current=preferred||sel.value||'Semua';
-  sel.innerHTML=`<option value="Semua">Semua materi tersimpan (${bank.length} soal)</option>`+keys.map(k=>`<option value="${esc(k)}">${esc(k)} (${groups[k]} soal)</option>`).join('');
-  sel.value=[...sel.options].some(o=>o.value===current)?current:(keys[0]||'Semua');
-  const help=document.getElementById('topicHelp');
-  if(help)help.textContent=keys.length?`Tersedia ${keys.length} materi di Bank Soal.`:'Belum ada materi tersimpan. Silakan buat soal di Generator AI terlebih dahulu.';
-}
-function showScreen(id){
-  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  if(id==='bank')renderBank();
-  if(id==='gameSetup'){
-    populateSetupTopics();
-    tryAutoStartMusic();
-  }
-  if(id==='generator'){
-    applyAiConfigToUI();
-    if(aiConfig.provider!=='builtin'&&!aiConfig.key.trim()&&!aiConfig.offlineAck){
-      openApiSettingsModal(true);
-    }
-  }
-}
-function formatPrize(n){
-  return n.toLocaleString('id-ID')+' Poin';
-}
-function shuffle(a){
-  const arr=[...a];
-  for(let i=arr.length-1;i>0;i--){
-    const j=Math.floor(Math.random()*(i+1));
-    [arr[i],arr[j]]=[arr[j],arr[i]];
-  }
-  return arr;
-}
-
-function startGame(customList=null){
-  const player=document.getElementById('playerName').value.trim()||'Peserta Kuis';
-  const chosenTopic=document.getElementById('gameTopic')?.value||'Semua';
-  let pool=customList||bank.filter(q=>chosenTopic==='Semua'||topicKey(q)===chosenTopic);
-  if(pool.length<1){
-    showNotice('Soal Belum Tersedia', 'Materi yang dipilih belum memiliki soal. Silakan buat soal di Generator AI terlebih dahulu.');
-    return;
-  }
-  tryAutoStartMusic();
-  const ordered=customList?[...pool]:shuffle(pool);
-  const questions=ordered.slice(0,Math.min(15,ordered.length));
-  game={player,questions,idx:0,selected:null,locked:false,lifelines:{5050:true,aud:true,swap:true},reserve:ordered.slice(questions.length),earned:0};
-  document.getElementById('playerLabel').textContent=player;
-  ['life5050','lifeAudience','lifeSwap'].forEach(id=>document.getElementById(id).disabled=false);
-  showScreen('game');
-  renderLadder();
-  renderQuestion();
-}
-function renderLadder(){
-  const el=document.getElementById('ladder');
-  el.innerHTML='';
-  const count=game.questions.length;
-  for(let i=0;i<count;i++){
-    const d=document.createElement('div');
-    d.className='rung'+(i===game.idx?' current':'')+(SAFE_LEVELS.includes(i)?' safe':'');
-    d.innerHTML=`<span>${i+1}</span><span>${formatPrize(PRIZES[i])}</span>`;
-    el.appendChild(d);
-  }
-}
-function renderQuestion(){
-  const q=game.questions[game.idx];
-  game.selected=null;
-  game.locked=false;
-  document.getElementById('levelLabel').textContent=`PERTANYAAN ${game.idx+1} / ${game.questions.length}`;
-  document.getElementById('earnedPoints').textContent=game.earned.toLocaleString('id-ID');
-  document.getElementById('questionText').textContent=q.q;
-  document.getElementById('gameStatus').textContent='';
-  document.getElementById('lockBtn').disabled=true;
-  const box=document.getElementById('answersBox');
-  box.innerHTML='';
-  ['A','B','C','D'].forEach((L,i)=>{
-    const b=document.createElement('button');
-    b.className='answer';
-    b.dataset.idx=i;
-    b.innerHTML=`<b>${L}:</b> <span>${esc(q.options[i])}</span>`;
-    b.onclick=()=>selectAnswer(i,b);
-    box.appendChild(b);
-  });
-  renderLadder();
-}
-function selectAnswer(i,btn){
-  if(game.locked)return;
-  game.selected=i;
-  document.querySelectorAll('.answer').forEach(a=>a.classList.remove('selected'));
-  btn.classList.add('selected');
-  document.getElementById('lockBtn').disabled=false;
-  playSelectSound();
-}
-function lockAnswer(){
-  if(game.selected===null||game.locked)return;
-  game.locked=true;
-  document.getElementById('lockBtn').disabled=true;
-  document.getElementById('gameStatus').textContent='Mengunci jawaban...';
-  playLockSound();
-  const q=game.questions[game.idx],btns=[...document.querySelectorAll('.answer')];
-  btns.forEach(b=>b.disabled=true);
-  setTimeout(()=>{
-    const ok=game.selected===q.answer;
-    btns[q.answer].classList.add('reveal-correct');
-    if(!ok)btns[game.selected].classList.add('reveal-wrong');
-    if(ok){
-      playCorrectSound();
-      game.earned=PRIZES[game.idx];
-      document.getElementById('earnedPoints').textContent=game.earned.toLocaleString('id-ID');
-      document.getElementById('gameStatus').innerHTML=`<span style="color:#34d399;font-weight:800">✔ Jawaban Benar!</span> ${esc(q.exp||'')}`;
-      setTimeout(()=>{
-        if(game.idx+1>=game.questions.length){endGame(true);}else{game.idx++;renderQuestion();}
-      },1650);
-    }else{
-      playWrongSound();
-      let safe=0;
-      SAFE_LEVELS.forEach(s=>{if(game.idx>s)safe=PRIZES[s];});
-      game.earned=safe;
-      document.getElementById('earnedPoints').textContent=game.earned.toLocaleString('id-ID');
-      document.getElementById('gameStatus').innerHTML=`<span style="color:#f87171;font-weight:800">✘ Jawaban Kurang Tepat.</span> ${esc(q.exp||'')}`;
-      setTimeout(()=>endGame(false),1900);
-    }
-  },1250);
-}
-function use5050(){
-  if(!game.lifelines[5050]||game.locked)return;
-  game.lifelines[5050]=false;
-  document.getElementById('life5050').disabled=true;
-  const q=game.questions[game.idx],wrong=shuffle([0,1,2,3].filter(i=>i!==q.answer)).slice(0,2);
-  document.querySelectorAll('.answer').forEach((b,i)=>{if(wrong.includes(i)){b.disabled=true;b.style.opacity='.22';}});
-  playLifelineSound();
-}
-function useAudience(){
-  if(!game.lifelines.aud||game.locked)return;
-  game.lifelines.aud=false;
-  document.getElementById('lifeAudience').disabled=true;
-  const q=game.questions[game.idx],pct=[8,8,8,8];
-  pct[q.answer]=52+Math.floor(Math.random()*20);
-  let rem=100-pct.reduce((a,b)=>a+b,0);
-  [0,1,2,3].filter(i=>i!==q.answer).forEach((i,idx)=>{
-    const add=idx===2?rem:Math.floor(Math.random()*rem);
-    pct[i]+=add;
-    rem-=add;
-  });
-  playLifelineSound();
-  openModal('Hasil Polling Audiens','Mayoritas audiens memilih opsi berikut:',['A','B','C','D'].map((L,i)=>`<div style="margin:10px 0;text-align:left"><b>${L} (${pct[i]}%)</b><div style="height:12px;background:#081a36;border-radius:99px;overflow:hidden;margin-top:4px;border:1px solid rgba(255,255,255,0.1)"><div style="width:${pct[i]}%;height:100%;background:linear-gradient(90deg,#f6c453,#ffe082)"></div></div></div>`).join(''));
-}
-function useSwap(){
-  if(!game.lifelines.swap||game.locked)return;
-  const replacement=game.reserve.shift()||shuffle(bank.filter(x=>x.id!==game.questions[game.idx].id))[0];
-  if(!replacement){
-    showNotice('Soal Cadangan Kosong', 'Tidak ada soal cadangan di bank soal.');
-    return;
-  }
-  game.lifelines.swap=false;
-  document.getElementById('lifeSwap').disabled=true;
-  game.questions[game.idx]=replacement;
-  renderQuestion();
-  playLifelineSound();
-}
-function confirmExitGame(){
-  openModal(
-    'Keluar Permainan?',
-    'Apakah Anda yakin ingin keluar dari permainan saat ini? Progres permainan ini akan dihentikan.',
-    '',
-    `<button class="btn" onclick="closeModal();showScreen('home')">Ya, Keluar</button><button class="btn ghost" onclick="closeModal()">Batal</button>`
-  );
-}
-function endGame(won){
-  if(won)playWinSound();
-  openModal(won?'🎉 SELAMAT! JUARA MILLIONAIRE!':'Permainan Selesai',
-    `${esc(game.player)} memperoleh <b>${formatPrize(game.earned)}</b>.`,
-    '',`<button class="btn" onclick="closeModal();showScreen('gameSetup')">Main Lagi</button><button class="btn ghost" onclick="closeModal();showScreen('home')">Beranda</button>`);
-}
-
-function openModal(title,body,extra='',actions='<button class="btn" onclick="closeModal()">Tutup</button>'){
-  document.getElementById('modalTitle').textContent=title;
-  document.getElementById('modalBody').innerHTML=body;
-  document.getElementById('modalExtra').innerHTML=extra;
-  document.getElementById('modalActions').innerHTML=actions;
-  document.getElementById('modal').classList.add('show');
-}
-function closeModal(){
-  document.getElementById('modal').classList.remove('show');
-}
-
-function renderBank(){
-  const tb=document.getElementById('bankTable');
-  tb.innerHTML='';
-  bank.forEach((q,i)=>{
-    const tr=document.createElement('tr');
-    tr.innerHTML=`<td>${i+1}</td><td><b>${esc(q.level)}</b><br><span class="muted">${esc(q.subject)} • ${esc(q.topic)}</span></td><td>${esc(q.q)}</td><td><b>${['A','B','C','D'][q.answer]}.</b> ${esc(q.options[q.answer])}</td><td><button class="btn ghost" style="padding:6px 10px" onclick="deleteQ('${q.id}')">Hapus</button></td>`;
-    tb.appendChild(tr);
-  });
-}
-function openManualForm(){
-  editId=null;
-  document.getElementById('manualBox').classList.remove('hidden');
-}
-function closeManualForm(){
-  document.getElementById('manualBox').classList.add('hidden');
-}
-function saveManualQuestion(){
-  const qText=document.getElementById('mQ').value.trim();
-  const opts=['mA','mB','mC','mD'].map(id=>document.getElementById(id).value.trim());
-  if(!qText||opts.some(o=>!o)){
-    showNotice('Data Belum Lengkap', 'Isi pertanyaan dan keempat pilihan jawaban terlebih dahulu.');
-    return;
-  }
-  bank.unshift({id:'m'+Date.now(),level:document.getElementById('mLevel').value,grade:'Semua Kelas',subject:document.getElementById('mSubject').value.trim()||'Umum',topic:document.getElementById('mTopic').value.trim()||'Materi',q:qText,options:opts,answer:Number(document.getElementById('mAns').value),exp:document.getElementById('mExp').value.trim()});
-  saveBank();
-  closeManualForm();
-  ['mQ','mA','mB','mC','mD','mExp'].forEach(id=>document.getElementById(id).value='');
-}
-function deleteQ(id){
-  openModal(
-    'Hapus Soal?',
-    'Apakah Anda yakin ingin menghapus soal ini dari Bank Soal?',
-    '',
-    `<button class="btn" onclick="executeDeleteQ('${esc(id)}')">Ya, Hapus</button><button class="btn ghost" onclick="closeModal()">Batal</button>`
-  );
-}
-function executeDeleteQ(id){
-  bank=bank.filter(q=>q.id!==id);
-  saveBank();
-  closeModal();
-}
-function resetDefaultBank(){
-  openModal(
-    'Reset Bank Soal?',
-    'Kembalikan bank soal ke 15 soal bawaan? Soal yang Anda buat sebelumnya akan diganti.',
-    '',
-    `<button class="btn" onclick="executeResetBank()">Ya, Reset</button><button class="btn ghost" onclick="closeModal()">Batal</button>`
-  );
-}
-function executeResetBank(){
-  bank=structuredClone(DEFAULT_QUESTIONS);
-  saveBank();
-  closeModal();
-}
-function exportBank(){
-  const blob=new Blob([JSON.stringify(bank,null,2)],{type:'application/json'});
-  const a=document.createElement('a');
-  a.href=URL.createObjectURL(blob);
-  a.download='bank-soal-millionaire.json';
-  a.click();
-}
-function importBank(e){
-  const f=e.target.files[0];
-  if(!f)return;
-  const r=new FileReader();
-  r.onload=()=>{
-    try{
-      const arr=JSON.parse(r.result);
-      if(!Array.isArray(arr))throw 0;
-      bank=[...arr,...bank];
+    function loadBank() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY_BANK);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            questionBank = parsed;
+            return;
+          }
+        }
+      } catch (e) {}
+      questionBank = JSON.parse(JSON.stringify(DEFAULT_QUESTIONS));
       saveBank();
-      showNotice('Impor Berhasil', 'Berhasil mengimpor '+arr.length+' soal ke Bank Soal.');
-    }catch(err){
-      showNotice('Impor Gagal', 'Format file JSON tidak valid.');
     }
-  };
-  r.readAsText(f);
-}
 
-async function generateQuestions(){
-  const level=document.getElementById('genLevel').value,grade=document.getElementById('genGrade').value,subject=document.getElementById('genSubject').value.trim()||'Pengetahuan Umum',topic=document.getElementById('genTopic').value.trim()||'Materi Utama',count=Number(document.getElementById('genCount').value),diff=document.getElementById('genDiff').value,notes=document.getElementById('genNotes').value.trim();
-  const key=document.getElementById('aiKey').value.trim(),model=DEFAULT_MODEL;
-  const st=document.getElementById('genStatus'),btn=document.getElementById('genBtn');
-
-  if(!key&&!aiConfig.offlineAck){
-    openApiSettingsModal(true);
-    return;
-  }
-
-  btn.disabled=true;st.className='status';st.textContent='Sedang menyusun soal pembelajaran...';
-  try{
-    let items=[];
-    if(key){
-      items=await generateWithAI({provider:'gemini',key,model,level,grade,subject,topic,count,diff,notes});
-    }else{
-      items=generateOfflineQuestions({level,grade,subject,topic,count,diff,notes});
+    function saveBank() {
+      try {
+        localStorage.setItem(STORAGE_KEY_BANK, JSON.stringify(questionBank));
+      } catch (e) {}
+      updateHomeStats();
+      populateSubjectDropdowns();
     }
-    generatedCache=items;renderGeneratedPreview(items);
-    document.getElementById('saveGenBtn').classList.remove('hidden');
-    document.getElementById('playGenBtn').classList.remove('hidden');
-    st.className='status ok';st.textContent=`Berhasil membuat ${items.length} soal (${subject} — ${topic}).`;
-  }catch(err){
-    st.className='status err';st.textContent='Gagal generate soal AI: '+err.message+' (Anda tetap dapat memakai Generator Materi Bawaan).';
-  }finally{btn.disabled=false;}
-}
-async function generateWithAI({provider,key,model,level,grade,subject,topic,count,diff,notes}){
-  const prompt=`Buat ${count} soal pilihan ganda berbahasa Indonesia untuk kuis Who Wants to Be a Millionaire. Jenjang: ${level}, Kelas: ${grade}, Mata pelajaran: ${subject}, Topik: ${topic}, Tingkat kesulitan: ${diff}. ${notes?'Catatan materi: '+notes:''} Kembalikan HANYA JSON array valid dengan format: [{"q":"pertanyaan","options":["opsi A","opsi B","opsi C","opsi D"],"answer":0,"exp":"pembahasan singkat"}]. answer adalah indeks 0-3.`;
-  let text='';
-  if(provider==='gemini'){
-    const res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${encodeURIComponent(key)}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:prompt}]}]})});
-    const data=await res.json();if(!res.ok)throw new Error(data.error?.message||'HTTP '+res.status);
-    text=data.candidates?.[0]?.content?.parts?.[0]?.text||'';
-  }else{
-    const res=await fetch('https://api.openai.com/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},body:JSON.stringify({model,messages:[{role:'user',content:prompt}]})});
-    const data=await res.json();if(!res.ok)throw new Error(data.error?.message||'HTTP '+res.status);
-    text=data.choices?.[0]?.message?.content||'';
-  }
-  const clean=text.replace(/```json|```/g,'').trim();
-  const parsed=JSON.parse(clean);
-  return parsed.map((x,i)=>({id:'ai'+Date.now()+i,level,grade,subject,topic,q:x.q,options:x.options.slice(0,4),answer:Number(x.answer)||0,exp:x.exp||''}));
-}
-function generateOfflineQuestions({level,grade,subject,topic,count,diff,notes}){
-  const sentences=notes?notes.split(/[.!?\n]+/).map(s=>s.trim()).filter(s=>s.length>18):[];
-  const templates=[
-    (n)=>`Pada mata pelajaran ${subject} (${grade}), konsep utama dalam topik "${topic}" adalah ...`,
-    (n)=>`Tujuan pembelajaran yang paling tepat ketika mempelajari materi "${topic}" pada ${subject} adalah ...`,
-    (n)=>`Pernyataan berikut yang sesuai dengan prinsip dasar "${topic}" adalah ...`,
-    (n)=>`Dalam penerapan sehari-hari, materi "${topic}" membantu siswa untuk ...`,
-    (n)=>`Langkah analisis yang tepat saat menyelesaikan persoalan "${topic}" tingkat ${diff} adalah ...`
-  ];
-  const out=[];
-  for(let i=0;i<count;i++){
-    const note=sentences[i%Math.max(1,sentences.length)];
-    const q=note?`Berdasarkan materi "${topic}", pernyataan yang benar terkait "${note.slice(0,65)}..." adalah ...`:templates[i%templates.length](i+1);
-    const correct=note?`Sesuai konsep ${topic}: ${note}`:`Memahami konsep, ciri, dan penerapan ${topic} secara tepat pada ${subject}`;
-    const options=shuffle([
-      correct,
-      `Mengabaikan hubungan sebab-akibat dalam materi ${topic}`,
-      `Menyamakan seluruh konsep ${topic} tanpa memperhatikan data`,
-      `Menarik kesimpulan yang bertentangan dengan kaidah ${subject}`
-    ]);
-    out.push({id:'gen'+Date.now()+i,level,grade,subject,topic,q:`[Soal ${i+1}] ${q}`,options,answer:options.indexOf(correct),exp:`Jawaban benar merujuk pada pemahaman inti materi ${topic} (${level} - ${grade}).`});
-  }
-  return out;
-}
-function renderGeneratedPreview(items){
-  document.getElementById('genPreview').innerHTML=items.map((q,i)=>`<div class="question-item"><div class="meta">${i+1}. ${esc(q.level)} • ${esc(q.grade)} • ${esc(q.subject)} • ${esc(q.topic)}</div><p><b>${esc(q.q)}</b></p><div class="small muted">${q.options.map((o,idx)=>`${idx===q.answer?'<b style="color:var(--green)">✔ ':'<span>'}${['A','B','C','D'][idx]}. ${esc(o)}${idx===q.answer?'</b>':'</span>'}`).join(' &nbsp;|&nbsp; ')}</div></div>`).join('');
-}
-function saveGenerated(){
-  if(!generatedCache.length)return;
-  bank=[...generatedCache,...bank];
-  saveBank();
-  showNotice('Soal Tersimpan', generatedCache.length+' soal berhasil disimpan ke Bank Soal dan tersedia di menu Mulai Bermain!');
-}
-function playGenerated(){
-  if(!generatedCache.length)return;
-  startGame(generatedCache);
-}
-function esc(s){
-  return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
-}
-updateBankCount();
-populateSetupTopics();
-applyAiConfigToUI();
 
-/* === Millionaire music.mp3 player + WebAudio fallback & sound effects === */
-let audioCtx=null,musicOn=false,musicMode='none',musicTimer=null,beatStep=0,userAttemptedMusic=false;
-const bgMusicEl=document.getElementById('bgMusic');
-if(bgMusicEl)bgMusicEl.volume=0.45;
+    /* =========================================================================
+       3. NAVIGASI LAYAR & NOTIFIKASI TOAST
+       ========================================================================= */
+    function showScreen(screenId) {
+      AudioEngine.playClick();
+      document.querySelectorAll('.screen').forEach(el => el.classList.remove('active'));
+      const target = document.getElementById(screenId);
+      if (target) target.classList.add('active');
 
-function ensureAudio(){
-  if(!audioCtx){
-    const Ctx=window.AudioContext||window.webkitAudioContext;
-    if(Ctx)audioCtx=new Ctx();
-  }
-  if(audioCtx&&audioCtx.state==='suspended')audioCtx.resume();
-}
-function tone(freq,dur=0.22,type='triangle',vol=0.05,delay=0){
-  if(!audioCtx)return;
-  const now=audioCtx.currentTime+delay;
-  const osc=audioCtx.createOscillator(),gain=audioCtx.createGain();
-  osc.type=type;osc.frequency.setValueAtTime(freq,now);
-  gain.gain.setValueAtTime(0.0001,now);
-  gain.gain.exponentialRampToValueAtTime(vol,now+0.02);
-  gain.gain.exponentialRampToValueAtTime(0.0001,now+dur);
-  osc.connect(gain);gain.connect(audioCtx.destination);
-  osc.start(now);osc.stop(now+dur+0.03);
-}
-function playMusicPulse(){
-  if(!musicOn||musicMode!=='synth')return;
-  ensureAudio();
-  const inGame=document.getElementById('game').classList.contains('active');
-  const lvl=game?game.idx:0;
-  const bassSeq=inGame?[110,110,130.81,146.83,110,110,164.81,146.83]:[130.81,164.81,196,164.81];
-  const note=bassSeq[beatStep%bassSeq.length]*(lvl>=10?1.122:1);
-  tone(note,0.34,'sine',inGame?0.055:0.035,0);
-  if(beatStep%2===0)tone(note*2,0.18,'triangle',inGame?0.024:0.016,0.03);
-  if(inGame&&beatStep%4===3)tone(note*3,0.12,'sine',0.018,0.12);
-  beatStep++;
-}
-function startSynthFallback(showToast=false){
-  musicMode='synth';
-  ensureAudio();
-  if(musicTimer)clearInterval(musicTimer);
-  playMusicPulse();
-  musicTimer=setInterval(playMusicPulse,540);
-  const btn=document.getElementById('musicBtn');
-  btn.textContent='🔊 Musik Aktif (Synth)';
-  btn.classList.add('playing');
-  if(showToast){
-    showMusicToast('File music.mp3 tidak ditemukan/gagal dimuat, beralih ke musik latar bawaan.');
-  }
-}
-function showMusicToast(text){
-  let toast=document.getElementById('musicToast');
-  if(!toast){
-    toast=document.createElement('div');
-    toast.id='musicToast';
-    toast.style.cssText='position:fixed;right:20px;bottom:68px;z-index:35;max-width:300px;background:rgba(11,29,66,0.95);border:1px solid var(--gold);color:var(--gold-light);padding:10px 14px;border-radius:12px;font-size:12px;box-shadow:0 8px 24px rgba(0,0,0,0.45);transition:opacity 0.3s ease;';
-    document.body.appendChild(toast);
-  }
-  toast.textContent=text;
-  toast.style.opacity='1';
-  clearTimeout(toast._hideTimer);
-  toast._hideTimer=setTimeout(()=>{toast.style.opacity='0';},3500);
-}
-async function startBackgroundMusic(isAuto=false){
-  const btn=document.getElementById('musicBtn');
-  musicOn=true;
-  if(bgMusicEl){
-    try{
-      bgMusicEl.currentTime=bgMusicEl.currentTime||0;
-      await bgMusicEl.play();
-      musicMode='mp3';
-      if(musicTimer){clearInterval(musicTimer);musicTimer=null;}
-      btn.textContent='🔊 Musik Aktif';
-      btn.classList.add('playing');
-      if(!isAuto)showMusicToast('Memutar musik latar (music.mp3)');
-      return;
-    }catch(err){
-      startSynthFallback(!isAuto);
-      return;
+      if (screenId === 'home') {
+        AudioEngine.stopSuspenseMusic();
+        stopQuestionTimer();
+        updateHomeStats();
+      } else if (screenId === 'bank') {
+        AudioEngine.stopSuspenseMusic();
+        renderBankList();
+      } else if (screenId === 'generator') {
+        AudioEngine.stopSuspenseMusic();
+        updateClassOptions();
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
-  }
-  startSynthFallback(!isAuto);
-}
-function stopBackgroundMusic(){
-  musicOn=false;
-  musicMode='none';
-  if(bgMusicEl){
-    bgMusicEl.pause();
-  }
-  if(musicTimer){
-    clearInterval(musicTimer);
-    musicTimer=null;
-  }
-  const btn=document.getElementById('musicBtn');
-  btn.textContent='🔇 Musik Latar';
-  btn.classList.remove('playing');
-}
-function toggleMusic(){
-  userAttemptedMusic=true;
-  if(!musicOn){
-    startBackgroundMusic(false);
-  }else{
-    stopBackgroundMusic();
-  }
-}
-function tryAutoStartMusic(){
-  if(!musicOn&&!userAttemptedMusic){
-    userAttemptedMusic=true;
-    startBackgroundMusic(true);
-  }
-}
-if(bgMusicEl){
-  bgMusicEl.addEventListener('error',()=>{
-    if(musicOn&&musicMode==='mp3'){
-      startSynthFallback(true);
+
+    function showToast(message, type = 'info') {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      const colors = {
+        info: 'border-sky-400 bg-slate-900/95 text-sky-100',
+        success: 'border-emerald-400 bg-emerald-950/95 text-emerald-100',
+        warning: 'border-yellow-400 bg-amber-950/95 text-yellow-100',
+        error: 'border-rose-400 bg-rose-950/95 text-rose-100'
+      };
+      toast.className = `pointer-events-auto border-l-4 ${colors[type] || colors.info} px-4 py-3 rounded-xl shadow-2xl text-xs sm:text-sm font-semibold backdrop-blur-md transition-all duration-300`;
+      toast.textContent = message;
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateX(16px)';
+        setTimeout(() => toast.remove(), 300);
+      }, 3200);
     }
-  });
-}
-function playSelectSound(){ensureAudio();tone(523.25,0.12,'triangle',0.07,0);tone(659.25,0.16,'triangle',0.07,0.07);}
-function playLockSound(){ensureAudio();[220,277.18,329.63,440].forEach((f,i)=>tone(f,0.28,'sawtooth',0.04,i*0.09));}
-function playCorrectSound(){ensureAudio();[523.25,659.25,783.99,1046.5].forEach((f,i)=>tone(f,0.32,'triangle',0.085,i*0.11));}
-function playWrongSound(){ensureAudio();tone(233.08,0.35,'sawtooth',0.08,0);tone(174.61,0.55,'sawtooth',0.08,0.22);}
-function playLifelineSound(){ensureAudio();[587.33,783.99,987.77].forEach((f,i)=>tone(f,0.2,'sine',0.07,i*0.08));}
-function playWinSound(){ensureAudio();[523.25,659.25,783.99,1046.5,1318.5].forEach((f,i)=>tone(f,0.45,'triangle',0.095,i*0.12));}
-</script>
+
+    function formatRupiah(num) {
+      return 'Rp ' + Number(num || 0).toLocaleString('id-ID');
+    }
+
+    function updateHomeStats() {
+      document.getElementById('stat-total-questions').textContent = questionBank.length;
+      document.getElementById('active-pack-badge').textContent = `Bank Soal: ${questionBank.length} Soal`;
+      const best = Number(localStorage.getItem(STORAGE_KEY_BEST) || 0);
+      document.getElementById('stat-best-prize').textContent = formatRupiah(best);
+    }
+
+    function populateSubjectDropdowns() {
+      const subjects = [...new Set(questionBank.map(q => q.subject))].sort();
+      const homeSel = document.getElementById('home-filter-subject');
+      const bankSel = document.getElementById('bank-filter-subject');
+      const prevHome = homeSel.value;
+      const prevBank = bankSel.value;
+
+      homeSel.innerHTML = '<option value="ALL">Semua Mapel (Campuran)</option>';
+      bankSel.innerHTML = '<option value="ALL">Semua Mapel</option>';
+
+      subjects.forEach(sub => {
+        const count = questionBank.filter(q => q.subject === sub).length;
+        homeSel.innerHTML += `<option value="${sub}">${sub} (${count} soal)</option>`;
+        bankSel.innerHTML += `<option value="${sub}">${sub}</option>`;
+      });
+
+      if ([...homeSel.options].some(o => o.value === prevHome)) homeSel.value = prevHome;
+      if ([...bankSel.options].some(o => o.value === prevBank)) bankSel.value = prevBank;
+    }
+
+    /* =========================================================================
+       4. GENERATOR SOAL AI (GEMINI API + SMART PROCEDURAL FALLBACK ENGINE)
+       ========================================================================= */
+    function updateClassOptions() {
+      const level = document.getElementById('gen-level').value;
+      const gradeSel = document.getElementById('gen-grade');
+      let options = [];
+      if (level === 'SD') options = ['Kelas 1', 'Kelas 2', 'Kelas 3', 'Kelas 4', 'Kelas 5', 'Kelas 6'];
+      else if (level === 'SMP') options = ['Kelas 7', 'Kelas 8', 'Kelas 9'];
+      else if (level === 'SMA') options = ['Kelas 10', 'Kelas 11', 'Kelas 12'];
+      else options = ['Tingkat Dasar', 'Tingkat Menengah', 'Tingkat Mahir / Olimpiade'];
+
+      gradeSel.innerHTML = options.map(o => `<option value="${o}">${o}</option>`).join('');
+    }
+
+    function loadApiKeyUI() {
+      const saved = localStorage.getItem(STORAGE_KEY_API) || '';
+      document.getElementById('gemini-api-key').value = saved;
+      updateApiBadge(saved);
+    }
+
+    function updateApiBadge(key) {
+      const badge = document.getElementById('api-status-badge');
+      if (key && key.trim().length > 10) {
+        badge.textContent = 'Gemini AI Aktif';
+        badge.className = 'text-[10px] px-2 py-0.5 rounded-full bg-sky-950 text-sky-300 border border-sky-400/40';
+      } else {
+        badge.textContent = 'Mode Otomatis Siap';
+        badge.className = 'text-[10px] px-2 py-0.5 rounded-full bg-emerald-950 text-emerald-300 border border-emerald-500/30';
+      }
+    }
+
+    function saveApiKey() {
+      const val = document.getElementById('gemini-api-key').value.trim();
+      localStorage.setItem(STORAGE_KEY_API, val);
+      updateApiBadge(val);
+      showToast(val ? 'Gemini API Key tersimpan di browser!' : 'API Key kosong, menggunakan Mode Otomatis.', 'success');
+    }
+
+    function clearApiKey() {
+      localStorage.removeItem(STORAGE_KEY_API);
+      document.getElementById('gemini-api-key').value = '';
+      updateApiBadge('');
+      showToast('API Key dihapus. Beralih ke Mode Otomatis.', 'info');
+    }
+
+    async function generateQuestions() {
+      const level = document.getElementById('gen-level').value;
+      const grade = document.getElementById('gen-grade').value;
+      const subject = document.getElementById('gen-subject').value;
+      const topic = document.getElementById('gen-topic').value.trim();
+      const count = parseInt(document.getElementById('gen-count').value, 10);
+      const apiKey = document.getElementById('gemini-api-key').value.trim();
+
+      const btn = document.getElementById('btn-run-generate');
+      const loadingEl = document.getElementById('gen-loading');
+      const emptyEl = document.getElementById('gen-empty');
+      const listEl = document.getElementById('gen-preview-list');
+      const actionsEl = document.getElementById('gen-actions');
+
+      btn.disabled = true;
+      emptyEl.classList.add('hidden');
+      listEl.innerHTML = '';
+      actionsEl.classList.add('hidden');
+      loadingEl.classList.remove('hidden');
+
+      let questions = null;
+      let sourceLabel = '';
+
+      // 1. Coba gunakan Gemini API jika API Key tersedia
+      if (apiKey.length > 10) {
+        try {
+          questions = await fetchFromGeminiAPI({ apiKey, level, grade, subject, topic, count });
+          sourceLabel = `✦ Dihasilkan oleh Gemini AI (${level} ${grade} • ${subject})`;
+        } catch (err) {
+          console.warn('Gemini API fallback:', err);
+          showToast('Koneksi Gemini API terkendala, beralih ke Mesin Soal Cerdas Otomatis.', 'warning');
+        }
+      }
+
+      // 2. Fallback Otomatis (Pasti berhasil 100% tanpa API Key / saat offline)
+      if (!questions || questions.length === 0) {
+        await new Promise(r => setTimeout(r, 450)); // Simulasi proses singkat agar halus
+        questions = generateSmartOfflineQuestions({ level, grade, subject, topic, count });
+        sourceLabel = `⚡ Dihasilkan oleh Mesin Soal Cerdas (${level} ${grade} • ${subject}${topic ? ' — ' + topic : ''})`;
+      }
+
+      generatedDraft = questions;
+      loadingEl.classList.add('hidden');
+      btn.disabled = false;
+
+      document.getElementById('gen-source-info').textContent = sourceLabel;
+      actionsEl.classList.remove('hidden');
+      renderGeneratedPreview();
+      AudioEngine.playCorrect();
+      showToast(`Berhasil membuat ${questions.length} soal siap main!`, 'success');
+    }
+
+    async function fetchFromGeminiAPI({ apiKey, level, grade, subject, topic, count }) {
+      const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${encodeURIComponent(apiKey)}`;
+      const prompt = `Buatkan tepat ${count} soal kuis pilihan ganda dalam Bahasa Indonesia bergaya "Who Wants to Be a Millionaire?" untuk jenjang ${level} (${grade}), mata pelajaran "${subject}"${topic ? `, dengan topik spesifik "${topic}"` : ''}.
+Urutkan tingkat kesulitan soal dari sangat mudah (nomor 1) hingga sangat sulit (nomor ${count}).
+Kembalikan HANYA array JSON valid tanpa markdown dengan struktur persis seperti ini:
+[
+  {
+    "question": "Teks pertanyaan yang jelas dan akurat",
+    "options": ["Pilihan A", "Pilihan B", "Pilihan C", "Pilihan D"],
+    "correct": 0,
+    "difficulty": 1,
+    "explanation": "Penjelasan singkat mengapa jawaban tersebut benar"
+  }
+]
+Pastikan "correct" adalah angka indeks 0, 1, 2, atau 3, dan "difficulty" adalah angka 1 (mudah), 2 (menengah), atau 3 (sulit).`;
+
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: prompt }] }],
+          generationConfig: {
+            temperature: 0.7,
+            responseMimeType: 'application/json'
+          }
+        })
+      });
+
+      if (!response.ok) throw new Error('HTTP ' + response.status);
+      const data = await response.json();
+      const rawText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+      if (!rawText) throw new Error('Empty AI response');
+
+      const cleaned = rawText.replace(/```json/gi, '').replace(/```/g, '').trim();
+      const parsed = JSON.parse(cleaned);
+      if (!Array.isArray(parsed) || parsed.length === 0) throw new Error('Invalid JSON array');
+
+      return parsed.slice(0, count).map((item, idx) => ({
+        id: 'ai-' + Date.now() + '-' + idx,
+        level,
+        subject,
+        difficulty: [1, 2, 3].includes(Number(item.difficulty)) ? Number(item.difficulty) : (idx < count / 3 ? 1 : idx < (2 * count) / 3 ? 2 : 3),
+        question: String(item.question || 'Pertanyaan kuis'),
+        options: Array.isArray(item.options) && item.options.length === 4 ? item.options.map(String) : ['Opsi A', 'Opsi B', 'Opsi C', 'Opsi D'],
+        correct: [0, 1, 2, 3].includes(Number(item.correct)) ? Number(item.correct) : 0,
+        explanation: String(item.explanation || 'Jawaban sesuai konsep materi ' + subject)
+      }));
+    }
+
+    /* Mesin Pembuat Soal Cerdas Offline (Prosedural + Bank Kurikulum Kaya) */
+    function generateSmartOfflineQuestions({ level, grade, subject, topic, count }) {
+      const results = [];
+      const randInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+      const shuffle = arr => [...arr].sort(() => Math.random() - 0.5);
+
+      // Generator Dinamis khusus Matematika (Selalu angka baru setiap kali generate)
+      if (subject === 'Matematika') {
+        for (let i = 0; i < count; i++) {
+          const tier = i < Math.ceil(count / 3) ? 1 : i < Math.ceil((2 * count) / 3) ? 2 : 3;
+          let qText = '', ans = 0, distractors = [], exp = '';
+
+          if (level === 'SD') {
+            if (tier === 1) {
+              const a = randInt(12, 45), b = randInt(11, 39);
+              ans = a + b;
+              qText = `[${grade}] Berapakah hasil penjumlahan dari ${a} + ${b}?`;
+              distractors = [ans + 10, ans - 10, ans + 2];
+              exp = `${a} + ${b} = ${ans}.`;
+            } else if (tier === 2) {
+              const a = randInt(6, 15), b = randInt(4, 12), c = randInt(5, 20);
+              ans = a * b + c;
+              qText = `[${grade}] Hitunglah nilai dari (${a} × ${b}) + ${c} = ...`;
+              distractors = [ans + a, ans - c, a * (b + c)];
+              exp = `Kerjakan perkalian terlebih dahulu: ${a} × ${b} = ${a * b}, lalu ditambah ${c} menjadi ${ans}.`;
+            } else {
+              const sisi = randInt(6, 18);
+              ans = sisi * sisi;
+              qText = `[${grade}] Sebuah persegi memiliki panjang sisi ${sisi} cm. Berapakah luas persegi tersebut?`;
+              distractors = [sisi * 4, ans + sisi, ans - 6];
+              exp = `Luas persegi = sisi × sisi = ${sisi} × ${sisi} = ${ans} cm².`;
+            }
+          } else if (level === 'SMP') {
+            if (tier === 1) {
+              const a = randInt(-15, -3), b = randInt(8, 25);
+              ans = a + b;
+              qText = `[${grade}] Hasil dari ${a} + ${b} adalah...`;
+              distractors = [-(Math.abs(a) + b), ans + 4, ans - 4];
+              exp = `${a} + ${b} = ${ans}.`;
+            } else if (tier === 2) {
+              const x = randInt(3, 12), m = randInt(2, 6), c = randInt(4, 15);
+              const total = m * x + c;
+              ans = x;
+              qText = `[${grade}] Tentukan nilai x yang memenuhi persamaan ${m}x + ${c} = ${total}.`;
+              distractors = [x + 1, x - 1, x + 2];
+              exp = `${m}x = ${total} - ${c} = ${total - c}, maka x = ${total - c} / ${m} = ${x}.`;
+            } else {
+              const a = randInt(3, 9), b = randInt(4, 12);
+              const c2 = a * a + b * b;
+              ans = c2;
+              qText = `[${grade}] Pada segitiga siku-siku dengan sisi penyiku ${a} cm dan ${b} cm, kuadrat sisi miringnya (c²) adalah...`;
+              distractors = [a + b, (a + b) * 2, c2 + 10];
+              exp = `Teorema Pythagoras: c² = a² + b² = ${a}² + ${b}² = ${a * a} + ${b * b} = ${c2}.`;
+            }
+          } else {
+            // SMA / UMUM
+            if (tier === 1) {
+              const base = randInt(2, 5), expPow = randInt(3, 4);
+              ans = Math.pow(base, expPow);
+              qText = `[${grade}] Nilai dari ${base}^${expPow} adalah...`;
+              distractors = [base * expPow, ans + base, ans - base];
+              exp = `${base} dipangkatkan ${expPow} sama dengan ${ans}.`;
+            } else if (tier === 2) {
+              const u1 = randInt(2, 8), beda = randInt(3, 7), n = randInt(8, 12);
+              ans = u1 + (n - 1) * beda;
+              qText = `[${grade}] Suku ke-${n} dari barisan aritmetika dengan suku pertama ${u1} dan beda ${beda} adalah...`;
+              distractors = [ans + beda, ans - beda, u1 + n * beda];
+              exp = `Un = a + (n - 1)b = ${u1} + (${n - 1} × ${beda}) = ${ans}.`;
+            } else {
+              const a = randInt(2, 6), b = randInt(3, 9);
+              ans = 2 * a;
+              qText = `[${grade}] Jika f(x) = ${a}x² + ${b}x - 7, maka nilai koefisien x pada turunan pertama f'(x) adalah...`;
+              distractors = [a, b, 2 * a + b];
+              exp = `f'(x) = ${2 * a}x + ${b}, sehingga koefisien x adalah ${2 * a}.`;
+            }
+          }
+
+          const allOpts = shuffle([String(ans), ...distractors.map(String)]);
+          results.push({
+            id: `gen-${Date.now()}-${i}`,
+            level,
+            subject,
+            difficulty: tier,
+            question: topic ? `[Topik: ${topic}] ${qText}` : qText,
+            options: allOpts,
+            correct: allOpts.indexOf(String(ans)),
+            explanation: exp
+          });
+        }
+        return results;
+      }
+
+      // Bank Tematik Kaya untuk Mapel Non-Matematika
+      const CURRICULUM_POOL = {
+        IPA: [
+          { d: 1, q: 'Perubahan wujud benda dari cair menjadi gas disebut...', o: ['Membeku', 'Mencair', 'Menguap', 'Menyublim'], c: 2, e: 'Menguap adalah perubahan wujud zat cair menjadi gas akibat pemanasan.' },
+          { d: 1, q: 'Bagian tumbuhan yang berfungsi menyerap air dan mineral dari dalam tanah adalah...', o: ['Daun', 'Batang', 'Akar', 'Bunga'], c: 2, e: 'Akar berperan menyerap air dan unsur hara dari tanah.' },
+          { d: 1, q: 'Hewan pemakan tumbuhan disebut...', o: ['Karnivora', 'Herbivora', 'Omnivora', 'Insektivora'], c: 1, e: 'Herbivora adalah kelompok hewan pemakan tumbuhan.' },
+          { d: 1, q: 'Sumber energi panas terbesar bagi kehidupan di Bumi adalah...', o: ['Bulan', 'Matahari', 'Bintang Utara', 'Inti Bumi'], c: 1, e: 'Matahari memancarkan energi cahaya dan panas utama bagi Bumi.' },
+          { d: 1, q: 'Alat indra manusia yang berfungsi untuk mengecap rasa adalah...', o: ['Hidung', 'Telinga', 'Lidah', 'Kulit'], c: 2, e: 'Lidah memiliki papila pengecap untuk mendeteksi rasa manis, asin, asam, dan pahit.' },
+          { d: 2, q: 'Proses perpindahan kalor tanpa disertai perpindahan zat perantaranya disebut...', o: ['Konveksi', 'Konduksi', 'Radiasi', 'Evaporasi'], c: 1, e: 'Konduksi adalah hantaran panas melalui zat padat tanpa memindahkan partikelnya.' },
+          { d: 2, q: 'Lapisan atmosfer yang melindungi Bumi dari radiasi ultraviolet Matahari adalah...', o: ['Troposfer', 'Ozon', 'Ionosfer', 'Eksosfer'], c: 1, e: 'Lapisan ozon (O₃) di stratosfer menyerap sebagian besar sinar UV berbahaya.' },
+          { d: 2, q: 'Bagian darah manusia yang berfungsi mengangkut oksigen ke seluruh tubuh adalah...', o: ['Leukosit', 'Trombosit', 'Eritrosit', 'Plasma darah'], c: 2, e: 'Eritrosit (sel darah merah) mengandung hemoglobin yang mengikat oksigen.' },
+          { d: 2, q: 'Satuan Internasional (SI) untuk gaya adalah...', o: ['Joule', 'Watt', 'Newton', 'Pascal'], c: 2, e: 'Newton (N) adalah satuan gaya dalam sistem SI.' },
+          { d: 2, q: 'Benda langit yang memiliki ekor cahaya saat mendekati Matahari adalah...', o: ['Asteroid', 'Komet', 'Meteoroid', 'Satelit'], c: 1, e: 'Komet tersusun dari es dan debu yang menyublim membentuk ekor saat mendekati Matahari.' },
+          { d: 3, q: 'Hukum kekekalan energi menyatakan bahwa energi tidak dapat diciptakan maupun dimusnahkan, melainkan hanya dapat...', o: ['Dihilangkan', 'Diubah bentuknya', 'Digandakan', 'Dibekukan'], c: 1, e: 'Energi hanya bertransformasi dari satu bentuk ke bentuk energi lainnya.' },
+          { d: 3, q: 'Enzim yang terdapat pada air liur manusia dan berfungsi mengubah amilum menjadi maltosa adalah...', o: ['Pepsin', 'Ptialin', 'Lipase', 'Tripsin'], c: 1, e: 'Enzim ptialin (amilase ludah) memecah karbohidrat kompleks menjadi gula sederhana.' },
+          { d: 3, q: 'Peristiwa pembelokan arah rambat cahaya ketika melewati dua medium dengan kerapatan optik berbeda disebut...', o: ['Refleksi', 'Refraksi', 'Difraksi', 'Interferensi'], c: 1, e: 'Refraksi atau pembiasan cahaya terjadi karena perbedaan kecepatan cahaya di dua medium.' },
+          { d: 3, q: 'Ikatan kimia yang terbentuk akibat pemakaian bersama pasangan elektron antaratom nonlogam disebut ikatan...', o: ['Ion', 'Kovalen', 'Logam', 'Hidrogen'], c: 1, e: 'Ikatan kovalen melibatkan penggunaan bersama pasangan elektron.' },
+          { d: 3, q: 'Hormon yang berperan menurunkan kadar glukosa dalam darah manusia adalah...', o: ['Adrenalin', 'Insulin', 'Tiroksin', 'Estrogen'], c: 1, e: 'Hormon insulin diproduksi oleh pankreas untuk mengatur kadar gula darah.' }
+        ],
+        IPS: [
+          { d: 1, q: 'Mata uang resmi negara Indonesia adalah...', o: ['Ringgit', 'Rupiah', 'Baht', 'Dolar'], c: 1, e: 'Rupiah (IDR) adalah mata uang sah Negara Kesatuan Republik Indonesia.' },
+          { d: 1, q: 'Pulau terbesar di wilayah Indonesia adalah...', o: ['Jawa', 'Sumatra', 'Kalimantan', 'Sulawesi'], c: 2, e: 'Kalimantan merupakan pulau terluas di Indonesia.' },
+          { d: 1, q: 'Kegiatan menghasilkan barang atau jasa untuk memenuhi kebutuhan disebut...', o: ['Konsumsi', 'Distribusi', 'Produksi', 'Investasi'], c: 2, e: 'Produksi adalah kegiatan menciptakan atau menambah nilai guna barang/jasa.' },
+          { d: 1, q: 'Arah mata angin di antara Utara dan Timur adalah...', o: ['Tenggara', 'Timur Laut', 'Barat Daya', 'Barat Laut'], c: 1, e: 'Timur Laut berada tepat di antara Utara dan Timur.' },
+          { d: 1, q: 'Gunung tertinggi di Pulau Jawa adalah...', o: ['Gunung Merapi', 'Gunung Semeru', 'Gunung Bromo', 'Gunung Slamet'], c: 1, e: 'Gunung Semeru (3.676 mdpl) adalah puncak tertinggi di Pulau Jawa.' },
+          { d: 2, q: 'Organisasi kerja sama negara-negara di kawasan Asia Tenggara adalah...', o: ['APEC', 'ASEAN', 'OPEC', 'NATO'], c: 1, e: 'ASEAN didirikan pada 8 Agustus 1967 di Bangkok untuk kerja sama Asia Tenggara.' },
+          { d: 2, q: 'Angin muson barat yang bertiup pada bulan Oktober hingga April menyebabkan Indonesia mengalami musim...', o: ['Kemarau', 'Hujan', 'Semi', 'Gugur'], c: 1, e: 'Angin muson barat membawa banyak uap air dari Samudra Hindia sehingga terjadi musim hujan.' },
+          { d: 2, q: 'Pelaku ekonomi yang berperan menyalurkan barang dari produsen ke konsumen disebut...', o: ['Produsen', 'Distributor', 'Konsumen', 'Investor'], c: 1, e: 'Distributor menjalankan fungsi distribusi barang ke masyarakat.' },
+          { d: 2, q: 'Danau vulkanik terbesar di Indonesia yang terletak di Sumatra Utara adalah...', o: ['Danau Singkarak', 'Danau Toba', 'Danau Poso', 'Danau Towuti'], c: 1, e: 'Danau Toba merupakan danau kaldera raksasa di Sumatra Utara.' },
+          { d: 2, q: 'Bentuk permukaan Bumi yang menjulang tinggi dengan ketinggian lebih dari 600 meter di atas permukaan laut disebut...', o: ['Dataran rendah', 'Pantai', 'Dataran tinggi / Pegunungan', 'Lembah'], c: 2, e: 'Dataran tinggi dan pegunungan berada pada elevasi tinggi.' },
+          { d: 3, q: 'Kondisi ketika jumlah permintaan lebih besar daripada jumlah penawaran barang di pasar akan menyebabkan harga cenderung...', o: ['Turun drastis', 'Naik', 'Tetap stabil', 'Menjadi nol'], c: 1, e: 'Sesuai hukum permintaan dan penawaran, kelangkaan pasokan mendorong kenaikan harga.' },
+          { d: 3, q: 'Negara pendiri ASEAN yang tidak pernah dijajah oleh bangsa Eropa adalah...', o: ['Indonesia', 'Malaysia', 'Thailand', 'Filipina'], c: 2, e: 'Thailand (dahulu Siam) berhasil mempertahankan kemerdekaannya melalui diplomasi.' },
+          { d: 3, q: 'Letak geografis Indonesia sangat strategis karena berada di posisi silang antara dua samudra, yaitu...', o: ['Pasifik dan Atlantik', 'Hindia dan Pasifik', 'Hindia dan Arktik', 'Atlantik dan Hindia'], c: 1, e: 'Indonesia diapit Samudra Hindia dan Samudra Pasifik serta Benua Asia dan Australia.' },
+          { d: 3, q: 'Inflasi yang sangat tinggi dan tidak terkendali hingga melebihi 100% per tahun disebut...', o: ['Deflasi', 'Hiperinflasi', 'Stagflasi', 'Devaluasi'], c: 1, e: 'Hiperinflasi adalah lonjakan harga barang secara ekstrem dalam waktu singkat.' },
+          { d: 3, q: 'Garis lintang 0 derajat yang membelah Bumi menjadi belahan utara dan selatan disebut garis...', o: ['Bujur Barat', 'Khatulistiwa (Ekuator)', 'Meridian Utama', 'Balik Utara'], c: 1, e: 'Garis khatulistiwa melintasi beberapa wilayah Indonesia seperti Pontianak.' }
+        ],
+        Sejarah: [
+          { d: 1, q: 'Teks Proklamasi Kemerdekaan Indonesia dibacakan oleh Ir. Soekarno pada tanggal...', o: ['17 Agustus 1945', '18 Agustus 1945', '10 November 1945', '1 Juni 1945'], c: 0, e: 'Proklamasi Kemerdekaan RI dikumandangkan pada Jumat, 17 Agustus 1945.' },
+          { d: 1, q: 'Siapakah tokoh yang menjahit bendera Merah Putih untuk upacara Proklamasi 17 Agustus 1945?', o: ['R.A. Kartini', 'Cut Nyak Dien', 'Fatmawati', 'Dewi Sartika'], c: 2, e: 'Ibu Fatmawati menjahit Sang Saka Merah Putih menjelang proklamasi.' },
+          { d: 1, q: 'Hari Pahlawan Nasional di Indonesia diperingati setiap tanggal...', o: ['28 Oktober', '10 November', '20 Mei', '22 Desember'], c: 1, e: '10 November diperingati untuk mengenang pertempuran heroik di Surabaya tahun 1945.' },
+          { d: 1, q: 'Naskah teks Proklamasi Kemerdekaan Indonesia diketik oleh...', o: ['Mohammad Hatta', 'Ahmad Soebardjo', 'Sayuti Melik', 'Sukarni'], c: 2, e: 'Sayuti Melik mengetik naskah proklamasi dengan beberapa penyempurnaan redaksi.' },
+          { d: 1, q: 'Candi Buddha terbesar di dunia yang terletak di Magelang, Jawa Tengah adalah...', o: ['Candi Prambanan', 'Candi Borobudur', 'Candi Mendut', 'Candi Sewu'], c: 1, e: 'Candi Borobudur dibangun pada masa Dinasti Syailendra abad ke-8 hingga ke-9.' },
+          { d: 2, q: 'Ikrar Sumpah Pemuda diucapkan pada Kongres Pemuda II tanggal...', o: ['20 Mei 1908', '28 Oktober 1928', '17 Agustus 1945', '1 Juni 1945'], c: 1, e: 'Sumpah Pemuda dicetuskan pada 28 Oktober 1928 di Batavia.' },
+          { d: 2, q: 'Organisasi pergerakan nasional pertama di Indonesia yang didirikan pada 20 Mei 1908 adalah...', o: ['Sarekat Islam', 'Budi Utomo', 'Indische Partij', 'Perhimpunan Indonesia'], c: 1, e: 'Budi Utomo dipelopori oleh dr. Soetomo dan mahasiswa STOVIA.' },
+          { d: 2, q: 'Patih Kerajaan Majapahit yang terkenal dengan Sumpah Palapa untuk menyatukan Nusantara adalah...', o: ['Hayam Wuruk', 'Gajah Mada', 'Raden Wijaya', 'Ken Arok'], c: 1, e: 'Mahapatih Gajah Mada mengucapkan Sumpah Palapa pada tahun 1336.' },
+          { d: 2, q: 'Konferensi Asia-Afrika (KAA) pertama kali diselenggarakan pada tahun 1955 di kota...', o: ['Jakarta', 'Bandung', 'Yogyakarta', 'Bogor'], c: 1, e: 'KAA 1955 berlangsung di Gedung Merdeka, Bandung dan menghasilkan Dasasila Bandung.' },
+          { d: 2, q: 'Perjanjian antara Indonesia dan Belanda pada tahun 1949 yang menghasilkan pengakuan kedaulatan RIS adalah...', o: ['Perjanjian Linggarjati', 'Perjanjian Renville', 'Konferensi Meja Bundar (KMB)', 'Perjanjian Roem-Royen'], c: 2, e: 'KMB di Den Haag menghasilkan pengakuan kedaulatan pada 27 Desember 1949.' },
+          { d: 3, q: 'Kerajaan Hindu tertua di Indonesia yang berdiri sekitar abad ke-4 Masehi di Kalimantan Timur adalah...', o: ['Tarumanegara', 'Kutai Martadipura', 'Mataram Kuno', 'Kediri'], c: 1, e: 'Kerajaan Kutai dibuktikan dengan peninggalan tujuh buah prasasti Yupa.' },
+          { d: 3, q: 'Lagu kebangsaan "Indonesia Raya" pertama kali diperdengarkan di depan umum pada...', o: ['Sidang BPUPKI', 'Kongres Pemuda II (1928)', 'Proklamasi 1945', 'Konferensi Meja Bundar'], c: 1, e: 'W.R. Supratman memainkan melodi Indonesia Raya dengan biola pada 28 Oktober 1928.' },
+          { d: 3, q: 'Sistem tanam paksa pada masa penjajahan Belanda yang dicetuskan oleh Johannes van den Bosch dikenal dengan istilah...', o: ['Otonomi Daerah', 'Cultuurstelsel', 'Politik Etis', 'Devide et Impera'], c: 1, e: 'Cultuurstelsel mewajibkan petani menyisihkan sebagian tanahnya untuk tanaman ekspor.' },
+          { d: 3, q: 'Ketua Badan Penyelidik Usaha-Usaha Persiapan Kemerdekaan Indonesia (BPUPKI) adalah...', o: ['Ir. Soekarno', 'Dr. Radjiman Wedyodiningrat', 'Drs. Moh. Hatta', 'Mr. Soepomo'], c: 1, e: 'Dr. K.R.T. Radjiman Wedyodiningrat menjabat sebagai ketua BPUPKI.' },
+          { d: 3, q: 'Serangan Umum 1 Maret 1949 bertujuan menunjukkan kepada dunia internasional bahwa TNI dan RI masih ada, terjadi di kota...', o: ['Surabaya', 'Yogyakarta', 'Semarang', 'Bandung'], c: 1, e: 'Serangan Umum 1 Maret 1949 berhasil menduduki Yogyakarta selama 6 jam.' }
+        ],
+        'Bahasa Indonesia': [
+          { d: 1, q: 'Kata baku yang tepat menurut Kamus Besar Bahasa Indonesia (KBBI) adalah...', o: ['Apotik', 'Apotek', 'Aktifitas', 'Resiko'], c: 1, e: 'Bentuk baku dalam KBBI adalah "apotek", "aktivitas", dan "risiko".' },
+          { d: 1, q: 'Tanda baca yang digunakan di akhir kalimat tanya adalah...', o: ['Tanda titik (.)', 'Tanda seru (!)', 'Tanda tanya (?)', 'Tanda koma (,)'], c: 2, e: 'Kalimat tanya selalu diakhiri dengan tanda tanya (?).' },
+          { d: 1, q: 'Antonim (lawan kata) dari kata "optimis" adalah...', o: ['Dinamis', 'Pesimis', 'Realistis', 'Praktis'], c: 1, e: 'Pesimis berarti bersikap tidak mempunyai harapan baik, kebalikan dari optimis.' },
+          { d: 1, q: 'Puisi lama yang terdiri atas empat baris dalam satu bait dengan rima a-b-a-b disebut...', o: ['Syair', 'Gurindam', 'Pantun', 'Soneta'], c: 2, e: 'Pantun memiliki 4 baris (2 sampiran, 2 isi) bersajak a-b-a-b.' },
+          { d: 1, q: 'Ide utama yang dibahas dalam suatu paragraf disebut...', o: ['Kalimat penjelas', 'Gagasan pokok', 'Kata kunci', 'Sinopsis'], c: 1, e: 'Gagasan pokok atau ide pokok menjadi inti pembahasan seluruh paragraf.' },
+          { d: 2, q: 'Majas yang memberikan sifat-sifat manusia kepada benda mati disebut majas...', o: ['Hiperbola', 'Personifikasi', 'Metafora', 'Litotes'], c: 1, e: 'Contoh personifikasi: "Angin malam berbisik lembut di telingaku."' },
+          { d: 2, q: 'Penulisan kata depan "di" yang benar terdapat pada kalimat...', o: ['Buku itu disimpan dilemari.', 'Ayah sedang bekerja di kantor.', 'Surat itu sudah dikirim kesana.', 'Mereka berkumpul dihalaman sekolah.'], c: 1, e: 'Kata depan "di" yang menunjukkan tempat ditulis terpisah dari kata yang mengikutinya.' },
+          { d: 2, q: 'Karangan yang berisi kisah hidup seseorang yang ditulis oleh orang lain disebut...', o: ['Autobiografi', 'Biografi', 'Bibliografi', 'Ensiklopedia'], c: 1, e: 'Biografi ditulis oleh orang lain, sedangkan autobiografi ditulis oleh tokoh itu sendiri.' },
+          { d: 2, q: 'Kata penghubung (konjungsi) yang menyatakan hubungan sebab-akibat adalah...', o: ['Tetapi', 'Sehingga', 'Sedangkan', 'Atau'], c: 1, e: 'Konjungsi "sehingga" menyatakan akibat dari suatu peristiwa.' },
+          { d: 2, q: 'Paragraf yang kalimat utamanya terletak di awal paragraf disebut paragraf...', o: ['Induktif', 'Deduktif', 'Campuran', 'Naratif'], c: 1, e: 'Paragraf deduktif dimulai dari pernyataan umum (kalimat utama) lalu diikuti kalimat penjelas.' },
+          { d: 3, q: 'Manakah penulisan gelar akademik yang sesuai dengan Ejaan Bahasa Indonesia yang Disempurnakan (EYD V)?', o: ['Dr. Budi Santoso, S.Pd.', 'Dr Budi Santoso S.Pd', 'Dr. Budi Santoso S.Pd.', 'Dr, Budi Santoso, S.Pd'], c: 0, e: 'Tanda titik digunakan setelah singkatan gelar dan tanda koma memisahkan nama dengan gelar di belakangnya.' },
+          { d: 3, q: 'Makna ungkapan "kambing hitam" dalam kalimat adalah...', o: ['Hewan ternak berwarna gelap', 'Orang yang dipersalahkan atas kesalahan orang lain', 'Orang yang sangat berjasa', 'Pemimpin kelompok'], c: 1, e: '"Kambing hitam" adalah idiom untuk pihak yang dijadikan tumpuan kesalahan.' },
+          { d: 3, q: 'Kalimat berikut yang merupakan kalimat efektif adalah...', o: ['Para hadirin sekalian dimohon berdiri.', 'Hadirin dimohon berdiri.', 'Kepada semua para tamu dipersilakan masuk.', 'Agar supaya berhasil, kita harus belajar giat.'], c: 1, e: 'Kata "para" dan "sekalian" bermakna jamak sehingga tidak boleh digunakan bersamaan.' },
+          { d: 3, q: 'Struktur teks eksplanasi yang tepat secara berurutan adalah...', o: ['Orientasi – Komplikasi – Resolusi', 'Pernyataan Umum – Deretan Penjelas – Interpretasi', 'Tesis – Argumentasi – Penegasan Ulang', 'Abstrak – Krisis – Reaksi'], c: 1, e: 'Teks eksplanasi menjelaskan proses terjadinya fenomena alam atau sosial.' },
+          { d: 3, q: 'Kata serapan yang penulisannya baku sesuai KBBI adalah...', o: ['Analisa', 'Analisis', 'Sistim', 'Kwalitas'], c: 1, e: 'Bentuk baku yang tepat adalah analisis, sistem, dan kualitas.' }
+        ],
+        'Bahasa Inggris': [
+          { d: 1, q: 'What is the English translation of "Perpustakaan"?', o: ['Laboratory', 'Library', 'Bookstore', 'Classroom'], c: 1, e: '"Library" means perpustakaan, whereas "bookstore" means toko buku.' },
+          { d: 1, q: 'Choose the correct pronoun: "___ is my best friend. Her name is Sinta."', o: ['He', 'She', 'It', 'They'], c: 1, e: '"She" is used for a singular female subject.' },
+          { d: 1, q: 'Which day comes after Wednesday?', o: ['Tuesday', 'Thursday', 'Friday', 'Monday'], c: 1, e: 'The order of days is Wednesday followed by Thursday.' },
+          { d: 1, q: 'Complete the sentence: "They ___ playing football in the yard right now."', o: ['is', 'am', 'are', 'was'], c: 2, e: 'Subject "They" in Present Continuous Tense uses "are".' },
+          { d: 1, q: 'What is the opposite (antonym) of "expensive"?', o: ['Cheap', 'Large', 'Heavy', 'Fast'], c: 0, e: 'Expensive (mahal) is the opposite of cheap (murah).' },
+          { d: 2, q: 'Choose the correct comparative form: "Mount Everest is ___ than Mount Merapi."', o: ['high', 'higher', 'highest', 'more high'], c: 1, e: 'One-syllable adjectives add "-er" for comparative degree (higher).' },
+          { d: 2, q: '"She ___ to Bali with her family last holiday."', o: ['go', 'goes', 'went', 'gone'], c: 2, e: '"Last holiday" indicates Simple Past Tense, so we use Verb 2 ("went").' },
+          { d: 2, q: 'What does the idiom "a piece of cake" mean?', o: ['Something very delicious', 'Something very easy to do', 'A birthday celebration', 'A difficult problem'], c: 1, e: '"A piece of cake" means a task that is very easy to accomplish.' },
+          { d: 2, q: 'Complete the conditional sentence: "If it rains tomorrow, we ___ at home."', o: ['stayed', 'will stay', 'would stay', 'staying'], c: 1, e: 'First Conditional uses "If + Simple Present, will + Verb 1".' },
+          { d: 2, q: 'Which word is a synonym for "enormous"?', o: ['Tiny', 'Huge', 'Weak', 'Narrow'], c: 1, e: 'Both "enormous" and "huge" mean extremely large.' },
+          { d: 3, q: 'Identify the passive voice form of: "The chef cooked a delicious meal."', o: ['A delicious meal is cooked by the chef.', 'A delicious meal was cooked by the chef.', 'A delicious meal cooks the chef.', 'The chef was cooked a delicious meal.'], c: 1, e: 'Simple Past Passive uses "was/were + Verb 3 (cooked)".' },
+          { d: 3, q: '"Neither the teacher nor the students ___ present at the meeting yesterday."', o: ['was', 'were', 'is', 'has been'], c: 1, e: 'With "neither...nor", the verb agrees with the closer subject ("students" -> plural "were").' },
+          { d: 3, q: 'Choose the correct preposition: "She is very keen ___ learning foreign languages."', o: ['at', 'on', 'with', 'for'], c: 1, e: 'The standard collocation is "keen on + V-ing/noun".' },
+          { d: 3, q: 'What is the meaning of the word "ubiquitous"?', o: ['Extremely rare', 'Present everywhere at the same time', 'Very dangerous', 'Completely silent'], c: 1, e: '"Ubiquitous" means found or appearing everywhere.' },
+          { d: 3, q: '"Had I known about the traffic jam, I ___ taken another route."', o: ['will have', 'would have', 'would', 'had'], c: 1, e: 'Inverted Third Conditional uses "Had + S + V3, S + would have + V3".' }
+        ],
+        PPKn: [
+          { d: 1, q: 'Dasar negara Republik Indonesia adalah...', o: ['UUD 1945', 'Pancasila', 'Bhinneka Tunggal Ika', 'Sumpah Pemuda'], c: 1, e: 'Pancasila adalah dasar falsafah dan ideologi negara Indonesia.' },
+          { d: 1, q: 'Semboyan negara Indonesia yang tertulis pada pita burung Garuda adalah...', o: ['Tut Wuri Handayani', 'Bhinneka Tunggal Ika', 'Merdeka atau Mati', 'Bersatu Kita Teguh'], c: 1, e: 'Bhinneka Tunggal Ika berarti "Berbeda-beda tetapi tetap satu jua".' },
+          { d: 1, q: 'Hari Lahir Pancasila diperingati setiap tanggal...', o: ['17 Agustus', '1 Juni', '1 Oktober', '28 Oktober'], c: 1, e: 'Pidato Ir. Soekarno tentang Pancasila disampaikan pada 1 Juni 1945.' },
+          { d: 2, q: 'Konstitusi atau hukum dasar tertulis tertinggi di Indonesia adalah...', o: ['Peraturan Pemerintah', 'UUD Negara Republik Indonesia Tahun 1945', 'Undang-Undang', 'Peraturan Presiden'], c: 1, e: 'UUD NRI Tahun 1945 menempati puncak hierarki peraturan perundang-undangan.' },
+          { d: 2, q: 'Lembaga negara yang berwenang menguji undang-undang terhadap UUD 1945 adalah...', o: ['Mahkamah Agung', 'Mahkamah Konstitusi', 'Komisi Yudisial', 'DPR'], c: 1, e: 'Mahkamah Konstitusi (MK) berwenang melakukan judicial review UU terhadap UUD 1945.' },
+          { d: 3, q: 'Pasal dalam UUD 1945 yang menegaskan bahwa "Negara Indonesia adalah negara hukum" adalah...', o: ['Pasal 1 Ayat (1)', 'Pasal 1 Ayat (2)', 'Pasal 1 Ayat (3)', 'Pasal 2 Ayat (1)'], c: 2, e: 'Pasal 1 Ayat (3) UUD 1945 berbunyi "Negara Indonesia adalah negara hukum."' }
+        ],
+        Informatika: [
+          { d: 1, q: 'Perangkat keras komputer yang berfungsi sebagai "otak" pemroses data utama adalah...', o: ['RAM', 'CPU (Processor)', 'Harddisk', 'Monitor'], c: 1, e: 'CPU (Central Processing Unit) mengeksekusi instruksi program komputer.' },
+          { d: 1, q: 'Tombol pintasan (shortcut) pada keyboard untuk menyalin (Copy) teks adalah...', o: ['Ctrl + V', 'Ctrl + C', 'Ctrl + X', 'Ctrl + Z'], c: 1, e: 'Ctrl + C berfungsi menyalin objek/teks yang dipilih.' },
+          { d: 2, q: 'Kepanjangan dari HTML dalam pengembangan halaman web adalah...', o: ['Hyper Text Markup Language', 'High Tech Modern Language', 'Hyperlink Transfer Main Language', 'Home Tool Markup Language'], c: 0, e: 'HTML adalah bahasa markah standar untuk menyusun struktur halaman web.' },
+          { d: 2, q: 'Urutan langkah-langkah logis dan sistematis untuk menyelesaikan suatu masalah disebut...', o: ['Kompilasi', 'Algoritma', 'Debugging', 'Enkripsi'], c: 1, e: 'Algoritma adalah prosedur langkah demi langkah untuk memecahkan masalah.' },
+          { d: 3, q: 'Protokol keamanan yang mengenkripsi komunikasi antara browser dan server web ditandai dengan awalan URL...', o: ['HTTP://', 'HTTPS://', 'FTP://', 'SMTP://'], c: 1, e: 'HTTPS menggunakan enkripsi TLS/SSL untuk melindungi integritas dan kerahasiaan data.' }
+        ],
+        'Pengetahuan Umum': [
+          { d: 1, q: 'Benua terkecil di dunia berdasarkan luas wilayahnya adalah...', o: ['Eropa', 'Australia', 'Antartika', 'Amerika Selatan'], c: 1, e: 'Australia merupakan benua dengan luas daratan terkecil di dunia.' },
+          { d: 1, q: 'Hewan darat tercepat di dunia adalah...', o: ['Singa', 'Cheetah', 'Kuda', 'Rusa'], c: 1, e: 'Cheetah mampu berlari hingga kecepatan lebih dari 100 km/jam.' },
+          { d: 2, q: 'Samudra terluas dan terdalam di Bumi adalah...', o: ['Samudra Atlantik', 'Samudra Hindia', 'Samudra Pasifik', 'Samudra Arktik'], c: 2, e: 'Samudra Pasifik mencakup sekitar sepertiga luas permukaan Bumi.' },
+          { d: 2, q: 'Negara yang dijuluki sebagai "Negeri Matahari Terbit" adalah...', o: ['Korea Selatan', 'Tiongkok', 'Jepang', 'Thailand'], c: 2, e: 'Jepang (Nippon) secara harfiah bermakna asal matahari.' },
+          { d: 3, q: 'Penemu telepon pertama kali yang mematenkannya pada tahun 1876 adalah...', o: ['Thomas Alva Edison', 'Alexander Graham Bell', 'Nikola Tesla', 'Guglielmo Marconi'], c: 1, e: 'Alexander Graham Bell memperoleh paten telepon pada Maret 1876.' }
+        ]
+      };
+
+      // Ambil pool sesuai mapel, gabung dengan default jika kurang
+      let pool = [...(CURRICULUM_POOL[subject] || [])];
+      const matchingDefault = DEFAULT_QUESTIONS.filter(q => q.subject === subject).map(q => ({
+        d: q.difficulty,
+        q: q.question,
+        o: q.options,
+        c: q.correct,
+        e: q.explanation
+      }));
+      pool = [...pool, ...matchingDefault];
+
+      // Jika pool masih kurang dari count, lengkapi dengan pengetahuan umum
+      if (pool.length < count) {
+        Object.values(CURRICULUM_POOL).forEach(arr => {
+          pool.push(...arr);
+        });
+      }
+
+      // Kelompokkan berdasarkan tingkat kesulitan 1, 2, 3
+      const easy = shuffle(pool.filter(x => x.d === 1));
+      const med = shuffle(pool.filter(x => x.d === 2));
+      const hard = shuffle(pool.filter(x => x.d === 3));
+      const orderedPool = [...easy, ...med, ...hard];
+
+      const usedTexts = new Set();
+      for (let i = 0; i < count; i++) {
+        const tier = i < Math.ceil(count / 3) ? 1 : i < Math.ceil((2 * count) / 3) ? 2 : 3;
+        let candidate = orderedPool.find(item => item.d === tier && !usedTexts.has(item.q))
+                     || orderedPool.find(item => !usedTexts.has(item.q))
+                     || orderedPool[i % orderedPool.length];
+
+        usedTexts.add(candidate.q);
+
+        // Acak posisi pilihan jawaban agar tidak hafal urutan
+        const correctText = candidate.o[candidate.c];
+        const shuffledOpts = shuffle(candidate.o);
+        const newCorrectIdx = shuffledOpts.indexOf(correctText);
+
+        results.push({
+          id: `gen-${Date.now()}-${i}`,
+          level,
+          subject,
+          difficulty: tier,
+          question: topic ? `[${grade} • ${topic}] ${candidate.q}` : `[${grade}] ${candidate.q}`,
+          options: shuffledOpts,
+          correct: newCorrectIdx,
+          explanation: candidate.e
+        });
+      }
+
+      return results;
+    }
+
+    function renderGeneratedPreview() {
+      const listEl = document.getElementById('gen-preview-list');
+      const letters = ['A', 'B', 'C', 'D'];
+      const diffLabels = { 1: 'Mudah', 2: 'Menengah', 3: 'Sulit' };
+      const diffColors = {
+        1: 'text-emerald-300 bg-emerald-950/80 border-emerald-500/30',
+        2: 'text-yellow-300 bg-amber-950/80 border-amber-500/30',
+        3: 'text-rose-300 bg-rose-950/80 border-rose-500/30'
+      };
+
+      listEl.innerHTML = generatedDraft.map((q, idx) => `
+        <div class="bg-slate-900/85 border border-sky-500/30 rounded-xl p-3.5 space-y-2">
+          <div class="flex items-center justify-between gap-2">
+            <span class="text-xs font-extrabold text-yellow-300">Soal #${idx + 1}</span>
+            <span class="text-[10px] px-2 py-0.5 rounded-full border ${diffColors[q.difficulty]} font-bold">
+              ${diffLabels[q.difficulty]}
+            </span>
+          </div>
+          <p class="text-xs sm:text-sm font-semibold text-white">${escapeHTML(q.question)}</p>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-1.5 text-xs">
+            ${q.options.map((opt, oIdx) => `
+              <div class="px-2.5 py-1.5 rounded-lg border ${oIdx === q.correct ? 'border-emerald-400/60 bg-emerald-950/50 text-emerald-200 font-bold' : 'border-slate-700/80 bg-slate-950/60 text-slate-300'}">
+                <span class="text-yellow-400 font-bold">${letters[oIdx]}.</span> ${escapeHTML(opt)} ${oIdx === q.correct ? '✓' : ''}
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function saveGeneratedToBank(playImmediately) {
+      if (!generatedDraft || generatedDraft.length === 0) return;
+      // Tambahkan ke bank soal utama
+      questionBank = [...generatedDraft, ...questionBank];
+      saveBank();
+      showToast(`${generatedDraft.length} soal ditambahkan ke Bank Soal!`, 'success');
+
+      if (playImmediately) {
+        // Mulai permainan langsung dengan soal yang baru di-generate
+        document.getElementById('home-question-count').value = String(generatedDraft.length);
+        startNewGame(generatedDraft);
+      }
+    }
+
+    /* =========================================================================
+       5. MANAJEMEN BANK SOAL (CRUD, FILTER, EXPORT/IMPORT JSON)
+       ========================================================================= */
+    function escapeHTML(str) {
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    function renderBankList() {
+      const search = document.getElementById('bank-search').value.toLowerCase().trim();
+      const subFilter = document.getElementById('bank-filter-subject').value;
+      const lvlFilter = document.getElementById('bank-filter-level').value;
+      const listEl = document.getElementById('bank-list');
+
+      const filtered = questionBank.filter(q => {
+        const matchSub = subFilter === 'ALL' || q.subject === subFilter;
+        const matchLvl = lvlFilter === 'ALL' || q.level === lvlFilter;
+        const matchSearch = !search || q.question.toLowerCase().includes(search) || q.subject.toLowerCase().includes(search);
+        return matchSub && matchLvl && matchSearch;
+      });
+
+      if (filtered.length === 0) {
+        listEl.innerHTML = `
+          <div class="col-span-full studio-card rounded-2xl p-8 text-center text-slate-400">
+            <p class="text-sm font-semibold text-sky-200">Tidak ada soal yang cocok dengan filter.</p>
+            <p class="text-xs mt-1">Coba ubah filter atau klik "+ Tambah Soal Manual" / "Generate Soal AI".</p>
+          </div>
+        `;
+        return;
+      }
+
+      const letters = ['A', 'B', 'C', 'D'];
+      listEl.innerHTML = filtered.map(q => `
+        <div class="studio-card rounded-xl p-4 flex flex-col justify-between gap-3">
+          <div class="space-y-2">
+            <div class="flex flex-wrap items-center justify-between gap-1.5">
+              <div class="flex items-center gap-1.5">
+                <span class="text-[10px] px-2 py-0.5 rounded-full bg-sky-900 text-sky-200 border border-sky-400/30 font-bold">${escapeHTML(q.level)}</span>
+                <span class="text-[10px] px-2 py-0.5 rounded-full bg-yellow-400/15 text-yellow-300 border border-yellow-400/30 font-bold">${escapeHTML(q.subject)}</span>
+              </div>
+              <div class="flex items-center gap-1.5">
+                <button onclick="openQuestionModal('${q.id}')" class="text-xs px-2 py-1 rounded bg-slate-800 hover:bg-sky-800 text-sky-200" title="Edit Soal">✏️</button>
+                <button onclick="deleteQuestion('${q.id}')" class="text-xs px-2 py-1 rounded bg-slate-800 hover:bg-rose-800 text-rose-300" title="Hapus Soal">🗑️</button>
+              </div>
+            </div>
+            <p class="text-xs sm:text-sm font-bold text-white leading-snug">${escapeHTML(q.question)}</p>
+          </div>
+          <div class="grid grid-cols-2 gap-1.5 text-[11px]">
+            ${q.options.map((opt, idx) => `
+              <div class="px-2 py-1 rounded border ${idx === q.correct ? 'border-emerald-500/50 bg-emerald-950/50 text-emerald-300 font-bold' : 'border-slate-800 bg-slate-950/60 text-slate-400'} truncate">
+                ${letters[idx]}. ${escapeHTML(opt)}
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function openQuestionModal(id = null) {
+      const modal = document.getElementById('question-modal');
+      document.getElementById('edit-question-id').value = id || '';
+      if (id) {
+        const q = questionBank.find(item => item.id === id);
+        if (!q) return;
+        document.getElementById('modal-title').textContent = 'Edit Soal';
+        document.getElementById('modal-level').value = q.level;
+        document.getElementById('modal-subject').value = q.subject;
+        document.getElementById('modal-difficulty').value = String(q.difficulty || 1);
+        document.getElementById('modal-question').value = q.question;
+        document.getElementById('modal-opt-0').value = q.options[0] || '';
+        document.getElementById('modal-opt-1').value = q.options[1] || '';
+        document.getElementById('modal-opt-2').value = q.options[2] || '';
+        document.getElementById('modal-opt-3').value = q.options[3] || '';
+        document.getElementById('modal-correct').value = String(q.correct);
+        document.getElementById('modal-explanation').value = q.explanation || '';
+      } else {
+        document.getElementById('modal-title').textContent = 'Tambah Soal Manual';
+        document.getElementById('modal-question').value = '';
+        document.getElementById('modal-opt-0').value = '';
+        document.getElementById('modal-opt-1').value = '';
+        document.getElementById('modal-opt-2').value = '';
+        document.getElementById('modal-opt-3').value = '';
+        document.getElementById('modal-correct').value = '0';
+        document.getElementById('modal-explanation').value = '';
+      }
+      modal.classList.remove('hidden');
+    }
+
+    function closeQuestionModal() {
+      document.getElementById('question-modal').classList.add('hidden');
+    }
+
+    function saveQuestionFromModal() {
+      const id = document.getElementById('edit-question-id').value;
+      const level = document.getElementById('modal-level').value;
+      const subject = document.getElementById('modal-subject').value;
+      const difficulty = parseInt(document.getElementById('modal-difficulty').value, 10);
+      const question = document.getElementById('modal-question').value.trim();
+      const options = [
+        document.getElementById('modal-opt-0').value.trim(),
+        document.getElementById('modal-opt-1').value.trim(),
+        document.getElementById('modal-opt-2').value.trim(),
+        document.getElementById('modal-opt-3').value.trim()
+      ];
+      const correct = parseInt(document.getElementById('modal-correct').value, 10);
+      const explanation = document.getElementById('modal-explanation').value.trim();
+
+      if (!question || options.some(o => !o)) {
+        showToast('Harap isi pertanyaan dan keempat pilihan jawaban (A, B, C, D).', 'error');
+        return;
+      }
+
+      if (id) {
+        const idx = questionBank.findIndex(item => item.id === id);
+        if (idx !== -1) {
+          questionBank[idx] = { ...questionBank[idx], level, subject, difficulty, question, options, correct, explanation };
+        }
+        showToast('Soal berhasil diperbarui!', 'success');
+      } else {
+        questionBank.unshift({
+          id: 'manual-' + Date.now(),
+          level,
+          subject,
+          difficulty,
+          question,
+          options,
+          correct,
+          explanation
+        });
+        showToast('Soal baru berhasil ditambahkan!', 'success');
+      }
+
+      saveBank();
+      closeQuestionModal();
+      renderBankList();
+    }
+
+    function deleteQuestion(id) {
+      if (questionBank.length <= 5) {
+        showToast('Minimal harus tersisa 5 soal di dalam Bank Soal.', 'warning');
+        return;
+      }
+      questionBank = questionBank.filter(q => q.id !== id);
+      saveBank();
+      renderBankList();
+      showToast('Soal dihapus dari Bank Soal.', 'info');
+    }
+
+    function confirmResetBank() {
+      questionBank = JSON.parse(JSON.stringify(DEFAULT_QUESTIONS));
+      saveBank();
+      renderBankList();
+      showToast('Bank Soal telah dikembalikan ke soal default!', 'success');
+    }
+
+    function exportBankJSON() {
+      const dataStr = JSON.stringify(questionBank, null, 2);
+      const blob = new Blob([dataStr], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `bank-soal-millionaire-${new Date().toISOString().slice(0, 10)}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast('File JSON Bank Soal berhasil diunduh!', 'success');
+    }
+
+    function importBankJSON(event) {
+      const file = event.target.files?.[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = e => {
+        try {
+          const imported = JSON.parse(e.target.result);
+          if (!Array.isArray(imported)) throw new Error('Format tidak valid');
+          const validItems = imported.filter(q => q.question && Array.isArray(q.options) && q.options.length === 4);
+          if (validItems.length === 0) throw new Error('Tidak ada soal valid');
+          questionBank = [...validItems, ...questionBank];
+          saveBank();
+          renderBankList();
+          showToast(`Berhasil mengimpor ${validItems.length} soal!`, 'success');
+        } catch (err) {
+          showToast('Gagal mengimpor JSON: pastikan format file valid.', 'error');
+        }
+        event.target.value = '';
+      };
+      reader.readAsText(file);
+    }
+
+    /* =========================================================================
+       6. MESIN PERMAINAN WHO WANTS TO BE A MILLIONAIRE?
+       ========================================================================= */
+    const PRIZE_LADDER_15 = [
+      { amount: 100000, safe: false },
+      { amount: 250000, safe: false },
+      { amount: 500000, safe: false },
+      { amount: 1000000, safe: false },
+      { amount: 2500000, safe: true },    // Titik Aman 1
+      { amount: 5000000, safe: false },
+      { amount: 10000000, safe: false },
+      { amount: 20000000, safe: false },
+      { amount: 35000000, safe: false },
+      { amount: 50000000, safe: true },   // Titik Aman 2
+      { amount: 100000000, safe: false },
+      { amount: 200000000, safe: false },
+      { amount: 350000000, safe: false },
+      { amount: 500000000, safe: false },
+      { amount: 1000000000, safe: true }  // Puncak 1 Miliar
+    ];
+
+    const PRIZE_LADDER_10 = [
+      { amount: 500000, safe: false },
+      { amount: 1000000, safe: false },
+      { amount: 5000000, safe: true },
+      { amount: 15000000, safe: false },
+      { amount: 30000000, safe: false },
+      { amount: 50000000, safe: true },
+      { amount: 125000000, safe: false },
+      { amount: 250000000, safe: false },
+      { amount: 500000000, safe: false },
+      { amount: 1000000000, safe: true }
+    ];
+
+    const PRIZE_LADDER_5 = [
+      { amount: 1000000, safe: false },
+      { amount: 10000000, safe: true },
+      { amount: 50000000, safe: false },
+      { amount: 250000000, safe: false },
+      { amount: 1000000000, safe: true }
+    ];
+
+    let gameState = {
+      questions: [],
+      backupQuestions: [],
+      ladder: [],
+      currentIndex: 0,
+      locked: false,
+      timerSeconds: 30,
+      timeLeft: 30,
+      timerInterval: null,
+      lifelines: {
+        fiftyFifty: true,
+        audience: true,
+        switchQ: true
+      }
+    };
+
+    function startNewGame(customPack = null) {
+      AudioEngine.init();
+      AudioEngine.playClick();
+
+      const totalCount = parseInt(document.getElementById('home-question-count').value, 10) || 15;
+      const subjectFilter = document.getElementById('home-filter-subject').value;
+      const timerSetting = parseInt(document.getElementById('home-timer-setting').value, 10);
+
+      let pool = customPack ? [...customPack] : [...questionBank];
+      if (!customPack && subjectFilter !== 'ALL') {
+        const filtered = pool.filter(q => q.subject === subjectFilter);
+        if (filtered.length >= 5) {
+          pool = filtered;
+        } else {
+          showToast(`Soal ${subjectFilter} kurang dari 5, mencampur dengan mapel lain.`, 'warning');
+        }
+      }
+
+      if (pool.length < totalCount) {
+        // Lengkapi otomatis jika bank soal lebih sedikit dari jumlah babak
+        const extra = generateSmartOfflineQuestions({
+          level: 'UMUM',
+          grade: 'Umum',
+          subject: subjectFilter === 'ALL' ? 'Pengetahuan Umum' : subjectFilter,
+          topic: '',
+          count: totalCount - pool.length + 3
+        });
+        pool = [...pool, ...extra];
+      }
+
+      // Urutkan soal berdasarkan kesulitan (Mudah -> Menengah -> Sulit) dengan pengacakan internal
+      const shuffle = arr => [...arr].sort(() => Math.random() - 0.5);
+      const sortedPool = [
+        ...shuffle(pool.filter(q => q.difficulty === 1)),
+        ...shuffle(pool.filter(q => q.difficulty === 2)),
+        ...shuffle(pool.filter(q => q.difficulty === 3))
+      ];
+
+      const selected = sortedPool.slice(0, totalCount);
+      const backups = sortedPool.slice(totalCount, totalCount + 5);
+
+      const ladder = totalCount === 5 ? PRIZE_LADDER_5 : totalCount === 10 ? PRIZE_LADDER_10 : PRIZE_LADDER_15;
+
+      gameState = {
+        questions: selected,
+        backupQuestions: backups.length > 0 ? backups : generateSmartOfflineQuestions({ level: 'UMUM', grade: 'Umum', subject: 'Pengetahuan Umum', topic: '', count: 3 }),
+        ladder,
+        currentIndex: 0,
+        locked: false,
+        timerSeconds: timerSetting,
+        timeLeft: timerSetting,
+        timerInterval: null,
+        lifelines: { fiftyFifty: true, audience: true, switchQ: true }
+      };
+
+      // Reset UI Lifelines
+      ['life-5050', 'life-audience', 'life-switch'].forEach(id => {
+        const btn = document.getElementById(id);
+        btn.disabled = false;
+        btn.classList.remove('lifeline-used');
+      });
+
+      document.querySelectorAll('.screen').forEach(el => el.classList.remove('active'));
+      document.getElementById('game').classList.add('active');
+
+      renderPrizeLadder();
+      loadCurrentQuestion();
+      AudioEngine.startSuspenseMusic();
+    }
+
+    function renderPrizeLadder() {
+      const container = document.getElementById('prize-ladder');
+      container.innerHTML = gameState.ladder.map((step, idx) => {
+        let cls = step.safe ? 'ladder-safe' : 'ladder-normal';
+        if (idx < gameState.currentIndex) cls = 'ladder-passed';
+        if (idx === gameState.currentIndex) cls = 'ladder-active';
+
+        return `
+          <div class="ladder-row ${cls}">
+            <span class="flex items-center gap-1.5">
+              <span class="w-5 text-right opacity-80">${idx + 1}</span>
+              <span>${step.safe ? '★' : '•'}</span>
+            </span>
+            <span>${formatRupiah(step.amount)}</span>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function loadCurrentQuestion() {
+      const q = gameState.questions[gameState.currentIndex];
+      const step = gameState.ladder[gameState.currentIndex];
+      gameState.locked = false;
+
+      document.getElementById('audience-panel').classList.add('hidden');
+      document.getElementById('explanation-box').classList.add('hidden');
+
+      document.getElementById('q-progress-badge').textContent = `Pertanyaan ${gameState.currentIndex + 1} / ${gameState.questions.length}`;
+      document.getElementById('q-meta-badge').textContent = `${q.subject} • ${q.level}`;
+      document.getElementById('q-current-prize').textContent = formatRupiah(step.amount);
+      document.getElementById('question-text').textContent = q.question;
+
+      // Update hadiah aman jika Walk Away
+      const currentEarned = gameState.currentIndex > 0 ? gameState.ladder[gameState.currentIndex - 1].amount : 0;
+      document.getElementById('walk-away-amount').textContent = formatRupiah(currentEarned);
+
+      for (let i = 0; i < 4; i++) {
+        const btn = document.getElementById(`opt-btn-${i}`);
+        btn.disabled = false;
+        btn.className = 'hex-option';
+        document.getElementById(`opt-text-${i}`).textContent = q.options[i];
+      }
+
+      renderPrizeLadder();
+      startQuestionTimer();
+    }
+
+    function startQuestionTimer() {
+      stopQuestionTimer();
+      const timerBox = document.getElementById('timer-box');
+      const timerEl = document.getElementById('game-timer');
+
+      if (!gameState.timerSeconds || gameState.timerSeconds <= 0) {
+        timerBox.classList.add('opacity-50');
+        timerEl.textContent = '∞';
+        return;
+      }
+
+      timerBox.classList.remove('opacity-50');
+      gameState.timeLeft = gameState.timerSeconds;
+      timerEl.textContent = gameState.timeLeft;
+      timerEl.className = 'font-display font-black text-xl text-yellow-300 min-w-[2.2rem] text-center';
+
+      gameState.timerInterval = setInterval(() => {
+        if (gameState.locked) return;
+        gameState.timeLeft--;
+        timerEl.textContent = gameState.timeLeft;
+
+        if (gameState.timeLeft <= 10) {
+          timerEl.className = 'font-display font-black text-xl text-rose-400 animate-pulse min-w-[2.2rem] text-center';
+          AudioEngine.playTone(880, 0.06, 'sine', 0.08);
+        }
+
+        if (gameState.timeLeft <= 0) {
+          stopQuestionTimer();
+          handleTimeOut();
+        }
+      }, 1000);
+    }
+
+    function stopQuestionTimer() {
+      if (gameState.timerInterval) {
+        clearInterval(gameState.timerInterval);
+        gameState.timerInterval = null;
+      }
+    }
+
+    function handleTimeOut() {
+      gameState.locked = true;
+      AudioEngine.playWrong();
+      const q = gameState.questions[gameState.currentIndex];
+      document.getElementById(`opt-btn-${q.correct}`).classList.add('opt-correct');
+      showToast('⏰ Waktu habis!', 'error');
+
+      setTimeout(() => {
+        const safePrize = getGuaranteedSafePrize();
+        endGame({
+          won: false,
+          prize: safePrize,
+          title: 'WAKTU HABIS!',
+          subtitle: 'Waktu untuk menjawab pertanyaan telah berakhir.'
+        });
+      }, 1800);
+    }
+
+    function selectAnswer(chosenIndex) {
+      if (gameState.locked) return;
+      gameState.locked = true;
+      stopQuestionTimer();
+
+      // Disable semua tombol jawaban
+      for (let i = 0; i < 4; i++) {
+        document.getElementById(`opt-btn-${i}`).disabled = true;
+      }
+
+      const chosenBtn = document.getElementById(`opt-btn-${chosenIndex}`);
+      chosenBtn.classList.add('opt-locked');
+      AudioEngine.playLockAnswer();
+
+      const q = gameState.questions[gameState.currentIndex];
+
+      // Ketegangan TV sebelum membuka jawaban (1.3 detik)
+      setTimeout(() => {
+        chosenBtn.classList.remove('opt-locked');
+        const correctBtn = document.getElementById(`opt-btn-${q.correct}`);
+
+        if (q.explanation) {
+          document.getElementById('explanation-text').textContent = q.explanation;
+          document.getElementById('explanation-box').classList.remove('hidden');
+        }
+
+        if (chosenIndex === q.correct) {
+          // BENAR!
+          correctBtn.classList.add('opt-correct');
+          const wonAmount = gameState.ladder[gameState.currentIndex].amount;
+
+          if (gameState.currentIndex === gameState.questions.length - 1) {
+            // MENANG 1 MILIAR!
+            AudioEngine.playBigWin();
+            setTimeout(() => {
+              endGame({
+                won: true,
+                prize: wonAmount,
+                title: 'JUARA 1 MILIAR!',
+                subtitle: 'Luar biasa! Anda menaklukkan seluruh pertanyaan!'
+              });
+            }, 2200);
+          } else {
+            AudioEngine.playCorrect();
+            showToast(`Benar! Hadiah Anda mencapai ${formatRupiah(wonAmount)}`, 'success');
+            setTimeout(() => {
+              gameState.currentIndex++;
+              loadCurrentQuestion();
+            }, 1900);
+          }
+        } else {
+          // SALAH!
+          chosenBtn.classList.add('opt-wrong');
+          correctBtn.classList.add('opt-correct');
+          AudioEngine.playWrong();
+
+          setTimeout(() => {
+            const safePrize = getGuaranteedSafePrize();
+            endGame({
+              won: false,
+              prize: safePrize,
+              title: 'JAWABAN KURANG TEPAT',
+              subtitle: `Jawaban yang benar adalah ${['A', 'B', 'C', 'D'][q.correct]}. ${q.options[q.correct]}`
+            });
+          }, 2400);
+        }
+      }, 1350);
+    }
+
+    function getGuaranteedSafePrize() {
+      let safeAmount = 0;
+      for (let i = 0; i < gameState.currentIndex; i++) {
+        if (gameState.ladder[i].safe) {
+          safeAmount = gameState.ladder[i].amount;
+        }
+      }
+      return safeAmount;
+    }
+
+    function walkAway() {
+      if (gameState.locked) return;
+      stopQuestionTimer();
+      AudioEngine.playCorrect();
+      const earned = gameState.currentIndex > 0 ? gameState.ladder[gameState.currentIndex - 1].amount : 0;
+      endGame({
+        won: earned > 0,
+        prize: earned,
+        title: 'KEPUTUSAN BIJAK!',
+        subtitle: 'Anda memilih berhenti aman dan membawa pulang hadiah yang telah diraih.'
+      });
+    }
+
+    function endGame({ won, prize, title, subtitle }) {
+      AudioEngine.stopSuspenseMusic();
+      stopQuestionTimer();
+
+      const prevBest = Number(localStorage.getItem(STORAGE_KEY_BEST) || 0);
+      if (prize > prevBest) {
+        localStorage.setItem(STORAGE_KEY_BEST, String(prize));
+      }
+
+      const answeredCorrect = won && gameState.currentIndex === gameState.questions.length - 1
+        ? gameState.questions.length
+        : gameState.currentIndex;
+
+      document.getElementById('result-icon').textContent = prize >= 1000000000 ? '👑' : prize > 0 ? '🏆' : '🎯';
+      document.getElementById('result-title').textContent = title;
+      document.getElementById('result-subtitle').textContent = subtitle;
+      document.getElementById('result-prize').textContent = formatRupiah(prize);
+      document.getElementById('result-correct-count').textContent = `${answeredCorrect} / ${gameState.questions.length}`;
+      document.getElementById('result-status-text').textContent = prize >= 1000000000 ? 'Pemenang Utama!' : prize > 0 ? 'Membawa Pulang Hadiah' : 'Coba Lagi';
+
+      document.querySelectorAll('.screen').forEach(el => el.classList.remove('active'));
+      document.getElementById('result').classList.add('active');
+    }
+
+    /* =========================================================================
+       7. TIGA BANTUAN (LIFELINES: 50:50, TANYA AUDIENS, GANTI SOAL)
+       ========================================================================= */
+    function useLifeline5050() {
+      if (!gameState.lifelines.fiftyFifty || gameState.locked) return;
+      gameState.lifelines.fiftyFifty = false;
+      const btn = document.getElementById('life-5050');
+      btn.disabled = true;
+      btn.classList.add('lifeline-used');
+      AudioEngine.playClick();
+
+      const q = gameState.questions[gameState.currentIndex];
+      const wrongIndices = [0, 1, 2, 3].filter(i => i !== q.correct).sort(() => Math.random() - 0.5);
+      const toRemove = wrongIndices.slice(0, 2);
+
+      toRemove.forEach(idx => {
+        const optBtn = document.getElementById(`opt-btn-${idx}`);
+        optBtn.disabled = true;
+        optBtn.classList.add('opt-eliminated');
+      });
+
+      showToast('Bantuan 50:50 digunakan! Dua jawaban salah dihilangkan.', 'info');
+    }
+
+    function useLifelineAudience() {
+      if (!gameState.lifelines.audience || gameState.locked) return;
+      gameState.lifelines.audience = false;
+      const btn = document.getElementById('life-audience');
+      btn.disabled = true;
+      btn.classList.add('lifeline-used');
+      AudioEngine.playClick();
+
+      const q = gameState.questions[gameState.currentIndex];
+      // Buat distribusi persentase realistis (jawaban benar dominan, tapi lebih ketat di soal sulit)
+      const baseCorrect = q.difficulty === 1 ? 72 : q.difficulty === 2 ? 56 : 44;
+      const correctPct = Math.min(86, baseCorrect + Math.floor(Math.random() * 14));
+      let remaining = 100 - correctPct;
+
+      const weights = [0, 1, 2, 3].map(i => {
+        if (i === q.correct) return 0;
+        const optBtn = document.getElementById(`opt-btn-${i}`);
+        return optBtn.classList.contains('opt-eliminated') ? 0 : Math.random() + 0.2;
+      });
+      const weightSum = weights.reduce((a, b) => a + b, 0) || 1;
+
+      const percentages = [0, 1, 2, 3].map(i => {
+        if (i === q.correct) return correctPct;
+        if (weights[i] === 0) return 0;
+        return Math.round((weights[i] / weightSum) * remaining);
+      });
+
+      // Koreksi pembulatan agar total tepat 100%
+      const diff = 100 - percentages.reduce((a, b) => a + b, 0);
+      percentages[q.correct] += diff;
+
+      const letters = ['A', 'B', 'C', 'D'];
+      const barsEl = document.getElementById('audience-bars');
+      barsEl.innerHTML = percentages.map((pct, i) => `
+        <div class="flex flex-col items-center justify-end h-full gap-1">
+          <span class="text-xs font-extrabold text-yellow-300">${pct}%</span>
+          <div class="w-full max-w-[44px] bg-slate-800/90 rounded-t-lg h-20 flex items-end overflow-hidden border border-sky-500/30">
+            <div style="height: ${pct}%" class="w-full bg-gradient-to-t from-sky-600 to-yellow-400 transition-all duration-700"></div>
+          </div>
+          <span class="text-xs font-bold text-white">${letters[i]}</span>
+        </div>
+      `).join('');
+
+      document.getElementById('audience-panel').classList.remove('hidden');
+      showToast('Hasil polling audiens telah ditampilkan!', 'info');
+    }
+
+    function useLifelineSwitch() {
+      if (!gameState.lifelines.switchQ || gameState.locked) return;
+      gameState.lifelines.switchQ = false;
+      const btn = document.getElementById('life-switch');
+      btn.disabled = true;
+      btn.classList.add('lifeline-used');
+      AudioEngine.playClick();
+
+      const replacement = gameState.backupQuestions.shift() || generateSmartOfflineQuestions({
+        level: 'UMUM',
+        grade: 'Umum',
+        subject: 'Pengetahuan Umum',
+        topic: '',
+        count: 1
+      })[0];
+
+      gameState.questions[gameState.currentIndex] = replacement;
+      loadCurrentQuestion();
+      showToast('Pertanyaan berhasil diganti dengan soal baru!', 'success');
+    }
+
+    /* =========================================================================
+       8. INISIALISASI SAAT HALAMAN DIMUAT
+       ========================================================================= */
+    window.addEventListener('DOMContentLoaded', () => {
+      loadBank();
+      updateHomeStats();
+      populateSubjectDropdowns();
+      updateClassOptions();
+      loadApiKeyUI();
+    });
+  </script>
 </body>
 </html>
