@@ -1232,6 +1232,7 @@ body:has(#game.active) .top {
 <script>
 const PRIZES=[100,200,300,500,1000,2000,4000,8000,16000,32000,64000,125000,250000,500000,1000000];
 const SAFE_LEVELS=[4,9,14];
+const DEFAULT_MODEL='gemini-3.8-flash';
 const DEFAULT_QUESTIONS=[
 {id:'d1',level:'SD / MI',grade:'Kelas 4',subject:'IPA',topic:'Sumber Energi',q:'Sumber energi cahaya dan panas terbesar bagi kehidupan di Bumi adalah ...',options:['Bulan','Matahari','Angin','Batu bara'],answer:1,exp:'Matahari memancarkan cahaya dan panas utama bagi makhluk hidup di Bumi.'},
 {id:'d2',level:'SD / MI',grade:'Kelas 5',subject:'Bahasa Indonesia',topic:'Kosakata',q:'Sinonim dari kata "cerdas" adalah ...',options:['Pandai','Lambat','Malas','Ragu'],answer:0,exp:'Cerdas memiliki arti yang sama atau dekat dengan pandai.'},
@@ -1262,12 +1263,12 @@ function loadAiConfig(){
       return {
         provider: parsed.offlineAck ? 'builtin' : 'gemini',
         key: parsed.key || '',
-        model: 'gemini-2.5-flash',
+        model: DEFAULT_MODEL,
         offlineAck: Boolean(parsed.offlineAck)
       };
     }
   }catch(e){}
-  return {provider:'gemini',key:'',model:'gemini-2.5-flash',offlineAck:false};
+  return {provider:'gemini',key:'',model:DEFAULT_MODEL,offlineAck:false};
 }
 
 function saveAiConfig(){
@@ -1295,7 +1296,7 @@ function applyAiConfigToUI(){
 
 function syncAiConfigFromForm(){
   aiConfig.key=document.getElementById('aiKey').value.trim();
-  aiConfig.model='gemini-2.5-flash';
+  aiConfig.model=DEFAULT_MODEL;
   if(aiConfig.key){
     aiConfig.provider='gemini';
     aiConfig.offlineAck=false;
@@ -1359,7 +1360,7 @@ function saveApiSettingsFromModal(){
     return;
   }
 
-  aiConfig={provider:'gemini',key,model:'gemini-2.5-flash',offlineAck:false};
+  aiConfig={provider:'gemini',key,model:DEFAULT_MODEL,offlineAck:false};
   saveAiConfig();
   closeModal();
 
@@ -1679,7 +1680,7 @@ function importBank(e){
 
 async function generateQuestions(){
   const level=document.getElementById('genLevel').value,grade=document.getElementById('genGrade').value,subject=document.getElementById('genSubject').value.trim()||'Pengetahuan Umum',topic=document.getElementById('genTopic').value.trim()||'Materi Utama',count=Number(document.getElementById('genCount').value),diff=document.getElementById('genDiff').value,notes=document.getElementById('genNotes').value.trim();
-  const key=document.getElementById('aiKey').value.trim(),model='gemini-2.5-flash';
+  const key=document.getElementById('aiKey').value.trim(),model=DEFAULT_MODEL;
   const st=document.getElementById('genStatus'),btn=document.getElementById('genBtn');
 
   if(!key&&!aiConfig.offlineAck){
