@@ -752,12 +752,12 @@
           </div>
 
           <!-- Tombol Konfirmasi Kunci Jawaban (Final Answer) -->
-          <div id="final-answer-bar" class="hidden pt-1 flex flex-col sm:flex-row items-center justify-center gap-3">
-            <button id="btn-confirm-final" onclick="confirmFinalAnswer()" class="btn-gold w-full sm:w-auto px-8 py-3.5 rounded-full text-sm sm:text-base tracking-wider flex items-center justify-center gap-2 shadow-2xl cursor-pointer">
+          <div id="final-answer-bar" class="pt-1 flex flex-col sm:flex-row items-center justify-center gap-3">
+            <button id="btn-confirm-final" onclick="confirmFinalAnswer()" disabled class="btn-gold w-full sm:w-auto px-8 py-3.5 rounded-full text-sm sm:text-base tracking-wider flex items-center justify-center gap-2 shadow-2xl cursor-pointer">
               <span>🔒</span>
-              <span id="final-answer-label">KUNCI JAWABAN (FINAL ANSWER)</span>
+              <span id="final-answer-label">PILIH JAWABAN DAHULU</span>
             </button>
-            <span class="text-[11px] text-sky-300/90">Masih bisa ganti pilihan sebelum dikunci</span>
+            <span id="final-answer-hint" class="text-[11px] text-sky-300/90">Klik A, B, C, atau D lalu tekan Kunci Jawaban</span>
           </div>
 
           <!-- Panel Grafik Tanya Audiens (Muncul saat dipakai) -->
@@ -1950,7 +1950,10 @@ Keterangan: "correct" adalah indeks 0, 1, 2, atau 3. "difficulty" adalah 1 (Muda
       gameState.selectedOption = null;
       gameState.locked = false;
 
-      document.getElementById('final-answer-bar').classList.add('hidden');
+      const confirmBtn = document.getElementById('btn-confirm-final');
+      confirmBtn.disabled = true;
+      document.getElementById('final-answer-label').textContent = 'PILIH JAWABAN DAHULU';
+      document.getElementById('final-answer-hint').textContent = 'Klik A, B, C, atau D lalu tekan Kunci Jawaban';
       document.getElementById('audience-panel').classList.add('hidden');
       document.getElementById('explanation-box').classList.add('hidden');
 
@@ -2047,10 +2050,12 @@ Keterangan: "correct" adalah indeks 0, 1, 2, atau 3. "difficulty" adalah 1 (Muda
       }
       optBtn.classList.add('opt-locked');
 
-      // Tampilkan tombol Kunci Jawaban (Final Answer)
+      // Aktifkan tombol Kunci Jawaban (Final Answer)
       const letters = ['A', 'B', 'C', 'D'];
+      const confirmBtn = document.getElementById('btn-confirm-final');
+      confirmBtn.disabled = false;
       document.getElementById('final-answer-label').textContent = `KUNCI JAWABAN ${letters[chosenIndex]}? (FINAL ANSWER)`;
-      document.getElementById('final-answer-bar').classList.remove('hidden');
+      document.getElementById('final-answer-hint').textContent = 'Masih bisa ganti pilihan sebelum dikunci';
     }
 
     function confirmFinalAnswer() {
@@ -2059,7 +2064,10 @@ Keterangan: "correct" adalah indeks 0, 1, 2, atau 3. "difficulty" adalah 1 (Muda
       gameState.locked = true;
       stopQuestionTimer();
 
-      document.getElementById('final-answer-bar').classList.add('hidden');
+      const confirmBtn = document.getElementById('btn-confirm-final');
+      confirmBtn.disabled = true;
+      document.getElementById('final-answer-label').textContent = 'JAWABAN DIKUNCI...';
+      document.getElementById('final-answer-hint').textContent = 'Menunggu hasil...';
 
       // Disable semua tombol jawaban
       for (let i = 0; i < 4; i++) {
@@ -2194,7 +2202,9 @@ Keterangan: "correct" adalah indeks 0, 1, 2, atau 3. "difficulty" adalah 1 (Muda
         optBtn.classList.add('opt-eliminated');
         if (gameState.selectedOption === idx) {
           gameState.selectedOption = null;
-          document.getElementById('final-answer-bar').classList.add('hidden');
+          document.getElementById('btn-confirm-final').disabled = true;
+          document.getElementById('final-answer-label').textContent = 'PILIH JAWABAN DAHULU';
+          document.getElementById('final-answer-hint').textContent = 'Klik A, B, C, atau D lalu tekan Kunci Jawaban';
         }
       });
 
