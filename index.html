@@ -302,7 +302,7 @@
   <div class="stage-spotlights"></div>
 
   <!-- Elemen Audio Utama untuk file lokal music.mp3 -->
-  <audio id="bgMusic" src="music.mp3" loop preload="auto"></audio>
+  <audio id="bgMusic" src="./music.mp3" loop preload="auto"></audio>
 
   <!-- Toast Notifikasi Non-Blocking -->
   <div id="toast-container" class="fixed top-4 right-4 z-50 flex flex-col gap-2 max-w-sm w-full pointer-events-none px-4 sm:px-0"></div>
@@ -464,13 +464,13 @@
           <!-- Form Konfigurasi (Kiri) -->
           <div class="lg:col-span-5 studio-card rounded-2xl p-5 space-y-3.5 h-fit">
             <h3 class="font-bold text-yellow-300 text-sm border-b border-sky-500/20 pb-2">
-              1. Konfigurasi Materi &amp; Kurikulum
+              1. Konfigurasi Materi &amp; Kurikulum Merdeka
             </h3>
 
             <div class="grid grid-cols-2 gap-3">
               <div>
                 <label class="block text-xs text-sky-300 font-semibold mb-1">Jenjang Pendidikan</label>
-                <select id="gen-level" onchange="updateClassOptions()" class="w-full bg-slate-900 border border-sky-500/40 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-yellow-400">
+                <select id="gen-level" onchange="onGenLevelChange()" class="w-full bg-slate-900 border border-sky-500/40 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-yellow-400">
                   <option value="SD">SD / MI</option>
                   <option value="SMP" selected>SMP / MTs</option>
                   <option value="SMA">SMA / SMK / MA</option>
@@ -486,17 +486,7 @@
             <div class="grid grid-cols-2 gap-3">
               <div>
                 <label class="block text-xs text-sky-300 font-semibold mb-1">Mata Pelajaran</label>
-                <select id="gen-subject" class="w-full bg-slate-900 border border-sky-500/40 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-yellow-400">
-                  <option value="Matematika">Matematika</option>
-                  <option value="IPA">IPA (Ilmu Pengetahuan Alam)</option>
-                  <option value="IPS">IPS (Ilmu Pengetahuan Sosial)</option>
-                  <option value="Bahasa Indonesia">Bahasa Indonesia</option>
-                  <option value="Bahasa Inggris">Bahasa Inggris</option>
-                  <option value="Sejarah">Sejarah</option>
-                  <option value="PPKn">PPKn (Pendidikan Pancasila)</option>
-                  <option value="Informatika">Informatika &amp; Teknologi</option>
-                  <option value="Pengetahuan Umum" selected>Pengetahuan Umum</option>
-                </select>
+                <select id="gen-subject" onchange="onGenSubjectChange()" class="w-full bg-slate-900 border border-sky-500/40 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-yellow-400"></select>
               </div>
               <div>
                 <label class="block text-xs text-sky-300 font-semibold mb-1">Jumlah Soal</label>
@@ -508,16 +498,32 @@
               </div>
             </div>
 
+            <div id="gen-custom-subject-wrap" class="hidden">
+              <label class="block text-xs text-sky-300 font-semibold mb-1">Nama Mata Pelajaran Manual</label>
+              <input id="gen-custom-subject" type="text" placeholder="Ketik nama mata pelajaran..." class="w-full bg-slate-900 border border-sky-500/40 rounded-xl px-3 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-yellow-400" />
+            </div>
+
             <div>
-              <label class="block text-xs text-sky-300 font-semibold mb-1">Topik / Bab Spesifik</label>
+              <div class="flex items-center justify-between mb-1">
+                <label class="block text-xs text-sky-300 font-semibold">Topik / Bab Spesifik</label>
+                <button type="button" onclick="suggestTopicsWithAI()" class="text-[11px] text-yellow-300 hover:underline font-bold flex items-center gap-1">
+                  <span>✨ Usulkan Topik Kurikulum</span>
+                </button>
+              </div>
               <input id="gen-topic" type="text" placeholder="Contoh: Sistem Tata Surya, Perang Diponegoro, Aljabar..." class="w-full bg-slate-900 border border-sky-500/40 rounded-xl px-3 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-yellow-400" />
+              <!-- Chip Usulan Topik AI -->
+              <div id="ai-topic-chips" class="hidden flex flex-wrap gap-1.5 pt-2"></div>
             </div>
 
             <div>
               <label class="block text-xs text-sky-300 font-semibold mb-1">
-                Materi / Ringkasan Teks Referensi <span class="text-slate-400 font-normal">(Opsional — agar 100% sesuai teks Anda)</span>
+                Instruksi Tambahan / Materi Teks Referensi <span class="text-slate-400 font-normal">(Opsional)</span>
               </label>
-              <textarea id="gen-material" rows="3" placeholder="Tempelkan (paste) ringkasan materi, catatan pelajaran, atau artikel di sini agar AI membuat soal murni dari materi ini..." class="w-full bg-slate-900 border border-sky-500/40 rounded-xl p-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-yellow-400"></textarea>
+              <textarea id="gen-material" rows="3" placeholder="Tempelkan ringkasan materi pelajaran atau tulis instruksi khusus (misal: fokus HOTS C4-C6, soal cerita kontekstual)..." class="w-full bg-slate-900 border border-sky-500/40 rounded-xl p-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-yellow-400"></textarea>
+              <div class="flex flex-wrap gap-1 pt-1.5">
+                <button type="button" onclick="applyPresetInstruction('Fokus menguji kemampuan berpikir tingkat tinggi (HOTS) level C4-C6 sesuai Kurikulum Merdeka.')" class="text-[10px] bg-slate-800/90 hover:bg-slate-700 text-sky-200 px-2 py-0.5 rounded border border-sky-500/25">+ Fokus HOTS C4-C6</button>
+                <button type="button" onclick="applyPresetInstruction('Buat soal dalam bentuk cerita kontekstual kehidupan sehari-hari siswa.')" class="text-[10px] bg-slate-800/90 hover:bg-slate-700 text-sky-200 px-2 py-0.5 rounded border border-sky-500/25">+ Soal Cerita Kontekstual</button>
+              </div>
             </div>
 
             <!-- Pengaturan Gemini API Key -->
@@ -536,7 +542,7 @@
                 <button onclick="clearApiKey()" class="px-2 py-1.5 rounded-lg text-xs bg-rose-950/80 border border-rose-500/40 text-rose-200 hover:bg-rose-900" title="Hapus API Key">✕</button>
               </div>
               <p class="text-[11px] text-slate-400 leading-relaxed">
-                Dapatkan API Key gratis di <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer" class="text-sky-300 underline hover:text-yellow-300">Google AI Studio</a>. Key tersimpan aman hanya di browser Anda.
+                Menggunakan model <span class="text-sky-300 font-semibold">gemini-3-flash-preview</span> dengan retry otomatis &amp; JSON terstruktur. Key tersimpan aman di browser Anda.
               </p>
             </div>
 
@@ -1133,15 +1139,15 @@
       if (target) target.classList.add('active');
 
       if (screenId === 'home') {
-        AudioEngine.stopSuspenseMusic();
         stopQuestionTimer();
         updateHomeStats();
       } else if (screenId === 'bank') {
-        AudioEngine.stopSuspenseMusic();
         renderBankList();
       } else if (screenId === 'generator') {
-        AudioEngine.stopSuspenseMusic();
-        updateClassOptions();
+        onGenLevelChange();
+      }
+      if (AudioEngine.musicEnabled) {
+        AudioEngine.startSuspenseMusic();
       }
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
@@ -1197,18 +1203,148 @@
     }
 
     /* =========================================================================
-       4. GENERATOR SOAL AI (GEMINI API + SMART PROCEDURAL FALLBACK ENGINE)
+       4. GENERATOR SOAL AI (ADAPTASI DARI ASESMEN GURU INDONESIA - GEMINI 3 FLASH)
        ========================================================================= */
-    function updateClassOptions() {
+    const CURRICULUM_SUBJECTS = {
+      SD: ['Bahasa Indonesia', 'Matematika', 'IPAS (IPA-IPS)', 'Pancasila / PPKn', 'Pendidikan Agama', 'Seni Budaya', 'PJOK', 'Bahasa Inggris', 'Lainnya'],
+      SMP: ['Bahasa Indonesia', 'Matematika', 'IPA (Ilmu Pengetahuan Alam)', 'IPS (Ilmu Pengetahuan Sosial)', 'Bahasa Inggris', 'Pancasila / PPKn', 'Pendidikan Agama', 'Informatika', 'Seni Budaya', 'PJOK', 'Lainnya'],
+      SMA: ['Bahasa Indonesia', 'Matematika Umum', 'Matematika Tingkat Lanjut', 'Fisika', 'Kimia', 'Biologi', 'Ekonomi', 'Sosiologi', 'Geografi', 'Sejarah', 'Bahasa Inggris', 'Pancasila / PPKn', 'Pendidikan Agama', 'Informatika', 'Lainnya'],
+      UMUM: ['Pengetahuan Umum', 'Wawasan Kebangsaan (TWK)', 'Tes Intelegensi Umum (TIU)', 'Sains & Teknologi', 'Sejarah & Budaya Dunia', 'Informatika & AI', 'Bahasa Inggris', 'Lainnya']
+    };
+
+    function onGenLevelChange() {
       const level = document.getElementById('gen-level').value;
       const gradeSel = document.getElementById('gen-grade');
-      let options = [];
-      if (level === 'SD') options = ['Kelas 1', 'Kelas 2', 'Kelas 3', 'Kelas 4', 'Kelas 5', 'Kelas 6'];
-      else if (level === 'SMP') options = ['Kelas 7', 'Kelas 8', 'Kelas 9'];
-      else if (level === 'SMA') options = ['Kelas 10', 'Kelas 11', 'Kelas 12'];
-      else options = ['Tingkat Dasar', 'Tingkat Menengah', 'Tingkat Mahir / Olimpiade'];
+      const subjSel = document.getElementById('gen-subject');
 
-      gradeSel.innerHTML = options.map(o => `<option value="${o}">${o}</option>`).join('');
+      let gradeOptions = [];
+      if (level === 'SD') gradeOptions = ['Kelas 1', 'Kelas 2', 'Kelas 3', 'Kelas 4', 'Kelas 5', 'Kelas 6'];
+      else if (level === 'SMP') gradeOptions = ['Kelas 7', 'Kelas 8', 'Kelas 9'];
+      else if (level === 'SMA') gradeOptions = ['Kelas 10', 'Kelas 11', 'Kelas 12'];
+      else gradeOptions = ['Tingkat Dasar', 'Tingkat Menengah', 'Tingkat Mahir / Olimpiade'];
+
+      gradeSel.innerHTML = gradeOptions.map(o => `<option value="${o}">${o}</option>`).join('');
+
+      const subjects = CURRICULUM_SUBJECTS[level] || CURRICULUM_SUBJECTS.UMUM;
+      subjSel.innerHTML = subjects.map(s => `<option value="${s}">${s}</option>`).join('');
+      onGenSubjectChange();
+    }
+
+    function onGenSubjectChange() {
+      const subj = document.getElementById('gen-subject').value;
+      const wrap = document.getElementById('gen-custom-subject-wrap');
+      if (subj === 'Lainnya') {
+        wrap.classList.remove('hidden');
+      } else {
+        wrap.classList.add('hidden');
+      }
+    }
+
+    function getResolvedSubject() {
+      const subj = document.getElementById('gen-subject').value;
+      if (subj === 'Lainnya') {
+        return document.getElementById('gen-custom-subject').value.trim() || 'Pengetahuan Umum';
+      }
+      return subj;
+    }
+
+    function applyPresetInstruction(text) {
+      const box = document.getElementById('gen-material');
+      box.value = box.value.trim() ? `${box.value.trim()}\n${text}` : text;
+      showToast('Instruksi ditambahkan!', 'info');
+    }
+
+    /* Pemanggilan Gemini API dengan Retry Exponential Backoff (mengikuti pola index (3).html) */
+    async function callGeminiAPI(prompt, systemInstruction = '', apiKey = '') {
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${encodeURIComponent(apiKey)}`;
+      const payload = {
+        contents: [{ parts: [{ text: prompt }] }],
+        systemInstruction: systemInstruction ? { parts: [{ text: systemInstruction }] } : undefined,
+        generationConfig: {
+          temperature: 0.35,
+          responseMimeType: 'application/json'
+        }
+      };
+
+      let retries = 0;
+      const maxRetries = 3;
+      while (retries < maxRetries) {
+        try {
+          const response = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+          if (!response.ok) {
+            const errText = await response.text();
+            let parsedMsg = `API Request Error [${response.status}]`;
+            try {
+              const errObj = JSON.parse(errText);
+              if (errObj?.error?.message) parsedMsg = errObj.error.message;
+            } catch (e) {}
+            throw new Error(parsedMsg);
+          }
+          const result = await response.json();
+          const jsonText = result?.candidates?.[0]?.content?.parts?.[0]?.text;
+          if (!jsonText) throw new Error('Format respons API tidak sesuai.');
+          const cleaned = jsonText.replace(/```json/gi, '').replace(/```/g, '').trim();
+          return JSON.parse(cleaned);
+        } catch (err) {
+          retries++;
+          if (retries >= maxRetries) throw err;
+          await new Promise(r => setTimeout(r, 1000 * Math.pow(2, retries)));
+        }
+      }
+    }
+
+    /* Fitur Usulan Topik Kurikulum via AI (seperti di index (3).html) */
+    async function suggestTopicsWithAI() {
+      const apiKey = document.getElementById('gemini-api-key').value.trim();
+      if (!apiKey || apiKey.length < 15) {
+        showToast('Masukkan Gemini API Key terlebih dahulu untuk mengusulkan topik.', 'warning');
+        return;
+      }
+
+      const level = document.getElementById('gen-level').value;
+      const grade = document.getElementById('gen-grade').value;
+      const subject = getResolvedSubject();
+      const chipsContainer = document.getElementById('ai-topic-chips');
+
+      chipsContainer.classList.remove('hidden');
+      chipsContainer.innerHTML = '<span class="text-[11px] text-sky-300 animate-pulse">AI sedang mengusulkan topik Kurikulum Merdeka...</span>';
+
+      const prompt = `Bertindaklah sebagai pengembang Kurikulum Merdeka Indonesia. Usulkan 5 topik/materi pembelajaran utama yang paling relevan dan akurat untuk:
+Jenjang: ${level}
+Kelas: ${grade}
+Mata Pelajaran: ${subject}
+
+Kembalikan JSON persis seperti ini:
+{
+  "proposedMaterials": [
+    "Topik 1",
+    "Topik 2"
+  ]
+}`;
+
+      try {
+        const res = await callGeminiAPI(prompt, 'Anda adalah pakar kurikulum pendidikan Indonesia.', apiKey);
+        const list = res?.proposedMaterials || [];
+        if (list.length === 0) throw new Error('Tidak ada usulan topik.');
+        chipsContainer.innerHTML = list.map(topic => `
+          <button type="button" onclick="selectSuggestedTopic('${escapeHTML(topic).replace(/'/g, "\\'")}')" class="text-[11px] bg-indigo-950/90 hover:bg-yellow-400 hover:text-slate-950 text-yellow-200 border border-yellow-400/40 px-2.5 py-1 rounded-full transition">
+            + ${escapeHTML(topic)}
+          </button>
+        `).join('');
+        showToast('Usulan topik Kurikulum Merdeka siap dipilih!', 'success');
+      } catch (err) {
+        chipsContainer.innerHTML = `<span class="text-[11px] text-rose-300">Gagal mengusulkan topik: ${escapeHTML(err.message)}</span>`;
+      }
+    }
+
+    function selectSuggestedTopic(topicText) {
+      const input = document.getElementById('gen-topic');
+      input.value = topicText;
+      AudioEngine.playClick();
     }
 
     function loadApiKeyUI() {
@@ -1220,7 +1356,7 @@
     function updateApiBadge(key) {
       const badge = document.getElementById('api-status-badge');
       if (key && key.trim().length > 10) {
-        badge.textContent = 'Gemini AI Siap';
+        badge.textContent = 'Gemini 3 Flash Siap';
         badge.className = 'text-[10px] px-2 py-0.5 rounded-full bg-emerald-950 text-emerald-300 border border-emerald-500/30';
       } else {
         badge.textContent = 'API Key Belum Diisi';
@@ -1250,7 +1386,7 @@
     async function generateQuestions() {
       const level = document.getElementById('gen-level').value;
       const grade = document.getElementById('gen-grade').value;
-      const subject = document.getElementById('gen-subject').value;
+      const subject = getResolvedSubject();
       const topic = document.getElementById('gen-topic').value.trim();
       const material = document.getElementById('gen-material').value.trim();
       const count = parseInt(document.getElementById('gen-count').value, 10);
@@ -1263,7 +1399,6 @@
       const listEl = document.getElementById('gen-preview-list');
       const actionsEl = document.getElementById('gen-actions');
 
-      // Jika API Key belum diisi, tampilkan panduan jelas (tanpa mengada-ada soal dummy)
       if (!apiKey || apiKey.length < 15) {
         emptyEl.classList.add('hidden');
         listEl.innerHTML = '';
@@ -1276,7 +1411,6 @@
         return;
       }
 
-      // Simpan otomatis key yang valid saat generate
       localStorage.setItem(STORAGE_KEY_API, apiKey);
       updateApiBadge(apiKey);
 
@@ -1293,12 +1427,12 @@
         loadingEl.classList.add('hidden');
         btn.disabled = false;
 
-        const descTopic = topic ? ` • Topik: ${topic}` : material ? ' • Berdasarkan Teks Materi' : '';
-        document.getElementById('gen-source-info').textContent = `✦ Dihasilkan oleh Gemini AI (${level} ${grade} • ${subject}${descTopic})`;
+        const descTopic = topic ? ` • Topik: ${topic}` : material ? ' • Berdasarkan Materi/Instruksi' : '';
+        document.getElementById('gen-source-info').textContent = `✦ Dihasilkan oleh Gemini 3 Flash (${level} ${grade} • ${subject}${descTopic})`;
         actionsEl.classList.remove('hidden');
         renderGeneratedPreview();
         AudioEngine.playCorrect();
-        showToast(`Berhasil menyusun ${questions.length} soal akurat sesuai materi!`, 'success');
+        showToast(`Berhasil menyusun ${questions.length} soal akurat sesuai kurikulum!`, 'success');
       } catch (err) {
         console.error('Gemini API Error:', err);
         loadingEl.classList.add('hidden');
@@ -1307,86 +1441,60 @@
         document.getElementById('gen-guide-desc').textContent =
           `Terjadi kendala (${err.message || 'Periksa API Key / koneksi internet Anda'}). Pastikan API Key dari Google AI Studio aktif dan kuota tersedia.`;
         guideEl.classList.remove('hidden');
-        showToast('Gagal generate soal dari Gemini AI. Periksa API Key Anda.', 'error');
+        showToast('Gagal generate soal dari Gemini AI: ' + err.message, 'error');
       }
     }
 
     async function fetchFromGeminiAPI({ apiKey, level, grade, subject, topic, material, count }) {
-      const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${encodeURIComponent(apiKey)}`;
-
-      const systemInstruction = `Anda adalah pakar penyusun soal ujian dan kurikulum pendidikan Indonesia (Kurikulum Merdeka & Kurikulum Nasional) yang sangat teliti dan akurat.
+      const systemInstruction = `Anda adalah spesialis penyusun kisi-kisi dan soal asesmen Kurikulum Merdeka Indonesia yang berpengalaman.
 Aturan wajib:
-1. Semua pertanyaan, pilihan jawaban, dan pembahasan harus 100% faktual, valid secara ilmiah/akademis, menggunakan Bahasa Indonesia yang baku dan baik (kecuali mata pelajaran Bahasa Inggris).
-2. DILARANG mengarang fakta, membuat pertanyaan ambigu, atau membuat pilihan pengecoh (distraktor) yang konyol/tidak masuk akal. Semua 4 opsi harus homogen, logis, dan setara panjang/strukturnya, namun hanya 1 yang mutlak benar.
-3. Jika pengguna memberikan "Teks Materi Referensi", seluruh soal WAJIB bersumber dan menguji pemahaman dari teks materi tersebut.
-4. Susun tingkat kesulitan secara bertahap (progresif): sepertiga awal mudah (pemahaman dasar), sepertiga tengah menengah (penerapan/analisis), sepertiga akhir sulit (penalaran tingkat tinggi/HOTS) ala kuis "Who Wants to Be a Millionaire?".`;
+1. Semua pertanyaan, pilihan jawaban, dan pembahasan harus 100% faktual, valid secara ilmiah/akademis, menggunakan kaidah Bahasa Indonesia yang baik dan sesuai tingkat kelas (kecuali mata pelajaran Bahasa Inggris).
+2. DILARANG mengarang fakta, membuat pertanyaan ambigu, atau membuat pilihan pengecoh (distraktor) yang konyol/tidak masuk akal. Keempat opsi (A, B, C, D) harus homogen, logis, dan hanya 1 yang mutlak benar.
+3. Jika pengguna memberikan teks materi referensi atau instruksi tambahan guru, seluruh soal WAJIB mematuhi instruksi dan bersumber dari materi tersebut.
+4. Susun tingkat kesulitan secara bertahap (progresif): sepertiga awal mudah (C1-C2), sepertiga tengah menengah (C3), sepertiga akhir sulit/HOTS (C4-C6) ala kuis "Who Wants to Be a Millionaire?".`;
 
-      let userPrompt = `Buatkan tepat ${count} soal pilihan ganda untuk:
+      let userPrompt = `Susun paket ${count} soal Pilihan Ganda (4 opsi) lengkap dengan tingkat kognitif, kunci jawaban, dan pembahasan untuk:
 - Jenjang Pendidikan: ${level}
 - Kelas / Tingkat: ${grade}
 - Mata Pelajaran: ${subject}`;
 
       if (topic) {
-        userPrompt += `\n- Topik / Bab Spesifik: ${topic}`;
+        userPrompt += `\n- Cakupan Materi / Topik: ${topic}`;
       }
       if (material) {
-        userPrompt += `\n\nTeks Materi Referensi Utama (buat soal berdasarkan materi ini):\n"""\n${material}\n"""`;
+        userPrompt += `\n- Materi Referensi / Instruksi Tambahan Guru:\n"""\n${material}\n"""`;
       }
 
-      userPrompt += `\n\nKembalikan HANYA JSON array murni berisi ${count} objek dengan skema tepat berikut:
-[
-  {
-    "question": "Pertanyaan lengkap dan jelas",
-    "options": ["Opsi A", "Opsi B", "Opsi C", "Opsi D"],
-    "correct": 0,
-    "difficulty": 1,
-    "explanation": "Penjelasan faktual singkat mengapa jawaban tersebut benar"
-  }
-]
-Keterangan: "correct" adalah indeks 0, 1, 2, atau 3. "difficulty" adalah 1 (mudah), 2 (menengah), atau 3 (sulit).`;
+      userPrompt += `\n\nKembalikan JSON dengan skema persis berikut:
+{
+  "questions": [
+    {
+      "question": "Teks pertanyaan lengkap (sertakan stimulus singkat di awal pertanyaan jika soal berbasis bacaan/kasus)",
+      "options": ["Pilihan A", "Pilihan B", "Pilihan C", "Pilihan D"],
+      "correct": 0,
+      "difficulty": 1,
+      "levelKognitif": "C2",
+      "explanation": "Pembahasan rinci mengapa jawaban tersebut benar"
+    }
+  ]
+}
+Keterangan: "correct" adalah indeks 0, 1, 2, atau 3. "difficulty" adalah 1 (Mudah), 2 (Sedang), atau 3 (Sulit/HOTS).`;
 
-      const response = await fetch(endpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          systemInstruction: {
-            parts: [{ text: systemInstruction }]
-          },
-          contents: [{ parts: [{ text: userPrompt }] }],
-          generationConfig: {
-            temperature: 0.35,
-            responseMimeType: 'application/json'
-          }
-        })
-      });
-
-      if (!response.ok) {
-        let errMsg = `HTTP ${response.status}`;
-        try {
-          const errData = await response.json();
-          if (errData?.error?.message) errMsg = errData.error.message;
-        } catch (e) {}
-        throw new Error(errMsg);
-      }
-
-      const data = await response.json();
-      const rawText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-      if (!rawText) throw new Error('Respons AI kosong');
-
-      const cleaned = rawText.replace(/```json/gi, '').replace(/```/g, '').trim();
-      const parsed = JSON.parse(cleaned);
-      if (!Array.isArray(parsed) || parsed.length === 0) throw new Error('Format JSON tidak sesuai');
+      const res = await callGeminiAPI(userPrompt, systemInstruction, apiKey);
+      const list = Array.isArray(res) ? res : res?.questions;
+      if (!Array.isArray(list) || list.length === 0) throw new Error('Format JSON soal tidak sesuai');
 
       const shuffle = arr => [...arr].sort(() => Math.random() - 0.5);
 
-      return parsed.slice(0, count).map((item, idx) => {
+      return list.slice(0, count).map((item, idx) => {
         const rawOpts = Array.isArray(item.options) && item.options.length === 4
-          ? item.options.map(String)
+          ? item.options.map(o => String(o).replace(/^[A-D]\.\s*/i, '').trim())
           : ['Pilihan A', 'Pilihan B', 'Pilihan C', 'Pilihan D'];
         const origCorrectIdx = [0, 1, 2, 3].includes(Number(item.correct)) ? Number(item.correct) : 0;
         const correctText = rawOpts[origCorrectIdx];
         const shuffledOpts = shuffle(rawOpts);
         const finalCorrectIdx = shuffledOpts.indexOf(correctText);
+        const cogBadge = item.levelKognitif ? `[${item.levelKognitif}] ` : '';
 
         return {
           id: 'ai-' + Date.now() + '-' + idx,
@@ -1398,7 +1506,7 @@ Keterangan: "correct" adalah indeks 0, 1, 2, atau 3. "difficulty" adalah 1 (muda
           question: String(item.question || '').trim(),
           options: shuffledOpts,
           correct: finalCorrectIdx >= 0 ? finalCorrectIdx : 0,
-          explanation: String(item.explanation || '').trim()
+          explanation: cogBadge + String(item.explanation || '').trim()
         };
       });
     }
@@ -2118,14 +2226,28 @@ Keterangan: "correct" adalah indeks 0, 1, 2, atau 3. "difficulty" adalah 1 (muda
       if (bgEl) {
         bgEl.addEventListener('error', () => {
           AudioEngine.mp3Available = false;
-          console.info('File music.mp3 tidak ditemukan di direktori yang sama; beralih otomatis ke audio synth.');
+          console.info('File ./music.mp3 tidak ditemukan di direktori yang sama; beralih otomatis ke audio synth.');
+          if (AudioEngine.musicEnabled) {
+            AudioEngine.startFallbackSynthLoop();
+          }
         });
       }
+
+      // Buka kunci autoplay audio browser pada interaksi klik/sentuh pertama pengguna
+      const unlockAudioOnFirstGesture = () => {
+        if (AudioEngine.musicEnabled) {
+          AudioEngine.startSuspenseMusic();
+        }
+        document.removeEventListener('click', unlockAudioOnFirstGesture);
+        document.removeEventListener('touchstart', unlockAudioOnFirstGesture);
+      };
+      document.addEventListener('click', unlockAudioOnFirstGesture, { once: true });
+      document.addEventListener('touchstart', unlockAudioOnFirstGesture, { once: true });
 
       loadBank();
       updateHomeStats();
       populateSubjectDropdowns();
-      updateClassOptions();
+      onGenLevelChange();
       loadApiKeyUI();
     });
   </script>
