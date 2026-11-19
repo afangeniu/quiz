@@ -301,6 +301,9 @@
 <body class="relative selection:bg-yellow-400 selection:text-slate-950">
   <div class="stage-spotlights"></div>
 
+  <!-- Elemen Audio Utama untuk file lokal music.mp3 -->
+  <audio id="bgMusic" src="music.mp3" loop preload="auto"></audio>
+
   <!-- Toast Notifikasi Non-Blocking -->
   <div id="toast-container" class="fixed top-4 right-4 z-50 flex flex-col gap-2 max-w-sm w-full pointer-events-none px-4 sm:px-0"></div>
 
@@ -319,13 +322,26 @@
         </div>
       </button>
 
-      <div class="flex items-center gap-2">
+      <div class="flex flex-wrap items-center gap-2">
+        <!-- Pilih file music.mp3 manual jika di folder berbeda -->
+        <label class="btn-studio px-2.5 py-1.5 rounded-full text-xs font-bold flex items-center gap-1 cursor-pointer" title="Pilih file music.mp3 dari perangkat Anda">
+          <span>📂</span>
+          <span class="hidden md:inline">Pilih MP3</span>
+          <input type="file" accept="audio/*" onchange="loadCustomMusicFile(event)" class="hidden" />
+        </label>
+
+        <!-- Slider Volume Musik -->
+        <div class="hidden sm:flex items-center gap-1.5 bg-slate-900/80 border border-sky-500/30 px-2.5 py-1 rounded-full" title="Atur Volume Musik & Efek Suara">
+          <span class="text-[11px] text-sky-300">Vol</span>
+          <input id="volume-slider" type="range" min="0" max="1" step="0.05" value="0.6" oninput="updateAudioVolume(this.value)" class="w-16 accent-yellow-400 cursor-pointer" />
+        </div>
+
         <!-- Toggle Suara & Musik -->
         <button id="btn-sound" onclick="toggleSound()" class="btn-studio px-3 py-1.5 rounded-full text-xs font-bold flex items-center gap-1.5" title="Aktifkan/Matikan Efek Suara">
           <span id="sound-icon">🔊</span>
-          <span id="sound-label" class="hidden sm:inline">Suara: ON</span>
+          <span id="sound-label" class="hidden sm:inline">SFX: ON</span>
         </button>
-        <button id="btn-music" onclick="toggleMusic()" class="btn-studio px-3 py-1.5 rounded-full text-xs font-bold flex items-center gap-1.5" title="Aktifkan/Matikan Musik Latar">
+        <button id="btn-music" onclick="toggleMusic()" class="btn-studio px-3 py-1.5 rounded-full text-xs font-bold flex items-center gap-1.5" title="Putar/Jeda music.mp3">
           <span id="music-icon">🎵</span>
           <span id="music-label" class="hidden sm:inline">Musik: ON</span>
         </button>
@@ -433,10 +449,10 @@
         <div class="flex flex-wrap items-center justify-between gap-3">
           <div>
             <h2 class="font-display text-xl sm:text-2xl font-bold text-yellow-300 flex items-center gap-2">
-              <span>✦</span> Generator Soal Cerdas &amp; AI
+              <span>✦</span> Generator Soal AI (Akurat &amp; Sesuai Materi)
             </h2>
             <p class="text-xs sm:text-sm text-sky-200/80">
-              Buat paket soal otomatis sesuai jenjang, kelas, mata pelajaran, dan topik pilihan Anda.
+              Menyusun soal faktual sesuai Kurikulum Indonesia atau berdasarkan teks materi yang Anda berikan.
             </p>
           </div>
           <button onclick="showScreen('home')" class="btn-studio px-4 py-2 rounded-xl text-xs sm:text-sm font-bold">
@@ -446,9 +462,9 @@
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
           <!-- Form Konfigurasi (Kiri) -->
-          <div class="lg:col-span-5 studio-card rounded-2xl p-5 space-y-4 h-fit">
+          <div class="lg:col-span-5 studio-card rounded-2xl p-5 space-y-3.5 h-fit">
             <h3 class="font-bold text-yellow-300 text-sm border-b border-sky-500/20 pb-2">
-              1. Konfigurasi Materi Soal
+              1. Konfigurasi Materi &amp; Kurikulum
             </h3>
 
             <div class="grid grid-cols-2 gap-3">
@@ -467,67 +483,79 @@
               </div>
             </div>
 
-            <div>
-              <label class="block text-xs text-sky-300 font-semibold mb-1">Mata Pelajaran</label>
-              <select id="gen-subject" class="w-full bg-slate-900 border border-sky-500/40 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-yellow-400">
-                <option value="Matematika">Matematika</option>
-                <option value="IPA">IPA (Ilmu Pengetahuan Alam)</option>
-                <option value="IPS">IPS (Ilmu Pengetahuan Sosial)</option>
-                <option value="Bahasa Indonesia">Bahasa Indonesia</option>
-                <option value="Bahasa Inggris">Bahasa Inggris</option>
-                <option value="Sejarah">Sejarah</option>
-                <option value="PPKn">PPKn (Pendidikan Pancasila)</option>
-                <option value="Informatika">Informatika &amp; Teknologi</option>
-                <option value="Pengetahuan Umum" selected>Pengetahuan Umum</option>
-              </select>
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs text-sky-300 font-semibold mb-1">Mata Pelajaran</label>
+                <select id="gen-subject" class="w-full bg-slate-900 border border-sky-500/40 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-yellow-400">
+                  <option value="Matematika">Matematika</option>
+                  <option value="IPA">IPA (Ilmu Pengetahuan Alam)</option>
+                  <option value="IPS">IPS (Ilmu Pengetahuan Sosial)</option>
+                  <option value="Bahasa Indonesia">Bahasa Indonesia</option>
+                  <option value="Bahasa Inggris">Bahasa Inggris</option>
+                  <option value="Sejarah">Sejarah</option>
+                  <option value="PPKn">PPKn (Pendidikan Pancasila)</option>
+                  <option value="Informatika">Informatika &amp; Teknologi</option>
+                  <option value="Pengetahuan Umum" selected>Pengetahuan Umum</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-xs text-sky-300 font-semibold mb-1">Jumlah Soal</label>
+                <select id="gen-count" class="w-full bg-slate-900 border border-sky-500/40 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-yellow-400">
+                  <option value="5">5 Soal (Babak Kilat)</option>
+                  <option value="10" selected>10 Soal (Babak Standar)</option>
+                  <option value="15">15 Soal (Babak Penuh)</option>
+                </select>
+              </div>
             </div>
 
             <div>
-              <label class="block text-xs text-sky-300 font-semibold mb-1">Topik Spesifik (Opsional)</label>
-              <input id="gen-topic" type="text" placeholder="Contoh: Tata Surya, Pecahan, Kemerdekaan RI..." class="w-full bg-slate-900 border border-sky-500/40 rounded-xl px-3 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-yellow-400" />
+              <label class="block text-xs text-sky-300 font-semibold mb-1">Topik / Bab Spesifik</label>
+              <input id="gen-topic" type="text" placeholder="Contoh: Sistem Tata Surya, Perang Diponegoro, Aljabar..." class="w-full bg-slate-900 border border-sky-500/40 rounded-xl px-3 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-yellow-400" />
             </div>
 
             <div>
-              <label class="block text-xs text-sky-300 font-semibold mb-1">Jumlah Soal</label>
-              <select id="gen-count" class="w-full bg-slate-900 border border-sky-500/40 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-yellow-400">
-                <option value="5">5 Soal (Babak Kilat)</option>
-                <option value="10" selected>10 Soal (Babak Standar)</option>
-                <option value="15">15 Soal (Babak Penuh 1 Miliar)</option>
-              </select>
+              <label class="block text-xs text-sky-300 font-semibold mb-1">
+                Materi / Ringkasan Teks Referensi <span class="text-slate-400 font-normal">(Opsional — agar 100% sesuai teks Anda)</span>
+              </label>
+              <textarea id="gen-material" rows="3" placeholder="Tempelkan (paste) ringkasan materi, catatan pelajaran, atau artikel di sini agar AI membuat soal murni dari materi ini..." class="w-full bg-slate-900 border border-sky-500/40 rounded-xl p-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-yellow-400"></textarea>
             </div>
 
-            <!-- Pengaturan Gemini API Key (Opsional + Fallback Otomatis) -->
-            <div class="bg-slate-950/70 border border-sky-500/25 rounded-xl p-3 space-y-2">
+            <!-- Pengaturan Gemini API Key -->
+            <div class="bg-slate-950/75 border border-sky-500/30 rounded-xl p-3 space-y-2">
               <div class="flex items-center justify-between">
-                <label class="text-xs font-bold text-sky-300 flex items-center gap-1.5">
-                  <span>🔑</span> Gemini API Key (Opsional)
+                <label class="text-xs font-bold text-yellow-300 flex items-center gap-1.5">
+                  <span>🔑</span> Google Gemini API Key
                 </label>
-                <span id="api-status-badge" class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-950 text-emerald-300 border border-emerald-500/30">
-                  Mode Otomatis Siap
+                <span id="api-status-badge" class="text-[10px] px-2 py-0.5 rounded-full bg-amber-950 text-amber-300 border border-amber-500/30">
+                  Belum Diisi
                 </span>
               </div>
               <div class="flex gap-1.5">
-                <input id="gemini-api-key" type="password" placeholder="Tempel AIzaSy... (kosongkan untuk Mode Otomatis)" class="flex-1 bg-slate-900 border border-sky-500/30 rounded-lg px-2.5 py-1.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-yellow-400" />
+                <input id="gemini-api-key" type="password" placeholder="Tempel AIzaSy... dari Google AI Studio" class="flex-1 bg-slate-900 border border-sky-500/30 rounded-lg px-2.5 py-1.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-yellow-400" />
                 <button onclick="saveApiKey()" class="btn-studio px-2.5 py-1.5 rounded-lg text-xs font-bold">Simpan</button>
                 <button onclick="clearApiKey()" class="px-2 py-1.5 rounded-lg text-xs bg-rose-950/80 border border-rose-500/40 text-rose-200 hover:bg-rose-900" title="Hapus API Key">✕</button>
               </div>
               <p class="text-[11px] text-slate-400 leading-relaxed">
-                Jika API Key diisi, soal dibuat langsung oleh <strong class="text-sky-300">Gemini AI</strong>. Jika dikosongkan atau offline, <strong class="text-yellow-300">Mesin Pembuat Soal Cerdas</strong> tetap menghasilkan soal yang relevan secara instan!
+                Dapatkan API Key gratis di <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer" class="text-sky-300 underline hover:text-yellow-300">Google AI Studio</a>. Key tersimpan aman hanya di browser Anda.
               </p>
             </div>
 
             <button id="btn-run-generate" onclick="generateQuestions()" class="btn-gold w-full py-3 rounded-xl text-sm sm:text-base flex items-center justify-center gap-2 cursor-pointer">
-              <span>✦</span> GENERATE SOAL SEKARANG
+              <span>✦</span> GENERATE SOAL DENGAN GEMINI AI
+            </button>
+
+            <button onclick="loadCuratedPresetToPreview()" class="btn-studio w-full py-2.5 rounded-xl text-xs font-bold text-sky-200 flex items-center justify-center gap-1.5 cursor-pointer">
+              <span>📚</span> Muat Soal Terkurasi dari Bank (Tanpa API Key)
             </button>
           </div>
 
           <!-- Area Pratinjau Hasil Generate (Kanan) -->
-          <div class="lg:col-span-7 studio-card rounded-2xl p-5 flex flex-col justify-between min-h-[420px]">
+          <div class="lg:col-span-7 studio-card rounded-2xl p-5 flex flex-col justify-between min-h-[460px]">
             <div>
               <div class="flex flex-wrap items-center justify-between gap-2 border-b border-sky-500/20 pb-3 mb-4">
                 <div>
                   <h3 class="font-bold text-yellow-300 text-sm">2. Pratinjau Soal Hasil Generate</h3>
-                  <p id="gen-source-info" class="text-[11px] text-sky-300/80">Belum ada soal yang di-generate.</p>
+                  <p id="gen-source-info" class="text-[11px] text-sky-300/80">Isi topik/materi dan klik Generate Soal.</p>
                 </div>
                 <div id="gen-actions" class="hidden flex flex-wrap gap-2">
                   <button onclick="saveGeneratedToBank(false)" class="btn-studio px-3 py-1.5 rounded-lg text-xs font-bold">
@@ -542,19 +570,42 @@
               <!-- Loading State -->
               <div id="gen-loading" class="hidden py-16 text-center space-y-3">
                 <div class="w-12 h-12 border-4 border-yellow-400 border-t-transparent rounded-full animate-spin mx-auto"></div>
-                <p class="text-sm font-bold text-yellow-300">Sedang menyusun pertanyaan bertingkat...</p>
-                <p class="text-xs text-sky-300">Menyesuaikan tingkat kesulitan dari mudah hingga Rp 1 Miliar</p>
+                <p class="text-sm font-bold text-yellow-300">Gemini AI sedang menyusun soal faktual sesuai materi...</p>
+                <p class="text-xs text-sky-300">Memvalidasi kunci jawaban, pengecoh cerdas, dan tingkat kesulitan</p>
+              </div>
+
+              <!-- Error / Panduan API Key State -->
+              <div id="gen-guide-box" class="hidden bg-amber-950/50 border border-amber-400/50 rounded-2xl p-5 text-left space-y-3 my-4">
+                <div class="flex items-start gap-2.5">
+                  <span class="text-2xl">🔑</span>
+                  <div class="space-y-1.5">
+                    <h4 id="gen-guide-title" class="text-sm font-bold text-yellow-300">Gemini API Key Diperlukan untuk Generate AI</h4>
+                    <p id="gen-guide-desc" class="text-xs text-amber-100/90 leading-relaxed">
+                      Agar soal yang dihasilkan benar-benar faktual, akurat, dan tidak mengada-ada sesuai topik maupun teks materi Anda, masukkan Google Gemini API Key gratis:
+                    </p>
+                    <ol class="list-decimal list-inside text-xs text-sky-200 space-y-1 pt-1">
+                      <li>Buka <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer" class="text-yellow-300 underline font-semibold">aistudio.google.com/apikey</a> dan login akun Google.</li>
+                      <li>Klik <strong>Create API Key</strong>, lalu salin kodenya.</li>
+                      <li>Tempelkan pada kolom <strong>Google Gemini API Key</strong> di sebelah kiri dan klik <strong>Simpan</strong>.</li>
+                    </ol>
+                    <div class="pt-2">
+                      <button onclick="loadCuratedPresetToPreview()" class="btn-studio px-3.5 py-2 rounded-xl text-xs font-bold text-yellow-300">
+                        📚 Atau Muat Soal Terkurasi Sesuai Mapel &amp; Jenjang Ini
+                      </button>
+                    </div>
+                  </div>
+                </div>
               </div>
 
               <!-- Empty State -->
               <div id="gen-empty" class="py-16 text-center space-y-2 text-slate-400">
-                <div class="text-4xl">✨</div>
-                <p class="text-sm font-semibold text-sky-200">Siap Membuat Soal Baru</p>
-                <p class="text-xs max-w-md mx-auto">Pilih jenjang, mata pelajaran, dan topik di sebelah kiri, lalu klik tombol <span class="text-yellow-300 font-semibold">Generate Soal Sekarang</span>.</p>
+                <div class="text-4xl">🎯</div>
+                <p class="text-sm font-semibold text-sky-200">Siap Membuat Soal Berkualitas</p>
+                <p class="text-xs max-w-md mx-auto">Pilih jenjang, mata pelajaran, topik, atau tempelkan ringkasan materi Anda, lalu klik <span class="text-yellow-300 font-semibold">Generate Soal dengan Gemini AI</span>.</p>
               </div>
 
               <!-- Daftar Hasil Pratinjau -->
-              <div id="gen-preview-list" class="space-y-3 max-h-[480px] overflow-y-auto pr-1"></div>
+              <div id="gen-preview-list" class="space-y-3 max-h-[500px] overflow-y-auto pr-1"></div>
             </div>
           </div>
         </div>
@@ -854,13 +905,15 @@
   <!-- ==================== JAVASCRIPT LOGIKA LENGKAP ==================== -->
   <script>
     /* =========================================================================
-       1. SISTEM AUDIO WEB AUDIO API (EFEK SUARA & MUSIK TANPA FILE EKSTERNAL)
+       1. SISTEM AUDIO: PEMUTAR music.mp3 + EFEK SUARA WEB AUDIO API
        ========================================================================= */
     const AudioEngine = {
       ctx: null,
       soundEnabled: true,
       musicEnabled: true,
-      bgInterval: null,
+      masterVolume: 0.6,
+      mp3Available: true,
+      fallbackInterval: null,
       bgStep: 0,
 
       init() {
@@ -871,20 +924,31 @@
         if (this.ctx && this.ctx.state === 'suspended') {
           this.ctx.resume();
         }
+        const bgEl = document.getElementById('bgMusic');
+        if (bgEl) {
+          bgEl.volume = this.masterVolume;
+        }
       },
 
-      playTone(freq, duration = 0.25, type = 'sine', gainVal = 0.14, delay = 0) {
-        if (!this.soundEnabled) return;
+      setVolume(val) {
+        this.masterVolume = Math.max(0, Math.min(1, Number(val)));
+        const bgEl = document.getElementById('bgMusic');
+        if (bgEl) bgEl.volume = this.masterVolume;
+      },
+
+      playTone(freq, duration = 0.25, type = 'sine', gainVal = 0.16, delay = 0) {
+        if (!this.soundEnabled || this.masterVolume <= 0) return;
         try {
           this.init();
           if (!this.ctx) return;
           const now = this.ctx.currentTime + delay;
           const osc = this.ctx.createOscillator();
           const gain = this.ctx.createGain();
+          const scaledGain = Math.max(0.001, gainVal * this.masterVolume * 1.4);
           osc.type = type;
           osc.frequency.setValueAtTime(freq, now);
           gain.gain.setValueAtTime(0.001, now);
-          gain.gain.exponentialRampToValueAtTime(gainVal, now + 0.02);
+          gain.gain.exponentialRampToValueAtTime(scaledGain, now + 0.02);
           gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
           osc.connect(gain);
           gain.connect(this.ctx.destination);
@@ -894,57 +958,98 @@
       },
 
       playClick() {
-        this.playTone(620, 0.08, 'triangle', 0.1);
+        this.playTone(620, 0.08, 'triangle', 0.12);
       },
 
       playLockAnswer() {
-        // Suara dramatis saat mengunci jawaban (Final Answer)
-        this.playTone(220, 0.35, 'sawtooth', 0.12, 0);
-        this.playTone(277.18, 0.35, 'triangle', 0.14, 0.08);
-        this.playTone(329.63, 0.55, 'sine', 0.16, 0.16);
+        this.playTone(220, 0.35, 'sawtooth', 0.14, 0);
+        this.playTone(277.18, 0.35, 'triangle', 0.16, 0.08);
+        this.playTone(329.63, 0.55, 'sine', 0.18, 0.16);
       },
 
       playCorrect() {
-        // Fanfare kemenangan tiap babak
         const notes = [523.25, 659.25, 783.99, 1046.50];
-        notes.forEach((f, i) => this.playTone(f, 0.32, 'triangle', 0.16, i * 0.09));
+        notes.forEach((f, i) => this.playTone(f, 0.32, 'triangle', 0.18, i * 0.09));
       },
 
       playWrong() {
-        // Nada rendah dramatis saat salah
-        this.playTone(196, 0.4, 'sawtooth', 0.15, 0);
-        this.playTone(146.83, 0.75, 'sawtooth', 0.16, 0.22);
+        this.playTone(196, 0.4, 'sawtooth', 0.17, 0);
+        this.playTone(146.83, 0.75, 'sawtooth', 0.18, 0.22);
       },
 
       playBigWin() {
         const chord = [523.25, 659.25, 783.99, 1046.5, 1318.5, 1567.98];
-        chord.forEach((f, i) => this.playTone(f, 0.55, 'triangle', 0.17, i * 0.1));
+        chord.forEach((f, i) => this.playTone(f, 0.55, 'triangle', 0.19, i * 0.1));
       },
 
       startSuspenseMusic() {
         this.stopSuspenseMusic();
         if (!this.musicEnabled) return;
+        this.init();
+
+        const bgEl = document.getElementById('bgMusic');
+        if (bgEl && this.mp3Available) {
+          bgEl.volume = this.masterVolume;
+          const playPromise = bgEl.play();
+          if (playPromise !== undefined) {
+            playPromise.catch(err => {
+              console.warn('Gagal memutar music.mp3 langsung, menggunakan synth cadangan:', err);
+              this.startFallbackSynthLoop();
+            });
+          }
+        } else {
+          this.startFallbackSynthLoop();
+        }
+      },
+
+      startFallbackSynthLoop() {
+        if (this.fallbackInterval) return;
         const bassPattern = [110, 110, 130.81, 110, 146.83, 130.81, 110, 98];
-        this.bgInterval = setInterval(() => {
+        this.fallbackInterval = setInterval(() => {
           if (!this.musicEnabled || !document.getElementById('game').classList.contains('active')) return;
           const freq = bassPattern[this.bgStep % bassPattern.length];
-          this.playTone(freq, 0.42, 'sine', 0.055, 0);
+          this.playTone(freq, 0.42, 'sine', 0.07, 0);
           this.bgStep++;
         }, 650);
       },
 
       stopSuspenseMusic() {
-        if (this.bgInterval) {
-          clearInterval(this.bgInterval);
-          this.bgInterval = null;
+        const bgEl = document.getElementById('bgMusic');
+        if (bgEl && !bgEl.paused) {
+          bgEl.pause();
+        }
+        if (this.fallbackInterval) {
+          clearInterval(this.fallbackInterval);
+          this.fallbackInterval = null;
         }
       }
     };
 
+    function updateAudioVolume(val) {
+      AudioEngine.setVolume(val);
+    }
+
+    function loadCustomMusicFile(event) {
+      const file = event.target.files?.[0];
+      if (!file) return;
+      const bgEl = document.getElementById('bgMusic');
+      const objectUrl = URL.createObjectURL(file);
+      bgEl.src = objectUrl;
+      bgEl.load();
+      AudioEngine.mp3Available = true;
+      AudioEngine.musicEnabled = true;
+      document.getElementById('music-icon').textContent = '🎵';
+      document.getElementById('music-label').textContent = 'Musik: ON';
+      showToast(`File musik "${file.name}" dimuat!`, 'success');
+      if (document.getElementById('game').classList.contains('active')) {
+        AudioEngine.startSuspenseMusic();
+      }
+    }
+
     function toggleSound() {
       AudioEngine.soundEnabled = !AudioEngine.soundEnabled;
       document.getElementById('sound-icon').textContent = AudioEngine.soundEnabled ? '🔊' : '🔇';
-      document.getElementById('sound-label').textContent = AudioEngine.soundEnabled ? 'Suara: ON' : 'Suara: OFF';
+      document.getElementById('sound-label').textContent = AudioEngine.soundEnabled ? 'SFX: ON' : 'SFX: OFF';
       if (AudioEngine.soundEnabled) AudioEngine.playClick();
     }
 
@@ -953,7 +1058,6 @@
       document.getElementById('music-icon').textContent = AudioEngine.musicEnabled ? '🎵' : '🔕';
       document.getElementById('music-label').textContent = AudioEngine.musicEnabled ? 'Musik: ON' : 'Musik: OFF';
       if (AudioEngine.musicEnabled) {
-        AudioEngine.init();
         AudioEngine.startSuspenseMusic();
       } else {
         AudioEngine.stopSuspenseMusic();
@@ -1116,11 +1220,11 @@
     function updateApiBadge(key) {
       const badge = document.getElementById('api-status-badge');
       if (key && key.trim().length > 10) {
-        badge.textContent = 'Gemini AI Aktif';
-        badge.className = 'text-[10px] px-2 py-0.5 rounded-full bg-sky-950 text-sky-300 border border-sky-400/40';
-      } else {
-        badge.textContent = 'Mode Otomatis Siap';
+        badge.textContent = 'Gemini AI Siap';
         badge.className = 'text-[10px] px-2 py-0.5 rounded-full bg-emerald-950 text-emerald-300 border border-emerald-500/30';
+      } else {
+        badge.textContent = 'API Key Belum Diisi';
+        badge.className = 'text-[10px] px-2 py-0.5 rounded-full bg-amber-950 text-amber-300 border border-amber-500/30';
       }
     }
 
@@ -1128,14 +1232,19 @@
       const val = document.getElementById('gemini-api-key').value.trim();
       localStorage.setItem(STORAGE_KEY_API, val);
       updateApiBadge(val);
-      showToast(val ? 'Gemini API Key tersimpan di browser!' : 'API Key kosong, menggunakan Mode Otomatis.', 'success');
+      if (val) {
+        document.getElementById('gen-guide-box').classList.add('hidden');
+        showToast('Gemini API Key berhasil disimpan!', 'success');
+      } else {
+        showToast('Kolom API Key kosong.', 'warning');
+      }
     }
 
     function clearApiKey() {
       localStorage.removeItem(STORAGE_KEY_API);
       document.getElementById('gemini-api-key').value = '';
       updateApiBadge('');
-      showToast('API Key dihapus. Beralih ke Mode Otomatis.', 'info');
+      showToast('API Key dihapus.', 'info');
     }
 
     async function generateQuestions() {
@@ -1143,356 +1252,190 @@
       const grade = document.getElementById('gen-grade').value;
       const subject = document.getElementById('gen-subject').value;
       const topic = document.getElementById('gen-topic').value.trim();
+      const material = document.getElementById('gen-material').value.trim();
       const count = parseInt(document.getElementById('gen-count').value, 10);
       const apiKey = document.getElementById('gemini-api-key').value.trim();
 
       const btn = document.getElementById('btn-run-generate');
       const loadingEl = document.getElementById('gen-loading');
       const emptyEl = document.getElementById('gen-empty');
+      const guideEl = document.getElementById('gen-guide-box');
       const listEl = document.getElementById('gen-preview-list');
       const actionsEl = document.getElementById('gen-actions');
 
+      // Jika API Key belum diisi, tampilkan panduan jelas (tanpa mengada-ada soal dummy)
+      if (!apiKey || apiKey.length < 15) {
+        emptyEl.classList.add('hidden');
+        listEl.innerHTML = '';
+        actionsEl.classList.add('hidden');
+        document.getElementById('gen-guide-title').textContent = 'Masukkan Gemini API Key untuk Generate Soal AI';
+        document.getElementById('gen-guide-desc').textContent =
+          'Untuk menjamin soal yang dibuat benar-benar akurat secara akademis, faktual, dan sesuai topik/teks materi Anda tanpa mengada-ada, diperlukan Google Gemini API Key:';
+        guideEl.classList.remove('hidden');
+        showToast('Silakan isi Gemini API Key terlebih dahulu atau muat soal terkurasi.', 'warning');
+        return;
+      }
+
+      // Simpan otomatis key yang valid saat generate
+      localStorage.setItem(STORAGE_KEY_API, apiKey);
+      updateApiBadge(apiKey);
+
       btn.disabled = true;
       emptyEl.classList.add('hidden');
+      guideEl.classList.add('hidden');
       listEl.innerHTML = '';
       actionsEl.classList.add('hidden');
       loadingEl.classList.remove('hidden');
 
-      let questions = null;
-      let sourceLabel = '';
+      try {
+        const questions = await fetchFromGeminiAPI({ apiKey, level, grade, subject, topic, material, count });
+        generatedDraft = questions;
+        loadingEl.classList.add('hidden');
+        btn.disabled = false;
 
-      // 1. Coba gunakan Gemini API jika API Key tersedia
-      if (apiKey.length > 10) {
-        try {
-          questions = await fetchFromGeminiAPI({ apiKey, level, grade, subject, topic, count });
-          sourceLabel = `✦ Dihasilkan oleh Gemini AI (${level} ${grade} • ${subject})`;
-        } catch (err) {
-          console.warn('Gemini API fallback:', err);
-          showToast('Koneksi Gemini API terkendala, beralih ke Mesin Soal Cerdas Otomatis.', 'warning');
-        }
+        const descTopic = topic ? ` • Topik: ${topic}` : material ? ' • Berdasarkan Teks Materi' : '';
+        document.getElementById('gen-source-info').textContent = `✦ Dihasilkan oleh Gemini AI (${level} ${grade} • ${subject}${descTopic})`;
+        actionsEl.classList.remove('hidden');
+        renderGeneratedPreview();
+        AudioEngine.playCorrect();
+        showToast(`Berhasil menyusun ${questions.length} soal akurat sesuai materi!`, 'success');
+      } catch (err) {
+        console.error('Gemini API Error:', err);
+        loadingEl.classList.add('hidden');
+        btn.disabled = false;
+        document.getElementById('gen-guide-title').textContent = 'Gagal Menghubungi Gemini AI';
+        document.getElementById('gen-guide-desc').textContent =
+          `Terjadi kendala (${err.message || 'Periksa API Key / koneksi internet Anda'}). Pastikan API Key dari Google AI Studio aktif dan kuota tersedia.`;
+        guideEl.classList.remove('hidden');
+        showToast('Gagal generate soal dari Gemini AI. Periksa API Key Anda.', 'error');
       }
-
-      // 2. Fallback Otomatis (Pasti berhasil 100% tanpa API Key / saat offline)
-      if (!questions || questions.length === 0) {
-        await new Promise(r => setTimeout(r, 450)); // Simulasi proses singkat agar halus
-        questions = generateSmartOfflineQuestions({ level, grade, subject, topic, count });
-        sourceLabel = `⚡ Dihasilkan oleh Mesin Soal Cerdas (${level} ${grade} • ${subject}${topic ? ' — ' + topic : ''})`;
-      }
-
-      generatedDraft = questions;
-      loadingEl.classList.add('hidden');
-      btn.disabled = false;
-
-      document.getElementById('gen-source-info').textContent = sourceLabel;
-      actionsEl.classList.remove('hidden');
-      renderGeneratedPreview();
-      AudioEngine.playCorrect();
-      showToast(`Berhasil membuat ${questions.length} soal siap main!`, 'success');
     }
 
-    async function fetchFromGeminiAPI({ apiKey, level, grade, subject, topic, count }) {
+    async function fetchFromGeminiAPI({ apiKey, level, grade, subject, topic, material, count }) {
       const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${encodeURIComponent(apiKey)}`;
-      const prompt = `Buatkan tepat ${count} soal kuis pilihan ganda dalam Bahasa Indonesia bergaya "Who Wants to Be a Millionaire?" untuk jenjang ${level} (${grade}), mata pelajaran "${subject}"${topic ? `, dengan topik spesifik "${topic}"` : ''}.
-Urutkan tingkat kesulitan soal dari sangat mudah (nomor 1) hingga sangat sulit (nomor ${count}).
-Kembalikan HANYA array JSON valid tanpa markdown dengan struktur persis seperti ini:
+
+      const systemInstruction = `Anda adalah pakar penyusun soal ujian dan kurikulum pendidikan Indonesia (Kurikulum Merdeka & Kurikulum Nasional) yang sangat teliti dan akurat.
+Aturan wajib:
+1. Semua pertanyaan, pilihan jawaban, dan pembahasan harus 100% faktual, valid secara ilmiah/akademis, menggunakan Bahasa Indonesia yang baku dan baik (kecuali mata pelajaran Bahasa Inggris).
+2. DILARANG mengarang fakta, membuat pertanyaan ambigu, atau membuat pilihan pengecoh (distraktor) yang konyol/tidak masuk akal. Semua 4 opsi harus homogen, logis, dan setara panjang/strukturnya, namun hanya 1 yang mutlak benar.
+3. Jika pengguna memberikan "Teks Materi Referensi", seluruh soal WAJIB bersumber dan menguji pemahaman dari teks materi tersebut.
+4. Susun tingkat kesulitan secara bertahap (progresif): sepertiga awal mudah (pemahaman dasar), sepertiga tengah menengah (penerapan/analisis), sepertiga akhir sulit (penalaran tingkat tinggi/HOTS) ala kuis "Who Wants to Be a Millionaire?".`;
+
+      let userPrompt = `Buatkan tepat ${count} soal pilihan ganda untuk:
+- Jenjang Pendidikan: ${level}
+- Kelas / Tingkat: ${grade}
+- Mata Pelajaran: ${subject}`;
+
+      if (topic) {
+        userPrompt += `\n- Topik / Bab Spesifik: ${topic}`;
+      }
+      if (material) {
+        userPrompt += `\n\nTeks Materi Referensi Utama (buat soal berdasarkan materi ini):\n"""\n${material}\n"""`;
+      }
+
+      userPrompt += `\n\nKembalikan HANYA JSON array murni berisi ${count} objek dengan skema tepat berikut:
 [
   {
-    "question": "Teks pertanyaan yang jelas dan akurat",
-    "options": ["Pilihan A", "Pilihan B", "Pilihan C", "Pilihan D"],
+    "question": "Pertanyaan lengkap dan jelas",
+    "options": ["Opsi A", "Opsi B", "Opsi C", "Opsi D"],
     "correct": 0,
     "difficulty": 1,
-    "explanation": "Penjelasan singkat mengapa jawaban tersebut benar"
+    "explanation": "Penjelasan faktual singkat mengapa jawaban tersebut benar"
   }
 ]
-Pastikan "correct" adalah angka indeks 0, 1, 2, atau 3, dan "difficulty" adalah angka 1 (mudah), 2 (menengah), atau 3 (sulit).`;
+Keterangan: "correct" adalah indeks 0, 1, 2, atau 3. "difficulty" adalah 1 (mudah), 2 (menengah), atau 3 (sulit).`;
 
       const response = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          contents: [{ parts: [{ text: prompt }] }],
+          systemInstruction: {
+            parts: [{ text: systemInstruction }]
+          },
+          contents: [{ parts: [{ text: userPrompt }] }],
           generationConfig: {
-            temperature: 0.7,
+            temperature: 0.35,
             responseMimeType: 'application/json'
           }
         })
       });
 
-      if (!response.ok) throw new Error('HTTP ' + response.status);
+      if (!response.ok) {
+        let errMsg = `HTTP ${response.status}`;
+        try {
+          const errData = await response.json();
+          if (errData?.error?.message) errMsg = errData.error.message;
+        } catch (e) {}
+        throw new Error(errMsg);
+      }
+
       const data = await response.json();
       const rawText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-      if (!rawText) throw new Error('Empty AI response');
+      if (!rawText) throw new Error('Respons AI kosong');
 
       const cleaned = rawText.replace(/```json/gi, '').replace(/```/g, '').trim();
       const parsed = JSON.parse(cleaned);
-      if (!Array.isArray(parsed) || parsed.length === 0) throw new Error('Invalid JSON array');
+      if (!Array.isArray(parsed) || parsed.length === 0) throw new Error('Format JSON tidak sesuai');
 
-      return parsed.slice(0, count).map((item, idx) => ({
-        id: 'ai-' + Date.now() + '-' + idx,
-        level,
-        subject,
-        difficulty: [1, 2, 3].includes(Number(item.difficulty)) ? Number(item.difficulty) : (idx < count / 3 ? 1 : idx < (2 * count) / 3 ? 2 : 3),
-        question: String(item.question || 'Pertanyaan kuis'),
-        options: Array.isArray(item.options) && item.options.length === 4 ? item.options.map(String) : ['Opsi A', 'Opsi B', 'Opsi C', 'Opsi D'],
-        correct: [0, 1, 2, 3].includes(Number(item.correct)) ? Number(item.correct) : 0,
-        explanation: String(item.explanation || 'Jawaban sesuai konsep materi ' + subject)
-      }));
-    }
-
-    /* Mesin Pembuat Soal Cerdas Offline (Prosedural + Bank Kurikulum Kaya) */
-    function generateSmartOfflineQuestions({ level, grade, subject, topic, count }) {
-      const results = [];
-      const randInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
       const shuffle = arr => [...arr].sort(() => Math.random() - 0.5);
 
-      // Generator Dinamis khusus Matematika (Selalu angka baru setiap kali generate)
-      if (subject === 'Matematika') {
-        for (let i = 0; i < count; i++) {
-          const tier = i < Math.ceil(count / 3) ? 1 : i < Math.ceil((2 * count) / 3) ? 2 : 3;
-          let qText = '', ans = 0, distractors = [], exp = '';
+      return parsed.slice(0, count).map((item, idx) => {
+        const rawOpts = Array.isArray(item.options) && item.options.length === 4
+          ? item.options.map(String)
+          : ['Pilihan A', 'Pilihan B', 'Pilihan C', 'Pilihan D'];
+        const origCorrectIdx = [0, 1, 2, 3].includes(Number(item.correct)) ? Number(item.correct) : 0;
+        const correctText = rawOpts[origCorrectIdx];
+        const shuffledOpts = shuffle(rawOpts);
+        const finalCorrectIdx = shuffledOpts.indexOf(correctText);
 
-          if (level === 'SD') {
-            if (tier === 1) {
-              const a = randInt(12, 45), b = randInt(11, 39);
-              ans = a + b;
-              qText = `[${grade}] Berapakah hasil penjumlahan dari ${a} + ${b}?`;
-              distractors = [ans + 10, ans - 10, ans + 2];
-              exp = `${a} + ${b} = ${ans}.`;
-            } else if (tier === 2) {
-              const a = randInt(6, 15), b = randInt(4, 12), c = randInt(5, 20);
-              ans = a * b + c;
-              qText = `[${grade}] Hitunglah nilai dari (${a} × ${b}) + ${c} = ...`;
-              distractors = [ans + a, ans - c, a * (b + c)];
-              exp = `Kerjakan perkalian terlebih dahulu: ${a} × ${b} = ${a * b}, lalu ditambah ${c} menjadi ${ans}.`;
-            } else {
-              const sisi = randInt(6, 18);
-              ans = sisi * sisi;
-              qText = `[${grade}] Sebuah persegi memiliki panjang sisi ${sisi} cm. Berapakah luas persegi tersebut?`;
-              distractors = [sisi * 4, ans + sisi, ans - 6];
-              exp = `Luas persegi = sisi × sisi = ${sisi} × ${sisi} = ${ans} cm².`;
-            }
-          } else if (level === 'SMP') {
-            if (tier === 1) {
-              const a = randInt(-15, -3), b = randInt(8, 25);
-              ans = a + b;
-              qText = `[${grade}] Hasil dari ${a} + ${b} adalah...`;
-              distractors = [-(Math.abs(a) + b), ans + 4, ans - 4];
-              exp = `${a} + ${b} = ${ans}.`;
-            } else if (tier === 2) {
-              const x = randInt(3, 12), m = randInt(2, 6), c = randInt(4, 15);
-              const total = m * x + c;
-              ans = x;
-              qText = `[${grade}] Tentukan nilai x yang memenuhi persamaan ${m}x + ${c} = ${total}.`;
-              distractors = [x + 1, x - 1, x + 2];
-              exp = `${m}x = ${total} - ${c} = ${total - c}, maka x = ${total - c} / ${m} = ${x}.`;
-            } else {
-              const a = randInt(3, 9), b = randInt(4, 12);
-              const c2 = a * a + b * b;
-              ans = c2;
-              qText = `[${grade}] Pada segitiga siku-siku dengan sisi penyiku ${a} cm dan ${b} cm, kuadrat sisi miringnya (c²) adalah...`;
-              distractors = [a + b, (a + b) * 2, c2 + 10];
-              exp = `Teorema Pythagoras: c² = a² + b² = ${a}² + ${b}² = ${a * a} + ${b * b} = ${c2}.`;
-            }
-          } else {
-            // SMA / UMUM
-            if (tier === 1) {
-              const base = randInt(2, 5), expPow = randInt(3, 4);
-              ans = Math.pow(base, expPow);
-              qText = `[${grade}] Nilai dari ${base}^${expPow} adalah...`;
-              distractors = [base * expPow, ans + base, ans - base];
-              exp = `${base} dipangkatkan ${expPow} sama dengan ${ans}.`;
-            } else if (tier === 2) {
-              const u1 = randInt(2, 8), beda = randInt(3, 7), n = randInt(8, 12);
-              ans = u1 + (n - 1) * beda;
-              qText = `[${grade}] Suku ke-${n} dari barisan aritmetika dengan suku pertama ${u1} dan beda ${beda} adalah...`;
-              distractors = [ans + beda, ans - beda, u1 + n * beda];
-              exp = `Un = a + (n - 1)b = ${u1} + (${n - 1} × ${beda}) = ${ans}.`;
-            } else {
-              const a = randInt(2, 6), b = randInt(3, 9);
-              ans = 2 * a;
-              qText = `[${grade}] Jika f(x) = ${a}x² + ${b}x - 7, maka nilai koefisien x pada turunan pertama f'(x) adalah...`;
-              distractors = [a, b, 2 * a + b];
-              exp = `f'(x) = ${2 * a}x + ${b}, sehingga koefisien x adalah ${2 * a}.`;
-            }
-          }
-
-          const allOpts = shuffle([String(ans), ...distractors.map(String)]);
-          results.push({
-            id: `gen-${Date.now()}-${i}`,
-            level,
-            subject,
-            difficulty: tier,
-            question: topic ? `[Topik: ${topic}] ${qText}` : qText,
-            options: allOpts,
-            correct: allOpts.indexOf(String(ans)),
-            explanation: exp
-          });
-        }
-        return results;
-      }
-
-      // Bank Tematik Kaya untuk Mapel Non-Matematika
-      const CURRICULUM_POOL = {
-        IPA: [
-          { d: 1, q: 'Perubahan wujud benda dari cair menjadi gas disebut...', o: ['Membeku', 'Mencair', 'Menguap', 'Menyublim'], c: 2, e: 'Menguap adalah perubahan wujud zat cair menjadi gas akibat pemanasan.' },
-          { d: 1, q: 'Bagian tumbuhan yang berfungsi menyerap air dan mineral dari dalam tanah adalah...', o: ['Daun', 'Batang', 'Akar', 'Bunga'], c: 2, e: 'Akar berperan menyerap air dan unsur hara dari tanah.' },
-          { d: 1, q: 'Hewan pemakan tumbuhan disebut...', o: ['Karnivora', 'Herbivora', 'Omnivora', 'Insektivora'], c: 1, e: 'Herbivora adalah kelompok hewan pemakan tumbuhan.' },
-          { d: 1, q: 'Sumber energi panas terbesar bagi kehidupan di Bumi adalah...', o: ['Bulan', 'Matahari', 'Bintang Utara', 'Inti Bumi'], c: 1, e: 'Matahari memancarkan energi cahaya dan panas utama bagi Bumi.' },
-          { d: 1, q: 'Alat indra manusia yang berfungsi untuk mengecap rasa adalah...', o: ['Hidung', 'Telinga', 'Lidah', 'Kulit'], c: 2, e: 'Lidah memiliki papila pengecap untuk mendeteksi rasa manis, asin, asam, dan pahit.' },
-          { d: 2, q: 'Proses perpindahan kalor tanpa disertai perpindahan zat perantaranya disebut...', o: ['Konveksi', 'Konduksi', 'Radiasi', 'Evaporasi'], c: 1, e: 'Konduksi adalah hantaran panas melalui zat padat tanpa memindahkan partikelnya.' },
-          { d: 2, q: 'Lapisan atmosfer yang melindungi Bumi dari radiasi ultraviolet Matahari adalah...', o: ['Troposfer', 'Ozon', 'Ionosfer', 'Eksosfer'], c: 1, e: 'Lapisan ozon (O₃) di stratosfer menyerap sebagian besar sinar UV berbahaya.' },
-          { d: 2, q: 'Bagian darah manusia yang berfungsi mengangkut oksigen ke seluruh tubuh adalah...', o: ['Leukosit', 'Trombosit', 'Eritrosit', 'Plasma darah'], c: 2, e: 'Eritrosit (sel darah merah) mengandung hemoglobin yang mengikat oksigen.' },
-          { d: 2, q: 'Satuan Internasional (SI) untuk gaya adalah...', o: ['Joule', 'Watt', 'Newton', 'Pascal'], c: 2, e: 'Newton (N) adalah satuan gaya dalam sistem SI.' },
-          { d: 2, q: 'Benda langit yang memiliki ekor cahaya saat mendekati Matahari adalah...', o: ['Asteroid', 'Komet', 'Meteoroid', 'Satelit'], c: 1, e: 'Komet tersusun dari es dan debu yang menyublim membentuk ekor saat mendekati Matahari.' },
-          { d: 3, q: 'Hukum kekekalan energi menyatakan bahwa energi tidak dapat diciptakan maupun dimusnahkan, melainkan hanya dapat...', o: ['Dihilangkan', 'Diubah bentuknya', 'Digandakan', 'Dibekukan'], c: 1, e: 'Energi hanya bertransformasi dari satu bentuk ke bentuk energi lainnya.' },
-          { d: 3, q: 'Enzim yang terdapat pada air liur manusia dan berfungsi mengubah amilum menjadi maltosa adalah...', o: ['Pepsin', 'Ptialin', 'Lipase', 'Tripsin'], c: 1, e: 'Enzim ptialin (amilase ludah) memecah karbohidrat kompleks menjadi gula sederhana.' },
-          { d: 3, q: 'Peristiwa pembelokan arah rambat cahaya ketika melewati dua medium dengan kerapatan optik berbeda disebut...', o: ['Refleksi', 'Refraksi', 'Difraksi', 'Interferensi'], c: 1, e: 'Refraksi atau pembiasan cahaya terjadi karena perbedaan kecepatan cahaya di dua medium.' },
-          { d: 3, q: 'Ikatan kimia yang terbentuk akibat pemakaian bersama pasangan elektron antaratom nonlogam disebut ikatan...', o: ['Ion', 'Kovalen', 'Logam', 'Hidrogen'], c: 1, e: 'Ikatan kovalen melibatkan penggunaan bersama pasangan elektron.' },
-          { d: 3, q: 'Hormon yang berperan menurunkan kadar glukosa dalam darah manusia adalah...', o: ['Adrenalin', 'Insulin', 'Tiroksin', 'Estrogen'], c: 1, e: 'Hormon insulin diproduksi oleh pankreas untuk mengatur kadar gula darah.' }
-        ],
-        IPS: [
-          { d: 1, q: 'Mata uang resmi negara Indonesia adalah...', o: ['Ringgit', 'Rupiah', 'Baht', 'Dolar'], c: 1, e: 'Rupiah (IDR) adalah mata uang sah Negara Kesatuan Republik Indonesia.' },
-          { d: 1, q: 'Pulau terbesar di wilayah Indonesia adalah...', o: ['Jawa', 'Sumatra', 'Kalimantan', 'Sulawesi'], c: 2, e: 'Kalimantan merupakan pulau terluas di Indonesia.' },
-          { d: 1, q: 'Kegiatan menghasilkan barang atau jasa untuk memenuhi kebutuhan disebut...', o: ['Konsumsi', 'Distribusi', 'Produksi', 'Investasi'], c: 2, e: 'Produksi adalah kegiatan menciptakan atau menambah nilai guna barang/jasa.' },
-          { d: 1, q: 'Arah mata angin di antara Utara dan Timur adalah...', o: ['Tenggara', 'Timur Laut', 'Barat Daya', 'Barat Laut'], c: 1, e: 'Timur Laut berada tepat di antara Utara dan Timur.' },
-          { d: 1, q: 'Gunung tertinggi di Pulau Jawa adalah...', o: ['Gunung Merapi', 'Gunung Semeru', 'Gunung Bromo', 'Gunung Slamet'], c: 1, e: 'Gunung Semeru (3.676 mdpl) adalah puncak tertinggi di Pulau Jawa.' },
-          { d: 2, q: 'Organisasi kerja sama negara-negara di kawasan Asia Tenggara adalah...', o: ['APEC', 'ASEAN', 'OPEC', 'NATO'], c: 1, e: 'ASEAN didirikan pada 8 Agustus 1967 di Bangkok untuk kerja sama Asia Tenggara.' },
-          { d: 2, q: 'Angin muson barat yang bertiup pada bulan Oktober hingga April menyebabkan Indonesia mengalami musim...', o: ['Kemarau', 'Hujan', 'Semi', 'Gugur'], c: 1, e: 'Angin muson barat membawa banyak uap air dari Samudra Hindia sehingga terjadi musim hujan.' },
-          { d: 2, q: 'Pelaku ekonomi yang berperan menyalurkan barang dari produsen ke konsumen disebut...', o: ['Produsen', 'Distributor', 'Konsumen', 'Investor'], c: 1, e: 'Distributor menjalankan fungsi distribusi barang ke masyarakat.' },
-          { d: 2, q: 'Danau vulkanik terbesar di Indonesia yang terletak di Sumatra Utara adalah...', o: ['Danau Singkarak', 'Danau Toba', 'Danau Poso', 'Danau Towuti'], c: 1, e: 'Danau Toba merupakan danau kaldera raksasa di Sumatra Utara.' },
-          { d: 2, q: 'Bentuk permukaan Bumi yang menjulang tinggi dengan ketinggian lebih dari 600 meter di atas permukaan laut disebut...', o: ['Dataran rendah', 'Pantai', 'Dataran tinggi / Pegunungan', 'Lembah'], c: 2, e: 'Dataran tinggi dan pegunungan berada pada elevasi tinggi.' },
-          { d: 3, q: 'Kondisi ketika jumlah permintaan lebih besar daripada jumlah penawaran barang di pasar akan menyebabkan harga cenderung...', o: ['Turun drastis', 'Naik', 'Tetap stabil', 'Menjadi nol'], c: 1, e: 'Sesuai hukum permintaan dan penawaran, kelangkaan pasokan mendorong kenaikan harga.' },
-          { d: 3, q: 'Negara pendiri ASEAN yang tidak pernah dijajah oleh bangsa Eropa adalah...', o: ['Indonesia', 'Malaysia', 'Thailand', 'Filipina'], c: 2, e: 'Thailand (dahulu Siam) berhasil mempertahankan kemerdekaannya melalui diplomasi.' },
-          { d: 3, q: 'Letak geografis Indonesia sangat strategis karena berada di posisi silang antara dua samudra, yaitu...', o: ['Pasifik dan Atlantik', 'Hindia dan Pasifik', 'Hindia dan Arktik', 'Atlantik dan Hindia'], c: 1, e: 'Indonesia diapit Samudra Hindia dan Samudra Pasifik serta Benua Asia dan Australia.' },
-          { d: 3, q: 'Inflasi yang sangat tinggi dan tidak terkendali hingga melebihi 100% per tahun disebut...', o: ['Deflasi', 'Hiperinflasi', 'Stagflasi', 'Devaluasi'], c: 1, e: 'Hiperinflasi adalah lonjakan harga barang secara ekstrem dalam waktu singkat.' },
-          { d: 3, q: 'Garis lintang 0 derajat yang membelah Bumi menjadi belahan utara dan selatan disebut garis...', o: ['Bujur Barat', 'Khatulistiwa (Ekuator)', 'Meridian Utama', 'Balik Utara'], c: 1, e: 'Garis khatulistiwa melintasi beberapa wilayah Indonesia seperti Pontianak.' }
-        ],
-        Sejarah: [
-          { d: 1, q: 'Teks Proklamasi Kemerdekaan Indonesia dibacakan oleh Ir. Soekarno pada tanggal...', o: ['17 Agustus 1945', '18 Agustus 1945', '10 November 1945', '1 Juni 1945'], c: 0, e: 'Proklamasi Kemerdekaan RI dikumandangkan pada Jumat, 17 Agustus 1945.' },
-          { d: 1, q: 'Siapakah tokoh yang menjahit bendera Merah Putih untuk upacara Proklamasi 17 Agustus 1945?', o: ['R.A. Kartini', 'Cut Nyak Dien', 'Fatmawati', 'Dewi Sartika'], c: 2, e: 'Ibu Fatmawati menjahit Sang Saka Merah Putih menjelang proklamasi.' },
-          { d: 1, q: 'Hari Pahlawan Nasional di Indonesia diperingati setiap tanggal...', o: ['28 Oktober', '10 November', '20 Mei', '22 Desember'], c: 1, e: '10 November diperingati untuk mengenang pertempuran heroik di Surabaya tahun 1945.' },
-          { d: 1, q: 'Naskah teks Proklamasi Kemerdekaan Indonesia diketik oleh...', o: ['Mohammad Hatta', 'Ahmad Soebardjo', 'Sayuti Melik', 'Sukarni'], c: 2, e: 'Sayuti Melik mengetik naskah proklamasi dengan beberapa penyempurnaan redaksi.' },
-          { d: 1, q: 'Candi Buddha terbesar di dunia yang terletak di Magelang, Jawa Tengah adalah...', o: ['Candi Prambanan', 'Candi Borobudur', 'Candi Mendut', 'Candi Sewu'], c: 1, e: 'Candi Borobudur dibangun pada masa Dinasti Syailendra abad ke-8 hingga ke-9.' },
-          { d: 2, q: 'Ikrar Sumpah Pemuda diucapkan pada Kongres Pemuda II tanggal...', o: ['20 Mei 1908', '28 Oktober 1928', '17 Agustus 1945', '1 Juni 1945'], c: 1, e: 'Sumpah Pemuda dicetuskan pada 28 Oktober 1928 di Batavia.' },
-          { d: 2, q: 'Organisasi pergerakan nasional pertama di Indonesia yang didirikan pada 20 Mei 1908 adalah...', o: ['Sarekat Islam', 'Budi Utomo', 'Indische Partij', 'Perhimpunan Indonesia'], c: 1, e: 'Budi Utomo dipelopori oleh dr. Soetomo dan mahasiswa STOVIA.' },
-          { d: 2, q: 'Patih Kerajaan Majapahit yang terkenal dengan Sumpah Palapa untuk menyatukan Nusantara adalah...', o: ['Hayam Wuruk', 'Gajah Mada', 'Raden Wijaya', 'Ken Arok'], c: 1, e: 'Mahapatih Gajah Mada mengucapkan Sumpah Palapa pada tahun 1336.' },
-          { d: 2, q: 'Konferensi Asia-Afrika (KAA) pertama kali diselenggarakan pada tahun 1955 di kota...', o: ['Jakarta', 'Bandung', 'Yogyakarta', 'Bogor'], c: 1, e: 'KAA 1955 berlangsung di Gedung Merdeka, Bandung dan menghasilkan Dasasila Bandung.' },
-          { d: 2, q: 'Perjanjian antara Indonesia dan Belanda pada tahun 1949 yang menghasilkan pengakuan kedaulatan RIS adalah...', o: ['Perjanjian Linggarjati', 'Perjanjian Renville', 'Konferensi Meja Bundar (KMB)', 'Perjanjian Roem-Royen'], c: 2, e: 'KMB di Den Haag menghasilkan pengakuan kedaulatan pada 27 Desember 1949.' },
-          { d: 3, q: 'Kerajaan Hindu tertua di Indonesia yang berdiri sekitar abad ke-4 Masehi di Kalimantan Timur adalah...', o: ['Tarumanegara', 'Kutai Martadipura', 'Mataram Kuno', 'Kediri'], c: 1, e: 'Kerajaan Kutai dibuktikan dengan peninggalan tujuh buah prasasti Yupa.' },
-          { d: 3, q: 'Lagu kebangsaan "Indonesia Raya" pertama kali diperdengarkan di depan umum pada...', o: ['Sidang BPUPKI', 'Kongres Pemuda II (1928)', 'Proklamasi 1945', 'Konferensi Meja Bundar'], c: 1, e: 'W.R. Supratman memainkan melodi Indonesia Raya dengan biola pada 28 Oktober 1928.' },
-          { d: 3, q: 'Sistem tanam paksa pada masa penjajahan Belanda yang dicetuskan oleh Johannes van den Bosch dikenal dengan istilah...', o: ['Otonomi Daerah', 'Cultuurstelsel', 'Politik Etis', 'Devide et Impera'], c: 1, e: 'Cultuurstelsel mewajibkan petani menyisihkan sebagian tanahnya untuk tanaman ekspor.' },
-          { d: 3, q: 'Ketua Badan Penyelidik Usaha-Usaha Persiapan Kemerdekaan Indonesia (BPUPKI) adalah...', o: ['Ir. Soekarno', 'Dr. Radjiman Wedyodiningrat', 'Drs. Moh. Hatta', 'Mr. Soepomo'], c: 1, e: 'Dr. K.R.T. Radjiman Wedyodiningrat menjabat sebagai ketua BPUPKI.' },
-          { d: 3, q: 'Serangan Umum 1 Maret 1949 bertujuan menunjukkan kepada dunia internasional bahwa TNI dan RI masih ada, terjadi di kota...', o: ['Surabaya', 'Yogyakarta', 'Semarang', 'Bandung'], c: 1, e: 'Serangan Umum 1 Maret 1949 berhasil menduduki Yogyakarta selama 6 jam.' }
-        ],
-        'Bahasa Indonesia': [
-          { d: 1, q: 'Kata baku yang tepat menurut Kamus Besar Bahasa Indonesia (KBBI) adalah...', o: ['Apotik', 'Apotek', 'Aktifitas', 'Resiko'], c: 1, e: 'Bentuk baku dalam KBBI adalah "apotek", "aktivitas", dan "risiko".' },
-          { d: 1, q: 'Tanda baca yang digunakan di akhir kalimat tanya adalah...', o: ['Tanda titik (.)', 'Tanda seru (!)', 'Tanda tanya (?)', 'Tanda koma (,)'], c: 2, e: 'Kalimat tanya selalu diakhiri dengan tanda tanya (?).' },
-          { d: 1, q: 'Antonim (lawan kata) dari kata "optimis" adalah...', o: ['Dinamis', 'Pesimis', 'Realistis', 'Praktis'], c: 1, e: 'Pesimis berarti bersikap tidak mempunyai harapan baik, kebalikan dari optimis.' },
-          { d: 1, q: 'Puisi lama yang terdiri atas empat baris dalam satu bait dengan rima a-b-a-b disebut...', o: ['Syair', 'Gurindam', 'Pantun', 'Soneta'], c: 2, e: 'Pantun memiliki 4 baris (2 sampiran, 2 isi) bersajak a-b-a-b.' },
-          { d: 1, q: 'Ide utama yang dibahas dalam suatu paragraf disebut...', o: ['Kalimat penjelas', 'Gagasan pokok', 'Kata kunci', 'Sinopsis'], c: 1, e: 'Gagasan pokok atau ide pokok menjadi inti pembahasan seluruh paragraf.' },
-          { d: 2, q: 'Majas yang memberikan sifat-sifat manusia kepada benda mati disebut majas...', o: ['Hiperbola', 'Personifikasi', 'Metafora', 'Litotes'], c: 1, e: 'Contoh personifikasi: "Angin malam berbisik lembut di telingaku."' },
-          { d: 2, q: 'Penulisan kata depan "di" yang benar terdapat pada kalimat...', o: ['Buku itu disimpan dilemari.', 'Ayah sedang bekerja di kantor.', 'Surat itu sudah dikirim kesana.', 'Mereka berkumpul dihalaman sekolah.'], c: 1, e: 'Kata depan "di" yang menunjukkan tempat ditulis terpisah dari kata yang mengikutinya.' },
-          { d: 2, q: 'Karangan yang berisi kisah hidup seseorang yang ditulis oleh orang lain disebut...', o: ['Autobiografi', 'Biografi', 'Bibliografi', 'Ensiklopedia'], c: 1, e: 'Biografi ditulis oleh orang lain, sedangkan autobiografi ditulis oleh tokoh itu sendiri.' },
-          { d: 2, q: 'Kata penghubung (konjungsi) yang menyatakan hubungan sebab-akibat adalah...', o: ['Tetapi', 'Sehingga', 'Sedangkan', 'Atau'], c: 1, e: 'Konjungsi "sehingga" menyatakan akibat dari suatu peristiwa.' },
-          { d: 2, q: 'Paragraf yang kalimat utamanya terletak di awal paragraf disebut paragraf...', o: ['Induktif', 'Deduktif', 'Campuran', 'Naratif'], c: 1, e: 'Paragraf deduktif dimulai dari pernyataan umum (kalimat utama) lalu diikuti kalimat penjelas.' },
-          { d: 3, q: 'Manakah penulisan gelar akademik yang sesuai dengan Ejaan Bahasa Indonesia yang Disempurnakan (EYD V)?', o: ['Dr. Budi Santoso, S.Pd.', 'Dr Budi Santoso S.Pd', 'Dr. Budi Santoso S.Pd.', 'Dr, Budi Santoso, S.Pd'], c: 0, e: 'Tanda titik digunakan setelah singkatan gelar dan tanda koma memisahkan nama dengan gelar di belakangnya.' },
-          { d: 3, q: 'Makna ungkapan "kambing hitam" dalam kalimat adalah...', o: ['Hewan ternak berwarna gelap', 'Orang yang dipersalahkan atas kesalahan orang lain', 'Orang yang sangat berjasa', 'Pemimpin kelompok'], c: 1, e: '"Kambing hitam" adalah idiom untuk pihak yang dijadikan tumpuan kesalahan.' },
-          { d: 3, q: 'Kalimat berikut yang merupakan kalimat efektif adalah...', o: ['Para hadirin sekalian dimohon berdiri.', 'Hadirin dimohon berdiri.', 'Kepada semua para tamu dipersilakan masuk.', 'Agar supaya berhasil, kita harus belajar giat.'], c: 1, e: 'Kata "para" dan "sekalian" bermakna jamak sehingga tidak boleh digunakan bersamaan.' },
-          { d: 3, q: 'Struktur teks eksplanasi yang tepat secara berurutan adalah...', o: ['Orientasi – Komplikasi – Resolusi', 'Pernyataan Umum – Deretan Penjelas – Interpretasi', 'Tesis – Argumentasi – Penegasan Ulang', 'Abstrak – Krisis – Reaksi'], c: 1, e: 'Teks eksplanasi menjelaskan proses terjadinya fenomena alam atau sosial.' },
-          { d: 3, q: 'Kata serapan yang penulisannya baku sesuai KBBI adalah...', o: ['Analisa', 'Analisis', 'Sistim', 'Kwalitas'], c: 1, e: 'Bentuk baku yang tepat adalah analisis, sistem, dan kualitas.' }
-        ],
-        'Bahasa Inggris': [
-          { d: 1, q: 'What is the English translation of "Perpustakaan"?', o: ['Laboratory', 'Library', 'Bookstore', 'Classroom'], c: 1, e: '"Library" means perpustakaan, whereas "bookstore" means toko buku.' },
-          { d: 1, q: 'Choose the correct pronoun: "___ is my best friend. Her name is Sinta."', o: ['He', 'She', 'It', 'They'], c: 1, e: '"She" is used for a singular female subject.' },
-          { d: 1, q: 'Which day comes after Wednesday?', o: ['Tuesday', 'Thursday', 'Friday', 'Monday'], c: 1, e: 'The order of days is Wednesday followed by Thursday.' },
-          { d: 1, q: 'Complete the sentence: "They ___ playing football in the yard right now."', o: ['is', 'am', 'are', 'was'], c: 2, e: 'Subject "They" in Present Continuous Tense uses "are".' },
-          { d: 1, q: 'What is the opposite (antonym) of "expensive"?', o: ['Cheap', 'Large', 'Heavy', 'Fast'], c: 0, e: 'Expensive (mahal) is the opposite of cheap (murah).' },
-          { d: 2, q: 'Choose the correct comparative form: "Mount Everest is ___ than Mount Merapi."', o: ['high', 'higher', 'highest', 'more high'], c: 1, e: 'One-syllable adjectives add "-er" for comparative degree (higher).' },
-          { d: 2, q: '"She ___ to Bali with her family last holiday."', o: ['go', 'goes', 'went', 'gone'], c: 2, e: '"Last holiday" indicates Simple Past Tense, so we use Verb 2 ("went").' },
-          { d: 2, q: 'What does the idiom "a piece of cake" mean?', o: ['Something very delicious', 'Something very easy to do', 'A birthday celebration', 'A difficult problem'], c: 1, e: '"A piece of cake" means a task that is very easy to accomplish.' },
-          { d: 2, q: 'Complete the conditional sentence: "If it rains tomorrow, we ___ at home."', o: ['stayed', 'will stay', 'would stay', 'staying'], c: 1, e: 'First Conditional uses "If + Simple Present, will + Verb 1".' },
-          { d: 2, q: 'Which word is a synonym for "enormous"?', o: ['Tiny', 'Huge', 'Weak', 'Narrow'], c: 1, e: 'Both "enormous" and "huge" mean extremely large.' },
-          { d: 3, q: 'Identify the passive voice form of: "The chef cooked a delicious meal."', o: ['A delicious meal is cooked by the chef.', 'A delicious meal was cooked by the chef.', 'A delicious meal cooks the chef.', 'The chef was cooked a delicious meal.'], c: 1, e: 'Simple Past Passive uses "was/were + Verb 3 (cooked)".' },
-          { d: 3, q: '"Neither the teacher nor the students ___ present at the meeting yesterday."', o: ['was', 'were', 'is', 'has been'], c: 1, e: 'With "neither...nor", the verb agrees with the closer subject ("students" -> plural "were").' },
-          { d: 3, q: 'Choose the correct preposition: "She is very keen ___ learning foreign languages."', o: ['at', 'on', 'with', 'for'], c: 1, e: 'The standard collocation is "keen on + V-ing/noun".' },
-          { d: 3, q: 'What is the meaning of the word "ubiquitous"?', o: ['Extremely rare', 'Present everywhere at the same time', 'Very dangerous', 'Completely silent'], c: 1, e: '"Ubiquitous" means found or appearing everywhere.' },
-          { d: 3, q: '"Had I known about the traffic jam, I ___ taken another route."', o: ['will have', 'would have', 'would', 'had'], c: 1, e: 'Inverted Third Conditional uses "Had + S + V3, S + would have + V3".' }
-        ],
-        PPKn: [
-          { d: 1, q: 'Dasar negara Republik Indonesia adalah...', o: ['UUD 1945', 'Pancasila', 'Bhinneka Tunggal Ika', 'Sumpah Pemuda'], c: 1, e: 'Pancasila adalah dasar falsafah dan ideologi negara Indonesia.' },
-          { d: 1, q: 'Semboyan negara Indonesia yang tertulis pada pita burung Garuda adalah...', o: ['Tut Wuri Handayani', 'Bhinneka Tunggal Ika', 'Merdeka atau Mati', 'Bersatu Kita Teguh'], c: 1, e: 'Bhinneka Tunggal Ika berarti "Berbeda-beda tetapi tetap satu jua".' },
-          { d: 1, q: 'Hari Lahir Pancasila diperingati setiap tanggal...', o: ['17 Agustus', '1 Juni', '1 Oktober', '28 Oktober'], c: 1, e: 'Pidato Ir. Soekarno tentang Pancasila disampaikan pada 1 Juni 1945.' },
-          { d: 2, q: 'Konstitusi atau hukum dasar tertulis tertinggi di Indonesia adalah...', o: ['Peraturan Pemerintah', 'UUD Negara Republik Indonesia Tahun 1945', 'Undang-Undang', 'Peraturan Presiden'], c: 1, e: 'UUD NRI Tahun 1945 menempati puncak hierarki peraturan perundang-undangan.' },
-          { d: 2, q: 'Lembaga negara yang berwenang menguji undang-undang terhadap UUD 1945 adalah...', o: ['Mahkamah Agung', 'Mahkamah Konstitusi', 'Komisi Yudisial', 'DPR'], c: 1, e: 'Mahkamah Konstitusi (MK) berwenang melakukan judicial review UU terhadap UUD 1945.' },
-          { d: 3, q: 'Pasal dalam UUD 1945 yang menegaskan bahwa "Negara Indonesia adalah negara hukum" adalah...', o: ['Pasal 1 Ayat (1)', 'Pasal 1 Ayat (2)', 'Pasal 1 Ayat (3)', 'Pasal 2 Ayat (1)'], c: 2, e: 'Pasal 1 Ayat (3) UUD 1945 berbunyi "Negara Indonesia adalah negara hukum."' }
-        ],
-        Informatika: [
-          { d: 1, q: 'Perangkat keras komputer yang berfungsi sebagai "otak" pemroses data utama adalah...', o: ['RAM', 'CPU (Processor)', 'Harddisk', 'Monitor'], c: 1, e: 'CPU (Central Processing Unit) mengeksekusi instruksi program komputer.' },
-          { d: 1, q: 'Tombol pintasan (shortcut) pada keyboard untuk menyalin (Copy) teks adalah...', o: ['Ctrl + V', 'Ctrl + C', 'Ctrl + X', 'Ctrl + Z'], c: 1, e: 'Ctrl + C berfungsi menyalin objek/teks yang dipilih.' },
-          { d: 2, q: 'Kepanjangan dari HTML dalam pengembangan halaman web adalah...', o: ['Hyper Text Markup Language', 'High Tech Modern Language', 'Hyperlink Transfer Main Language', 'Home Tool Markup Language'], c: 0, e: 'HTML adalah bahasa markah standar untuk menyusun struktur halaman web.' },
-          { d: 2, q: 'Urutan langkah-langkah logis dan sistematis untuk menyelesaikan suatu masalah disebut...', o: ['Kompilasi', 'Algoritma', 'Debugging', 'Enkripsi'], c: 1, e: 'Algoritma adalah prosedur langkah demi langkah untuk memecahkan masalah.' },
-          { d: 3, q: 'Protokol keamanan yang mengenkripsi komunikasi antara browser dan server web ditandai dengan awalan URL...', o: ['HTTP://', 'HTTPS://', 'FTP://', 'SMTP://'], c: 1, e: 'HTTPS menggunakan enkripsi TLS/SSL untuk melindungi integritas dan kerahasiaan data.' }
-        ],
-        'Pengetahuan Umum': [
-          { d: 1, q: 'Benua terkecil di dunia berdasarkan luas wilayahnya adalah...', o: ['Eropa', 'Australia', 'Antartika', 'Amerika Selatan'], c: 1, e: 'Australia merupakan benua dengan luas daratan terkecil di dunia.' },
-          { d: 1, q: 'Hewan darat tercepat di dunia adalah...', o: ['Singa', 'Cheetah', 'Kuda', 'Rusa'], c: 1, e: 'Cheetah mampu berlari hingga kecepatan lebih dari 100 km/jam.' },
-          { d: 2, q: 'Samudra terluas dan terdalam di Bumi adalah...', o: ['Samudra Atlantik', 'Samudra Hindia', 'Samudra Pasifik', 'Samudra Arktik'], c: 2, e: 'Samudra Pasifik mencakup sekitar sepertiga luas permukaan Bumi.' },
-          { d: 2, q: 'Negara yang dijuluki sebagai "Negeri Matahari Terbit" adalah...', o: ['Korea Selatan', 'Tiongkok', 'Jepang', 'Thailand'], c: 2, e: 'Jepang (Nippon) secara harfiah bermakna asal matahari.' },
-          { d: 3, q: 'Penemu telepon pertama kali yang mematenkannya pada tahun 1876 adalah...', o: ['Thomas Alva Edison', 'Alexander Graham Bell', 'Nikola Tesla', 'Guglielmo Marconi'], c: 1, e: 'Alexander Graham Bell memperoleh paten telepon pada Maret 1876.' }
-        ]
-      };
-
-      // Ambil pool sesuai mapel, gabung dengan default jika kurang
-      let pool = [...(CURRICULUM_POOL[subject] || [])];
-      const matchingDefault = DEFAULT_QUESTIONS.filter(q => q.subject === subject).map(q => ({
-        d: q.difficulty,
-        q: q.question,
-        o: q.options,
-        c: q.correct,
-        e: q.explanation
-      }));
-      pool = [...pool, ...matchingDefault];
-
-      // Jika pool masih kurang dari count, lengkapi dengan pengetahuan umum
-      if (pool.length < count) {
-        Object.values(CURRICULUM_POOL).forEach(arr => {
-          pool.push(...arr);
-        });
-      }
-
-      // Kelompokkan berdasarkan tingkat kesulitan 1, 2, 3
-      const easy = shuffle(pool.filter(x => x.d === 1));
-      const med = shuffle(pool.filter(x => x.d === 2));
-      const hard = shuffle(pool.filter(x => x.d === 3));
-      const orderedPool = [...easy, ...med, ...hard];
-
-      const usedTexts = new Set();
-      for (let i = 0; i < count; i++) {
-        const tier = i < Math.ceil(count / 3) ? 1 : i < Math.ceil((2 * count) / 3) ? 2 : 3;
-        let candidate = orderedPool.find(item => item.d === tier && !usedTexts.has(item.q))
-                     || orderedPool.find(item => !usedTexts.has(item.q))
-                     || orderedPool[i % orderedPool.length];
-
-        usedTexts.add(candidate.q);
-
-        // Acak posisi pilihan jawaban agar tidak hafal urutan
-        const correctText = candidate.o[candidate.c];
-        const shuffledOpts = shuffle(candidate.o);
-        const newCorrectIdx = shuffledOpts.indexOf(correctText);
-
-        results.push({
-          id: `gen-${Date.now()}-${i}`,
+        return {
+          id: 'ai-' + Date.now() + '-' + idx,
           level,
           subject,
-          difficulty: tier,
-          question: topic ? `[${grade} • ${topic}] ${candidate.q}` : `[${grade}] ${candidate.q}`,
+          difficulty: [1, 2, 3].includes(Number(item.difficulty))
+            ? Number(item.difficulty)
+            : (idx < count / 3 ? 1 : idx < (2 * count) / 3 ? 2 : 3),
+          question: String(item.question || '').trim(),
           options: shuffledOpts,
-          correct: newCorrectIdx,
-          explanation: candidate.e
-        });
+          correct: finalCorrectIdx >= 0 ? finalCorrectIdx : 0,
+          explanation: String(item.explanation || '').trim()
+        };
+      });
+    }
+
+    /* Memuat soal terkurasi asli dari Bank Soal sesuai filter tanpa mengarang */
+    function loadCuratedPresetToPreview() {
+      const level = document.getElementById('gen-level').value;
+      const subject = document.getElementById('gen-subject').value;
+      const count = parseInt(document.getElementById('gen-count').value, 10);
+
+      let matches = questionBank.filter(q => q.subject === subject && q.level === level);
+      if (matches.length < count) {
+        const sameSubject = questionBank.filter(q => q.subject === subject && !matches.includes(q));
+        matches = [...matches, ...sameSubject];
+      }
+      if (matches.length < count) {
+        const sameLevel = questionBank.filter(q => q.level === level && !matches.includes(q));
+        matches = [...matches, ...sameLevel];
+      }
+      if (matches.length < count) {
+        const others = questionBank.filter(q => !matches.includes(q));
+        matches = [...matches, ...others];
       }
 
-      return results;
+      const selected = matches.slice(0, count).map((q, i) => ({
+        ...q,
+        id: 'curated-' + Date.now() + '-' + i
+      }));
+
+      generatedDraft = selected;
+      document.getElementById('gen-empty').classList.add('hidden');
+      document.getElementById('gen-guide-box').classList.add('hidden');
+      document.getElementById('gen-source-info').textContent = `📚 Paket Soal Terkurasi (${selected.length} soal • ${subject})`;
+      document.getElementById('gen-actions').classList.remove('hidden');
+      renderGeneratedPreview();
+      AudioEngine.playClick();
+      showToast(`Memuat ${selected.length} soal terkurasi dari Bank Soal.`, 'info');
     }
 
     function renderGeneratedPreview() {
@@ -1808,16 +1751,10 @@ Pastikan "correct" adalah angka indeks 0, 1, 2, atau 3, dan "difficulty" adalah 
       }
 
       if (pool.length < totalCount) {
-        // Lengkapi otomatis jika bank soal lebih sedikit dari jumlah babak
-        const extra = generateSmartOfflineQuestions({
-          level: 'UMUM',
-          grade: 'Umum',
-          subject: subjectFilter === 'ALL' ? 'Pengetahuan Umum' : subjectFilter,
-          topic: '',
-          count: totalCount - pool.length + 3
-        });
-        pool = [...pool, ...extra];
+        showToast(`Jumlah soal di kategori ini (${pool.length}) lebih sedikit dari ${totalCount}, menyesuaikan jumlah babak.`, 'warning');
       }
+
+      const actualCount = Math.min(totalCount, pool.length);
 
       // Urutkan soal berdasarkan kesulitan (Mudah -> Menengah -> Sulit) dengan pengacakan internal
       const shuffle = arr => [...arr].sort(() => Math.random() - 0.5);
@@ -1827,14 +1764,18 @@ Pastikan "correct" adalah angka indeks 0, 1, 2, atau 3, dan "difficulty" adalah 
         ...shuffle(pool.filter(q => q.difficulty === 3))
       ];
 
-      const selected = sortedPool.slice(0, totalCount);
-      const backups = sortedPool.slice(totalCount, totalCount + 5);
+      const selected = sortedPool.slice(0, actualCount);
+      const backups = sortedPool.slice(actualCount, actualCount + 5);
 
-      const ladder = totalCount === 5 ? PRIZE_LADDER_5 : totalCount === 10 ? PRIZE_LADDER_10 : PRIZE_LADDER_15;
+      const ladder = actualCount <= 5
+        ? PRIZE_LADDER_5.slice(0, actualCount)
+        : actualCount <= 10
+          ? PRIZE_LADDER_10.slice(0, actualCount)
+          : PRIZE_LADDER_15.slice(0, actualCount);
 
       gameState = {
         questions: selected,
-        backupQuestions: backups.length > 0 ? backups : generateSmartOfflineQuestions({ level: 'UMUM', grade: 'Umum', subject: 'Pengetahuan Umum', topic: '', count: 3 }),
+        backupQuestions: backups,
         ladder,
         currentIndex: 0,
         locked: false,
@@ -2153,29 +2094,34 @@ Pastikan "correct" adalah angka indeks 0, 1, 2, atau 3, dan "difficulty" adalah 
 
     function useLifelineSwitch() {
       if (!gameState.lifelines.switchQ || gameState.locked) return;
+      if (!gameState.backupQuestions || gameState.backupQuestions.length === 0) {
+        showToast('Tidak ada soal cadangan tersisa di paket ini.', 'warning');
+        return;
+      }
       gameState.lifelines.switchQ = false;
       const btn = document.getElementById('life-switch');
       btn.disabled = true;
       btn.classList.add('lifeline-used');
       AudioEngine.playClick();
 
-      const replacement = gameState.backupQuestions.shift() || generateSmartOfflineQuestions({
-        level: 'UMUM',
-        grade: 'Umum',
-        subject: 'Pengetahuan Umum',
-        topic: '',
-        count: 1
-      })[0];
-
+      const replacement = gameState.backupQuestions.shift();
       gameState.questions[gameState.currentIndex] = replacement;
       loadCurrentQuestion();
-      showToast('Pertanyaan berhasil diganti dengan soal baru!', 'success');
+      showToast('Pertanyaan berhasil diganti dengan soal cadangan!', 'success');
     }
 
     /* =========================================================================
        8. INISIALISASI SAAT HALAMAN DIMUAT
        ========================================================================= */
     window.addEventListener('DOMContentLoaded', () => {
+      const bgEl = document.getElementById('bgMusic');
+      if (bgEl) {
+        bgEl.addEventListener('error', () => {
+          AudioEngine.mp3Available = false;
+          console.info('File music.mp3 tidak ditemukan di direktori yang sama; beralih otomatis ke audio synth.');
+        });
+      }
+
       loadBank();
       updateHomeStats();
       populateSubjectDropdowns();
